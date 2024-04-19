@@ -1,0 +1,146 @@
+openapi: 3.0.0
+info:
+  version: "1.0.0"
+  title: Banking Application API
+  description: |
+    This API allows users to perform banking operations such as registering a new account, listing all accounts, depositing money, withdrawing money, and transferring money between accounts.
+
+basePath: /api
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+
+paths:
+  /register:
+    post:
+      summary: Register a new account
+      description: Creates a new bank account for a user.
+      parameters:
+        - in: body
+          name: account
+          description: Account details to be registered
+          required: true
+          schema:
+            type: object
+            properties:
+              account_number:
+                type: string
+              holder_name:
+                type: string
+              balance:
+                type: number
+      responses:
+        200:
+          description: Success message
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+
+  /accounts:
+    get:
+      summary: List all accounts
+      description: Returns a list of all bank accounts.
+      responses:
+        200:
+          description: List of accounts
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Account"
+
+  /deposit:
+    post:
+      summary: Deposit money
+      description: Deposits money into the specified account.
+      parameters:
+        - in: body
+          name: deposit
+          description: Deposit details
+          required: true
+          schema:
+            type: object
+            properties:
+              account_number:
+                type: string
+              amount:
+                type: number
+      responses:
+        200:
+          description: Success message
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+
+  /withdraw:
+    post:
+      summary: Withdraw money
+      description: Withdraws money from the specified account.
+      parameters:
+        - in: body
+          name: withdraw
+          description: Withdrawal details
+          required: true
+          schema:
+            type: object
+            properties:
+              account_number:
+                type: string
+              amount:
+                type: number
+      responses:
+        200:
+          description: Success message
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+
+  /transfer:
+    post:
+      summary: Transfer money
+      description: Transfers money from one account to another.
+      parameters:
+        - in: body
+          name: transfer
+          description: Transfer details
+          required: true
+          schema:
+            type: object
+            properties:
+              from_account_number:
+                type: string
+              to_account_number:
+                type: string
+              amount:
+                type: number
+      responses:
+        200:
+          description: Success message
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+
+definitions:
+  Account:
+    type: object
+    properties:
+      account_number:
+        type: string
+      holder_name:
+        type: string
+      balance:
+        type: number
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/SALMANKANJJ/Banking/1.0.0
