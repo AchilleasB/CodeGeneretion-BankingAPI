@@ -1,9 +1,15 @@
 <script setup>
-import TheWelcome from '../components/TheWelcome.vue'
+import HomeBanner from '../components/account/HomeBanner.vue'
+import RegistrationForm from '../components/account/RegistrationForm.vue'
+import { ref } from 'vue';
+
 </script>
 
 <template>
   <main>
-    <TheWelcome />
+    <HomeBanner />
+    <div class="registration-container">
+      <RegistrationForm />
+    </div>
   </main>
 </template>
