@@ -1,7 +1,9 @@
 <script setup>
 import { ref } from 'vue';
 import { useUserStore } from '../../stores/user';
+import { useRouter } from 'vue-router'
 
+const router = useRouter();
 const userStore = useUserStore();
 
 const firstName = ref('');
@@ -21,12 +23,14 @@ const register = async () => {
     if (res.data) {
       successMessage.value = `${res.data.firstName} has successfully signed up!`;
       errorMessage.value = '';
+      setTimeout(() => {
+                router.push({ name: 'home' });
+            }, 2000);
     } else {
       errorMessage.value = res.response.data.errorMessage;
       successMessage.value = '';
-    }
-
-    setTimeout(() => {
+      
+      setTimeout(() => {
       successMessage.value = '';
       errorMessage.value = '';
       firstName.value = '';
@@ -37,6 +41,7 @@ const register = async () => {
       email.value = '';
       password.value = '';
     }, 2000);
+    }
   }
   catch (error) {
     console.log(error);
@@ -47,7 +52,7 @@ const register = async () => {
 
 <template>
   <div class="container fluid mt-4">
-    <h3 class="d-flex justify-content-left mb-5">Registration form</h3>
+    <h3 class="d-flex justify-content-left mb-5">Registration</h3>
     <div v-if="successMessage" class="alert alert-success">{{ successMessage }}</div>
     <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
     <form action="" method="POST" class="registration-form row">
@@ -134,7 +139,7 @@ const register = async () => {
   display: flex;
   margin: auto;
   justify-content: center;
-  width: 75%;
+  /* width: 75%; */
 }
 
 h3 {
@@ -145,7 +150,7 @@ input {
   border: 1px solid #ccc;
   border-radius: 3px;
   padding: 1em;
-  width: 75%;
+  /* width: 75%; */
   height: 2.5em;
 }
 
