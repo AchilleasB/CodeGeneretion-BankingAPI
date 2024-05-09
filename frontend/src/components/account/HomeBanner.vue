@@ -3,12 +3,15 @@
 
 <template>
   <div class="banner">
-    <h1>Super Bank</h1>
+    <h1>Welcome to the Super Bank</h1>
   </div>
 </template>
 
 <style scoped>
+
 .banner {
+  width: 50%;
+  height: 50vh;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -19,5 +22,6 @@
 h1 {
   color: white;
   font-size: 3rem;
+  text-align: center;
 }
 </style>

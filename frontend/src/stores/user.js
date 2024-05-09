@@ -5,12 +5,7 @@ export const useUserStore = defineStore('userStore', {
     state: () => ({
         jwt: '',
         id: 0,
-        fullName: '',
-        email: '',
-        role: '',
-        dateOfBirth: '',
-        phone: '',
-        bsn: '',
+        // fullName: ''
     }),
 
     getters: {
@@ -49,21 +44,13 @@ export const useUserStore = defineStore('userStore', {
                 });
                 console.log(response);
 
-                this.jwt = response.data.jwt;
-                this.id = response.data.id;
+                this.jwt = response.data.jwtToken;
+                this.id = response.data.userId;
                 this.fullName = response.data.firstName + ' ' + response.data.lastName;
-                this.email = response.data.email;
-                this.role = response.data.role;
-                this.dateOfBirth = response.data.dateOfBirth;
-                this.phone = response.data.phone;
 
                 localStorage.setItem('jwt', this.jwt);
                 localStorage.setItem('id', this.id);
-                localStorage.setItem('fullName', this.fullName);
-                localStorage.setItem('email', this.email);
-                localStorage.setItem('role', this.role);
-                localStorage.setItem('dateOfBirth', this.dateOfBirth);
-                localStorage.setItem('phone', this.phone);
+                // localStorage.setItem('fullName', this.fullName);
 
                 axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.jwt;
 
