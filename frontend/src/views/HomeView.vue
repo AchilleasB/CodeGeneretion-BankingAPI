@@ -1,5 +1,5 @@
 <script setup>
-import HomeBanner from '../components/account/HomeBanner.vue'
+import HomeBanner from '../components/HomeBanner.vue'
 import RegistrationForm from '../components/account/RegistrationForm.vue'
 import LoginForm from '../components/account/LoginForm.vue'
 import { ref } from 'vue';
@@ -17,7 +17,7 @@ const switchToLogin = () => {
 
 <template>
   <main>
-    <HomeBanner />
+    <!-- <HomeBanner /> -->
     <div class="login-container" v-if="showLoginForm">
       <LoginForm @switchToRegistration="switchToRegistration" />
       <p class="mt-3 text-center" @click="switchToRegistration">Don't have a bank account?
