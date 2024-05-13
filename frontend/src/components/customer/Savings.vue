@@ -16,6 +16,14 @@ const router = useRouter()
         <div class="col-12">
           <div class="card">
             <div class="card-body">
+              <p>IBAN</p>
+              <h3>INGB05NL 1660 1243 9080</h3> // This should be replaced with the actual balance
+            </div>
+          </div>
+        </div>
+        <div class="col-12">
+          <div class="card">
+            <div class="card-body">
               <p>Total balance</p>
               <h2>$25,000</h2> // This should be replaced with the actual balance
             </div>
@@ -40,14 +48,6 @@ const router = useRouter()
                   <button> Transfer OUT</button>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-12">
-          <div class="card">
-            <div class="card-body">
-              <p>IBAN</p>
-              <h3>INGB05NL 1660 1243 9080</h3> // This should be replaced with the actual balance
             </div>
           </div>
         </div>

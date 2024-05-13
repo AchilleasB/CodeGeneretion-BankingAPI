@@ -17,11 +17,12 @@ const login = async () => {
         const res = await userStore.login(email.value, password.value);
 
         if (res.data) {
-            successMessage.value = `${res.data.firstName} has successfully logged in!`;
+            successMessage.value = `You have successfully logged in!`;
             errorMessage.value = '';
 
             setTimeout(() => {
-                router.push({ name: 'about' });
+                if (res.data.role === 'Customer')
+                router.push({ name: 'customer' });
             }, 2000);
         } else {
             errorMessage.value = res.response.data.errorMessage;
@@ -52,13 +53,7 @@ const login = async () => {
             </div>
             <div class="col-12 mb-3">
                 <label for="inputLoginPassword" class="form-label">Password</label>
-                <input name="password" type="password" v-model="password" class="form-control" id="inputLoginPassword"
-                    aria-describedby="passwordHelpBlock">
-                <div id="passwordHelpBlock" class="form-text">
-                    Your password must be 8-20 characters long, contain letters and numbers, and must not
-                    contain spaces,
-                    special characters, or emoji.
-                </div>
+                <input name="password" type="password" v-model="password" class="form-control" id="inputLoginPassword">
             </div>
             <div class="col-12 d-flex justify-content-center">
                 <button @click.prevent="login" type="submit" class="btn btn-primary mt-4">Submit</button>
@@ -69,12 +64,12 @@ const login = async () => {
 
 <style scoped>
 .container {
-    width: 75%;
-    border: 1px solid black;
-    border-radius: 5px;
-    padding: 10px;
+    width: 100%;
+    max-width: 500px;
+     border-radius: 8px;
+    padding: 20px;
     background: rgb(247, 247, 247);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .login-form {
@@ -86,34 +81,49 @@ const login = async () => {
 
 h3 {
     color: #3f51b5;
+    text-align: center;
 }
 
-input {
-    border: 1px solid #ccc;
-    border-radius: 3px;
-    padding: 1em;
-    width: 75%;
-    height: 2.5em;
-}
-
-.btn-primary {
-    background-color: #3f51b5;
-    color: #fff;
+input, button {
+    width: calc(100% - 40px); /* Full width minus padding */
     padding: 10px 20px;
-    border-radius: 3px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box; /* Includes padding in width */
+}
+
+input:focus {
+    border-color: #5c67f2;
+    outline: none;
+}
+
+button {
+    background-color: #5c67f2;
+    color: white;
+    border: none;
     cursor: pointer;
-    font-size: 1.3em;
-    width: 50%;
+    transition: background-color 0.3s;
 }
 
-.btn-primary:hover {
-    background-color: #2e89fe;
+button:hover {
+    background-color: #6d78f3;
 }
 
-#emailHelp,
-#passwordHelpBlock {
-    font-size: 0.8em;
-    font-style: italic;
-    width: 75%;
+.alert {
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+    color: #fff;
+    text-align: center;
 }
+
+.alert-success {
+    background-color: #4CAF50;
+}
+
+.alert-danger {
+    background-color: #f44336; 
+}
+
 </style>
