@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -50,5 +51,6 @@ public class User {
 
     @Column(name="daily_limit")
     private double dailyLimit;
+
 
 }

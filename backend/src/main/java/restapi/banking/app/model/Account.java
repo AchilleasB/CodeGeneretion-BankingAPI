@@ -1,30 +1,32 @@
 package restapi.banking.app.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import restapi.banking.app.utilities.IBANGenerator;
-
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 import java.time.LocalDate;
 
 @Entity
 @NoArgsConstructor
-@Getter
-@Setter
+@AllArgsConstructor
+@Builder
+@Data
 @Table(name= "accounts")
 public class Account {
     @Id
+    @GenericGenerator(name = "IBANGenerator", strategy = "restapi.banking.app.utilities.IBANGenerator")
+    @GeneratedValue(generator = "IBANGenerator")
     private String iban;
     private AccountType accountType;
-    private double balance;
-    private LocalDate openingDate;
-    private double dailyLimit; // for ex, max daily withdrawal limit is 200 euros
-    private double absoluteLimit;// for ex, they can not go below 0 euros
-
+    @Builder.Default
+    private AccountStatus accountStatus = AccountStatus.PENDING;
+    @Builder.Default
+    private double balance = 0.0;
+    @Builder.Default
+    private LocalDate openingDate = LocalDate.now();
+    @Builder.Default
+    private double dailyLimit = 0.00; // for ex, max daily withdrawal limit is 200 euros
+    @Builder.Default
+    private double absoluteLimit = 0.00;// for ex, they can not go below 0 euros
 
 
 }
