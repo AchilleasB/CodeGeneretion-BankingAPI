@@ -18,10 +18,7 @@ import io.jsonwebtoken.security.Keys;
 @Service
 public class JwtService {
     private static final String SECRET_KEY = "404E635266556A586E3272357538782F413F4428472B4B6250655368566D5971";
-    
-    public String extractUsername(String token) {
-        return null;
-    }
+
 
     public static String generateToken (UserDetails userDetails) {
         return createToken(new HashMap<>(), userDetails); 
@@ -32,7 +29,7 @@ public class JwtService {
                 .setClaims(claims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hour
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -41,6 +38,10 @@ public class JwtService {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
+
+    public String extractUsername(String token) {
+      return extractClaim(token, Claims::getSubject);
+  }
 
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());

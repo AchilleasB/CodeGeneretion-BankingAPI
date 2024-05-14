@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import restapi.banking.app.model.UserRole;
 
 @Data
 @Builder
@@ -13,5 +14,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LoginResponseDTO {
     private UUID userId;
+    private UserRole role;
     private String jwtToken;
 }

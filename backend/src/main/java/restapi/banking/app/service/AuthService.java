@@ -23,7 +23,7 @@ import javax.naming.AuthenticationException;
 
 @Service
 @AllArgsConstructor
-public class UserService {
+public class AuthService {
 
     private final UserRepository userRepository;
     private final UserDetailsService userDetails;
