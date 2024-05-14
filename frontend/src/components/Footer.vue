@@ -5,6 +5,7 @@
             <ul class="nav col-md-4 justify-content-end">
                 <li class="nav-item"><router-link to="/" class="nav-link px-2 text-body-secondary">Home</router-link></li>
                 <li class="nav-item"><router-link to="/about" class="nav-link px-2 text-body-secondary">About us</router-link></li>
+                <li class="nav-item"><router-link to="/customer" class="nav-link px-2 text-body-secondary">Customer</router-link></li>
             </ul>
         </footer>
     </div>
