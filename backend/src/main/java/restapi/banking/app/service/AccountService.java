@@ -3,52 +3,52 @@ package restapi.banking.app.service;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import restapi.banking.app.model.Account;
+import restapi.banking.app.dto.AccountDTO;
 import restapi.banking.app.repository.AccountRepository;
+import org.modelmapper.ModelMapper;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AccountService {
+
     private final AccountRepository accountRepository;
+
+    private final ModelMapper mapper = new ModelMapper();
+
     public AccountService(AccountRepository accountRepository) {
 
         this.accountRepository = accountRepository;
     }
-    public Account createAccount(Account account) {
-        return accountRepository.save(account);
-    }
-    public List<Account> getAllAccounts() {
-        return accountRepository.findAll();
+
+    public List<AccountDTO> getAllAccounts() {
+        return accountRepository.findAll().stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
     }
 
-    public Account getAccountByIban(String iban) {
-        Optional<Account> account = accountRepository.findById(iban);
-        return account.orElse(null);
+    
+    public AccountDTO createAccount(Account account) {
+        return null;
     }
-    // update account information
-    public Account updateAccount(Account updatedAccount) {
-        String iban = updatedAccount.getIban();
-        Optional<Account> optionalAccount = accountRepository.findById(iban);
-        if (optionalAccount.isPresent()) {
-            Account existingAccount = getAccount(updatedAccount, optionalAccount);
-            // Save the updated account
-            return accountRepository.save(existingAccount);
-        } else {
-            throw new EntityNotFoundException("Account with IBAN " + iban + " not found");
+
+
+    public AccountDTO getAccountByIban(String iban) {
+        Account account = accountRepository.findByIban(iban);
+        if (account == null) {
+            throw new EntityNotFoundException("Account with the following IBAN: " + iban + " not found");
         }
+        return convertToDTO(account);
     }
+    
 
-    private static Account getAccount(Account updatedAccount, Optional<Account> optionalAccount) {
-        Account existingAccount = optionalAccount.get();
-        // Update fields
-        existingAccount.setAccountType(updatedAccount.getAccountType());
-        existingAccount.setAccountStatus(updatedAccount.getAccountStatus());
-        existingAccount.setBalance(updatedAccount.getBalance());
-        existingAccount.setOpeningDate(updatedAccount.getOpeningDate());
-        existingAccount.setDailyLimit(updatedAccount.getDailyLimit());
-        existingAccount.setAbsoluteLimit(updatedAccount.getAbsoluteLimit());
-        return existingAccount;
+    // private functions
+
+    private AccountDTO convertToDTO(Account account) {
+        AccountDTO accountDTO = mapper.map(account, AccountDTO.class);
+        return accountDTO;
     }
 
 }
