@@ -37,7 +37,7 @@ public class AuthService {
         isUserAdult(registrationDTO.getDateOfBirth());
         User user = modelMapper.map(registrationDTO, User.class);
         user.setPassword(passwordEncoder.encode(registrationDTO.getPassword()));
-        user.setRole(UserRole.Customer);
+        user.setRole(UserRole.CUSTOMER);
         user.setApproved(false);
         user.setDailyLimit(0);
         userRepository.saveAndFlush(user);

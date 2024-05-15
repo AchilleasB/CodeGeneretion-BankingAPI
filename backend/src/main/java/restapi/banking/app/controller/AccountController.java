@@ -36,11 +36,11 @@ public class AccountController {
     }
 
 
-    @PostMapping
-    public ResponseEntity<Account> createAccount(@RequestBody Account account) {
-        Account newAccount = accountService.createAccount(account);
-        return ResponseEntity.status(201).body(newAccount);
-    }
+    // @PostMapping
+    // public ResponseEntity<Account> createAccount(@RequestBody Account account) {
+    //     Account newAccount = accountService.createAccount(account);
+    //     return ResponseEntity.status(201).body(newAccount);
+    // }
 
     // @PutMapping("/{iban}")
     // public ResponseEntity<Account> updateAccount(@PathVariable String iban, @RequestBody Account updatedAccount) {
