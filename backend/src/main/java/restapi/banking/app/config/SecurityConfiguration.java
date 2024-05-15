@@ -14,8 +14,8 @@ import org.springframework.security.web.authentication.logout.LogoutHandler;
 import lombok.RequiredArgsConstructor;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
-import static restapi.banking.app.model.UserRole.Employee;
-import static restapi.banking.app.model.UserRole.Customer;
+// import static restapi.banking.app.model.UserRole.Employee;
+// import static restapi.banking.app.model.UserRole.Customer;
 
 @Configuration
 @EnableWebSecurity

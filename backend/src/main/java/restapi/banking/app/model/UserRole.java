@@ -4,6 +4,6 @@ import lombok.ToString;
 
 @ToString
 public enum UserRole {
-    Customer,
-    Employee
+    CUSTOMER,
+    EMPLOYEE
 }
