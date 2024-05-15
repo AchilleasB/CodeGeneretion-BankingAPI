@@ -21,7 +21,7 @@ const login = async () => {
             errorMessage.value = '';
 
             setTimeout(() => {
-                if (res.data.role === 'Customer')
+                if (res.data.role === 'CUSTOMER')
                 router.push({ name: 'customer' });
             }, 2000);
         } else {
