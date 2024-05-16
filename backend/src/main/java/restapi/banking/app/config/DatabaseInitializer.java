@@ -12,6 +12,7 @@ import restapi.banking.app.model.Account;
 import restapi.banking.app.model.AccountType;
 import restapi.banking.app.model.User;
 import restapi.banking.app.model.UserRole;
+import restapi.banking.app.repository.AccountRepository;
 import restapi.banking.app.repository.UserRepository;
 
 @Component
@@ -20,6 +21,7 @@ public class DatabaseInitializer {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AccountRepository accountRepository;
 
     @PostConstruct // This method will be called after the bean has been initialized at the start of the application
     public void initializeData() {
@@ -50,7 +52,7 @@ public class DatabaseInitializer {
         userRepository.saveAndFlush(customer1);
 
         Account account1 = new Account();
-        account1.setIban("NL01INHO3456000001");
+        account1.setIban("NL01INHO3456000021");
         account1.setBalance(BigDecimal.valueOf(20560));
         account1.setAccountType(AccountType.CHECKING);
         account1.setOpeningDate(LocalDate.now());
@@ -59,9 +61,10 @@ public class DatabaseInitializer {
         account1.setDailyLimit(BigDecimal.valueOf(5000));
         account1.setTransactionLimit(BigDecimal.valueOf(1000));
         account1.setActive(true);
-        
+        accountRepository.saveAndFlush(account1);
+
         Account account2 = new Account();
-        account2.setIban("NL01INHO7634150001");
+        account2.setIban("NL01INHO7634150005");
         account2.setBalance(BigDecimal.valueOf(16450));
         account2.setAccountType(AccountType.SAVINGS);
         account2.setOpeningDate(LocalDate.now());
@@ -70,6 +73,8 @@ public class DatabaseInitializer {
         account2.setDailyLimit(BigDecimal.valueOf(5000));
         account2.setTransactionLimit(BigDecimal.valueOf(1000));
         account2.setActive(true);
+        accountRepository.saveAndFlush(account2);
+
 
         User customer2 = new User();
         customer2.setFirstName("Tony");
@@ -94,7 +99,9 @@ public class DatabaseInitializer {
         account3.setDailyLimit(BigDecimal.valueOf(5000));
         account3.setTransactionLimit(BigDecimal.valueOf(1000));
         account3.setActive(true);
-        
+        accountRepository.saveAndFlush(account3);
+
+
         Account account4 = new Account();
         account4.setIban("NL01INHO7634150001");
         account4.setBalance(BigDecimal.valueOf(128450));
@@ -105,6 +112,8 @@ public class DatabaseInitializer {
         account4.setDailyLimit(BigDecimal.valueOf(5000));
         account4.setTransactionLimit(BigDecimal.valueOf(1000));
         account4.setActive(true);
+        accountRepository.saveAndFlush(account4);
+
 
     }
 }
