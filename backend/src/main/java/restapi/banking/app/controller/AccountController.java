@@ -15,6 +15,7 @@ import restapi.banking.app.service.AccountService;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -23,17 +24,18 @@ import java.util.Optional;
 public class AccountController {
 
     private final AccountService accountService;
-    
-    @GetMapping
-    public ResponseEntity<List<AccountDTO>> getAccounts() {
-        List<AccountDTO> accounts = accountService.getAllAccounts();
+
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<List<AccountDTO>> getAccountsByUserId(@PathVariable UUID userId) {
+        List<AccountDTO> accounts = accountService.getAccountsByUserId(userId);
         return ResponseEntity.status(200).body(accounts);
     }
-    @GetMapping("/{iban}")
-    public ResponseEntity<AccountDTO> getAccountByIban(@PathVariable String iban) {
-        AccountDTO accountDTO = accountService.getAccountByIban(iban);
-        return ResponseEntity.status(200).body(accountDTO);
-    }
+//    @GetMapping("/{iban}")
+//    public ResponseEntity<AccountDTO> getAccountByIban(@PathVariable String iban) {
+//        AccountDTO accountDTO = accountService.getAccountByIban(iban);
+//        return ResponseEntity.status(200).body(accountDTO);
+//    }
 
 
     // @PostMapping
