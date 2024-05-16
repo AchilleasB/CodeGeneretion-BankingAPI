@@ -1,5 +1,7 @@
 package restapi.banking.app.service;
 
+import restapi.banking.app.dto.LoginRequestDTO;
+import restapi.banking.app.dto.LoginResponseDTO;
 import restapi.banking.app.dto.RegistrationDTO;
 import restapi.banking.app.dto.UserDTO;
 import restapi.banking.app.model.User;
@@ -10,16 +12,21 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;
 
+import javax.naming.AuthenticationException;
+
 @Service
 @AllArgsConstructor
-public class UserService {
+public class AuthService {
 
     private final UserRepository userRepository;
+    private final UserDetailsService userDetails;
     @Autowired
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
@@ -30,12 +37,24 @@ public class UserService {
         isUserAdult(registrationDTO.getDateOfBirth());
         User user = modelMapper.map(registrationDTO, User.class);
         user.setPassword(passwordEncoder.encode(registrationDTO.getPassword()));
-        user.setRole(UserRole.Customer);
+        user.setRole(UserRole.CUSTOMER);
         user.setApproved(false);
         user.setDailyLimit(0);
         userRepository.saveAndFlush(user);
         return modelMapper.map(user, UserDTO.class);
         
+    }
+
+    public LoginResponseDTO login(LoginRequestDTO loginRequest) throws AuthenticationException {
+        UserDetails user = userDetails.loadUserByUsername(loginRequest.getEmail());
+
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("Password is incorrect");
+        }
+        
+        LoginResponseDTO responseDTO = modelMapper.map(user, LoginResponseDTO.class);
+        responseDTO.setJwtToken(JwtService.generateToken(user));
+        return responseDTO;
     }
 
 
