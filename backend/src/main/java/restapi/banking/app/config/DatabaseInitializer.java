@@ -12,6 +12,7 @@ import restapi.banking.app.model.Account;
 import restapi.banking.app.model.AccountType;
 import restapi.banking.app.model.User;
 import restapi.banking.app.model.UserRole;
+import restapi.banking.app.repository.AccountRepository;
 import restapi.banking.app.repository.UserRepository;
 
 @Component
@@ -19,6 +20,7 @@ import restapi.banking.app.repository.UserRepository;
 public class DatabaseInitializer {
 
     private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
 
     @PostConstruct // This method will be called after the bean has been initialized at the start of the application
@@ -33,7 +35,6 @@ public class DatabaseInitializer {
         superBank.setRole(UserRole.EMPLOYEE);
         superBank.setApproved(true);
         superBank.setDailyLimit(1000000);
-
         userRepository.saveAndFlush(superBank);
 
         User customer1 = new User();

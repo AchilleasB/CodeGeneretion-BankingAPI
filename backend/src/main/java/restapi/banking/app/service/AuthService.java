@@ -59,7 +59,7 @@ public class AuthService {
 
 
     // private functions
-
+    // todo: Would be good to add throws to the functions here?
     private void doesEmailExist(String email) {
         if (userRepository.findByEmail(email).isPresent()) {
             throw new IllegalArgumentException("Email already exists");
