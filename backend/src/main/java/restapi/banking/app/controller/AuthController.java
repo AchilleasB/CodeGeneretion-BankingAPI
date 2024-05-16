@@ -19,13 +19,14 @@ import lombok.RequiredArgsConstructor;
 @CrossOrigin
 @RequestMapping("/auth")
 public class AuthController {
-    
-    private final AuthService authService;  
+
+    private final AuthService authService;
 
     @PostMapping("/register")
     public ResponseEntity<UserDTO> register(@Valid @RequestBody RegistrationDTO registrationDTO) {
         UserDTO registeringUserDTO = authService.register(registrationDTO);
         return ResponseEntity.status(201).body(registeringUserDTO);
+
     }
 
     @PostMapping("/login")

@@ -4,7 +4,12 @@ import { useUserStore } from '../../stores/user'
 import { useRouter } from 'vue-router'
 
 const userStore = useUserStore()
+
 const router = useRouter()
+
+const balance = ref(0);
+
+
 
 </script>
 
@@ -22,43 +27,47 @@ const router = useRouter()
           </div>
         </div>
       </div>
-      <div class="col-8">
-        <div class="card">
-          <div class="card-body">
-            <p>Total balance</p>
-            <h2>$13,562</h2> // This should be replaced with the actual balance
+      <div class="row justify-content-center">
+        <div class="col-8">
+          <div class="card">
+            <div class="card-body">
+              <p>Total balance</p>
+              <h2>$13,562</h2> // This should be replaced with the actual balance
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row justify-content-center">
+        <div class="col-4">
+          <div class="card">
+            <div class="card-body">
+              <button> Send payment</button>
+            </div>
           </div>
         </div>
       </div>
       <div class="col-4">
         <div class="card">
           <div class="card-body">
-            <button> Send payment</button>
+            <p>Daily limit</p>
+            <h3>$1000</h3> // to be replaced with the actual balance
           </div>
         </div>
       </div>
-    </div>
-    <div class="col">
-      <div class="card">
-        <div class="card-body">
-          <p>Daily limit</p>
-          <h3>$1000</h3> // to be replaced with the actual balance
+      <div class="col-4">
+        <div class="card">
+          <div class="card-body">
+            <p>Transaction limit</p>
+            <h3>$1000</h3> // to be replaced with the actual balance
+          </div>
         </div>
       </div>
-    </div>
-    <div class="col">
-      <div class="card">
-        <div class="card-body">
-          <p>Transaction limit</p>
-          <h3>$1000</h3> // to be replaced with the actual balance
-        </div>
-      </div>
-    </div>
-    <div class="col">
-      <div class="card">
-        <div class="card-body">
-          <p>Absolute limit</p>
-          <h3>$100</h3> // to be replaced with the actual balance
+      <div class="col-4">
+        <div class="card">
+          <div class="card-body">
+            <p>Absolute limit</p>
+            <h3>$100</h3> // to be replaced with the actual balance
+          </div>
         </div>
       </div>
     </div>

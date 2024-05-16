@@ -2,6 +2,7 @@ package restapi.banking.app.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -16,7 +17,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Data
-@ToString
+@Builder
 @AllArgsConstructor // constructor to initialize all the fields of the class
 @NoArgsConstructor // constructor to create instances of the class without passing any arguments
 @Entity
