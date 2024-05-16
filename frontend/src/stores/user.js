@@ -28,7 +28,7 @@ export const useUserStore = defineStore('userStore', {
                     lastName: lastName,
                     dateOfBirth: formatedDate,
                     phone: phone,
-                    bsn: bsn,
+                    bsn: parseInt(bsn),
                     email: email,
                     password: password
                 });
