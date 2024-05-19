@@ -14,6 +14,7 @@ import restapi.banking.app.model.UserRole;
 @NoArgsConstructor
 public class LoginResponseDTO {
     private UUID userId;
+    private String firstName;
     private UserRole role;
     private String jwtToken;
 }
