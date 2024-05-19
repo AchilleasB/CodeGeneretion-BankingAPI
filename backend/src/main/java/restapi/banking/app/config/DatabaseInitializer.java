@@ -22,7 +22,6 @@ public class DatabaseInitializer {
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
-    private final AccountRepository accountRepository;
 
     @PostConstruct // This method will be called after the bean has been initialized at the start of the application
     public void initializeData() {
@@ -58,7 +57,6 @@ public class DatabaseInitializer {
         account1.setOpeningDate(LocalDate.now());
         account1.setUser(customer1);
         account1.setAbsoluteLimit(BigDecimal.valueOf(100));
-        account1.setDailyLimit(BigDecimal.valueOf(5000));
         account1.setTransactionLimit(BigDecimal.valueOf(1000));
         account1.setActive(true);
         accountRepository.saveAndFlush(account1);
@@ -70,7 +68,6 @@ public class DatabaseInitializer {
         account2.setOpeningDate(LocalDate.now());
         account2.setUser(customer1);
         account2.setAbsoluteLimit(BigDecimal.valueOf(100));
-        account2.setDailyLimit(BigDecimal.valueOf(5000));
         account2.setTransactionLimit(BigDecimal.valueOf(1000));
         account2.setActive(true);
         accountRepository.saveAndFlush(account2);
@@ -90,13 +87,12 @@ public class DatabaseInitializer {
         userRepository.saveAndFlush(customer2);
 
         Account account3 = new Account();
-        account3.setIban("NL01INHO3456000001");
+        account3.setIban("NL01INHO3456089001");
         account3.setBalance(BigDecimal.valueOf(32480));
         account3.setAccountType(AccountType.CHECKING);
         account3.setOpeningDate(LocalDate.now());
         account3.setUser(customer2);
         account3.setAbsoluteLimit(BigDecimal.valueOf(100));
-        account3.setDailyLimit(BigDecimal.valueOf(5000));
         account3.setTransactionLimit(BigDecimal.valueOf(1000));
         account3.setActive(true);
         accountRepository.saveAndFlush(account3);
@@ -109,11 +105,9 @@ public class DatabaseInitializer {
         account4.setOpeningDate(LocalDate.now());
         account4.setUser(customer2);
         account4.setAbsoluteLimit(BigDecimal.valueOf(100));
-        account4.setDailyLimit(BigDecimal.valueOf(5000));
         account4.setTransactionLimit(BigDecimal.valueOf(1000));
         account4.setActive(true);
         accountRepository.saveAndFlush(account4);
-
 
     }
 }

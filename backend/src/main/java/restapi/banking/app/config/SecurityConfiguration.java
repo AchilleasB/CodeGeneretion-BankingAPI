@@ -1,5 +1,6 @@
 package restapi.banking.app.config;
 
+import org.springframework.boot.autoconfigure.security.SecurityProperties.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -10,12 +11,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import lombok.RequiredArgsConstructor;
+import restapi.banking.app.model.UserRole;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
-// import static restapi.banking.app.model.UserRole.Employee;
-// import static restapi.banking.app.model.UserRole.Customer;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -23,8 +28,11 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class SecurityConfiguration {
 
     private static final String[] WHITE_LIST_URL = {
-            "/auth/register",
-            "/auth/login"
+            "/auth/**",
+            "/users/**",
+            "/accounts/**",
+            "/transactions/**"
+
     };
 
     private final JwtAuthenticationFilter jwtAuthFilter;
@@ -35,8 +43,11 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
             .csrf(csrf -> csrf.disable())
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(WHITE_LIST_URL).permitAll()
+                // .antMatchers("/admin/**").hasRole(Employee.name())
+                .requestMatchers("/transactions/atm/**").hasRole(UserRole.CUSTOMER.name())
                 .anyRequest().authenticated()
                 )
             .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
@@ -49,6 +60,18 @@ public class SecurityConfiguration {
             // SecurityContextHolder.clearContext())
             // )
             .build();
+    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // Add your frontend URL here
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
         
 
