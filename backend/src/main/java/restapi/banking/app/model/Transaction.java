@@ -7,8 +7,11 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Data
 @ToString
 @AllArgsConstructor
@@ -20,17 +23,27 @@ public class Transaction {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
+    @Column(name="transaction_type")
+    private TransactionType type;
+    
     @Column(name="amount")
-    private BigDecimal amount; //BigDecimal over double or float due to precision level
-    @Column(name="ibanFrom")
-    private String ibanFrom;
-    @Column(name="ibanTo")
-    private String ibanTo;
+    private BigDecimal amount;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_from", referencedColumnName = "id")
+    @JsonIgnoreProperties("transactions")
+    private Account accountFrom;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "acount_to", referencedColumnName = "id")
+    @JsonIgnoreProperties("transactions")
+    private Account accountTo;
+
     @Column(name="message")
     private String message;
-    @Column(name="timestamp")
-    private LocalDateTime timestamp;
 
-    //todo: change ibans to Accounts
+    @Column(name="timestamp")
+    private LocalDate timestamp;
 
 }

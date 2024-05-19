@@ -1,12 +1,10 @@
 <script setup>
 import { ref } from 'vue';
-import { useUserStore } from '../../stores/user'
+import { useAuthStore } from '../../stores/auth'
 import { useRouter } from 'vue-router'
 
-const userStore = useUserStore()
 
 const router = useRouter()
-
 const balance = ref(0);
 
 
@@ -83,14 +81,15 @@ h1 {
 .card {
   margin: 10px;
   padding: 10px;
-  /* border: 1px solid #ccc; */
   border-radius: 5px;
   box-shadow: 2px 2px 5px #ccc;
 }
 
 button {
-  background-color: #4CAF50;
+  background: linear-gradient(90deg, #4e54c8 20%, #8f94fb 40%, #FF7B83 90%);
   color: white;
+  font-size: 1.3em;
+  font-weight: bold;
   padding: 14px 20px;
   margin: 8px 0;
   border: none;

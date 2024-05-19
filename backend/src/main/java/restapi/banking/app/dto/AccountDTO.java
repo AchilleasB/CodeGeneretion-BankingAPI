@@ -41,9 +41,6 @@ public class AccountDTO {
     @Min(value = 0, message = "Absolute Limit must be greater than or equal to 0")
     private BigDecimal absoluteLimit;
 
-    @Min(value = 0, message = "Daily Limit must be greater than or equal to 0")
-    private BigDecimal dailyLimit;
-
     @Min(value = 0, message = "Transaction Limit must be greater than or equal to 0")
     private BigDecimal transactionLimit;
 

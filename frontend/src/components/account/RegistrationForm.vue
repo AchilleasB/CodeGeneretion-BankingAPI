@@ -1,10 +1,10 @@
 <script setup>
 import { ref } from 'vue';
-import { useUserStore } from '../../stores/user';
+import { useAuthStore } from '../../stores/auth';
 import { useRouter } from 'vue-router'
 
 const router = useRouter();
-const userStore = useUserStore();
+const authStore = useAuthStore();
 
 const firstName = ref('');
 const lastName = ref('');
@@ -18,7 +18,7 @@ const errorMessage = ref('');
 
 const register = async () => {
   try {
-    const res = await userStore.register(firstName.value, lastName.value, dateOfBirth.value, phone.value, bsn.value, email.value, password.value);
+    const res = await authStore.register(firstName.value, lastName.value, dateOfBirth.value, phone.value, bsn.value, email.value, password.value);
 
     if (res.data) {
       successMessage.value = `${res.data.firstName} has successfully signed up!`;
