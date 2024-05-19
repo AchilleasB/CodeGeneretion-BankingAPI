@@ -1,15 +1,32 @@
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useUserStore } from '../../stores/user'
+import { useAccountStore } from '../../stores/useAccountStore';
+
 import { useRouter } from 'vue-router'
 
 const userStore = useUserStore()
 
 const router = useRouter()
 
+const accountStore = useAccountStore();
+const iban = ref(null);
 const balance = ref(0);
+const dailyLimit = ref(0);
+const transactionLimit = ref(0);
+const absoluteLimit = ref(0);
 
-
+onMounted(async () => {
+  await accountStore.loadAccounts();
+  if (accountStore.checkingAccount) {
+    const account = accountStore.checkingAccount;
+    iban.value = account.iban;
+    balance.value = account.balance;
+    dailyLimit.value = account.dailyLimit;
+    transactionLimit.value = account.transactionLimit;
+    absoluteLimit.value = account.absoluteLimit;
+  }
+});
 
 </script>
 
@@ -22,7 +39,7 @@ const balance = ref(0);
           <div class="card">
             <div class="card-body">
               <p>IBAN</p>
-              <h3>INGB02NL 2340 5678 4321</h3> // This should be replaced with the actual balance
+              <h3>{{ iban }}</h3> 
             </div>
           </div>
         </div>
@@ -32,7 +49,7 @@ const balance = ref(0);
           <div class="card">
             <div class="card-body">
               <p>Total balance</p>
-              <h2>$13,562</h2> // This should be replaced with the actual balance
+              <h2>€ {{ balance }}</h2>
             </div>
           </div>
         </div>
@@ -50,7 +67,7 @@ const balance = ref(0);
         <div class="card">
           <div class="card-body">
             <p>Daily limit</p>
-            <h3>$1000</h3> // to be replaced with the actual balance
+            <h3>€ {{ dailyLimit }}</h3> 
           </div>
         </div>
       </div>
@@ -58,7 +75,7 @@ const balance = ref(0);
         <div class="card">
           <div class="card-body">
             <p>Transaction limit</p>
-            <h3>$1000</h3> // to be replaced with the actual balance
+            <h3>€ {{ transactionLimit }}</h3> 
           </div>
         </div>
       </div>
@@ -66,7 +83,7 @@ const balance = ref(0);
         <div class="card">
           <div class="card-body">
             <p>Absolute limit</p>
-            <h3>$100</h3> // to be replaced with the actual balance
+            <h3>€ {{ absoluteLimit }}</h3> 
           </div>
         </div>
       </div>

@@ -5,6 +5,7 @@ export const useUserStore = defineStore('userStore', {
     state: () => ({
         jwt: '',
         id: 0,
+        user: null
         // fullName: ''
     }),
 
@@ -89,6 +90,22 @@ export const useUserStore = defineStore('userStore', {
 
             return false;
 
+        },
+        async getLoggedInUser() {
+            try {
+                const id = localStorage.getItem('id');
+                if (id) {
+                    const response = await axios.get(`users/${id}`);
+                    const user = response.data;
+
+                    this.user = user;
+                    
+                    return user;
+                }
+                return null;
+            } catch (error) {
+                console.log(error);
+            }
         },
 
         logout() {

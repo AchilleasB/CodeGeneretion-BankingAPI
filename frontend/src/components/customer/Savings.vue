@@ -1,10 +1,27 @@
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useUserStore } from '../../stores/user'
+import { useAccountStore } from '../../stores/useAccountStore';
+
 import { useRouter } from 'vue-router'
 
 const userStore = useUserStore()
 const router = useRouter()
+
+
+const accountStore = useAccountStore();
+const iban = ref(null);
+const balance = ref(0);
+
+
+onMounted(async () => {
+  await accountStore.loadAccounts();
+  if (accountStore.savingsAccount) {
+    const account = accountStore.savingsAccount;
+    iban.value = account.iban;
+    balance.value = account.balance;
+  }
+});
 
 </script>
 
@@ -17,7 +34,7 @@ const router = useRouter()
           <div class="card">
             <div class="card-body">
               <p>IBAN</p>
-              <h3>INGB05NL 1660 1243 9080</h3> // This should be replaced with the actual balance
+              <h3>€ {{ iban }}</h3> 
             </div>
           </div>
         </div>
@@ -25,7 +42,7 @@ const router = useRouter()
           <div class="card">
             <div class="card-body">
               <p>Total balance</p>
-              <h2>$25,000</h2> // This should be replaced with the actual balance
+              <h2>€ {{ balance }}</h2>
             </div>
           </div>
         </div>
