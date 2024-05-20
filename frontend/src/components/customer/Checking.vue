@@ -1,18 +1,34 @@
 <script setup>
-import { ref } from 'vue';
-import { useAuthStore } from '../../stores/auth'
-import { useRouter } from 'vue-router'
+import { onMounted, ref } from 'vue';
+import { useUserStore } from '../../stores/user';
+import { useAccountStore } from '../../stores/account';
 
+const userStore = useUserStore();
+const accountStore = useAccountStore();
 
-const router = useRouter()
+const iban = ref('');
 const balance = ref(0);
+const dailyLimit = ref(0);
+const transactionLimit = ref(0);
+const absoluteLimit = ref(0);
 
-
-
+onMounted(async () => {
+  const userId = userStore.userId;
+  await accountStore.getCustomerAccounts(userId);
+  const checkingAccount = accountStore.getCheckingAccount[0];
+  
+  if (checkingAccount) {
+    iban.value = checkingAccount.iban;
+    balance.value = checkingAccount.balance;
+    dailyLimit.value = checkingAccount.dailyLimit;
+    transactionLimit.value = checkingAccount.transactionLimit;
+    absoluteLimit.value = checkingAccount.absoluteLimit;
+  }
+});
 </script>
 
 <template>
-  <h1> Checking account</h1>
+  <h1>Checking Account</h1>
   <div class="container text-center">
     <div class="row">
       <div class="row">
@@ -20,7 +36,7 @@ const balance = ref(0);
           <div class="card">
             <div class="card-body">
               <p>IBAN</p>
-              <h3>INGB02NL 2340 5678 4321</h3> // This should be replaced with the actual balance
+              <h3>{{ iban }}</h3> 
             </div>
           </div>
         </div>
@@ -30,7 +46,7 @@ const balance = ref(0);
           <div class="card">
             <div class="card-body">
               <p>Total balance</p>
-              <h2>$13,562</h2> // This should be replaced with the actual balance
+              <h2>€ {{ balance }}</h2>
             </div>
           </div>
         </div>
@@ -39,7 +55,7 @@ const balance = ref(0);
         <div class="col-4">
           <div class="card">
             <div class="card-body">
-              <button> Send payment</button>
+              <button>Send Payment</button>
             </div>
           </div>
         </div>
@@ -47,24 +63,24 @@ const balance = ref(0);
       <div class="col-4">
         <div class="card">
           <div class="card-body">
-            <p>Daily limit</p>
-            <h3>$1000</h3> // to be replaced with the actual balance
+            <p>Daily Limit</p>
+            <h3>€ {{ dailyLimit }}</h3> 
           </div>
         </div>
       </div>
       <div class="col-4">
         <div class="card">
           <div class="card-body">
-            <p>Transaction limit</p>
-            <h3>$1000</h3> // to be replaced with the actual balance
+            <p>Transaction Limit</p>
+            <h3>€ {{ transactionLimit }}</h3> 
           </div>
         </div>
       </div>
       <div class="col-4">
         <div class="card">
           <div class="card-body">
-            <p>Absolute limit</p>
-            <h3>$100</h3> // to be replaced with the actual balance
+            <p>Absolute Limit</p>
+            <h3>€ {{ absoluteLimit }}</h3> 
           </div>
         </div>
       </div>
@@ -86,10 +102,8 @@ h1 {
 }
 
 button {
-  background: linear-gradient(90deg, #4e54c8 20%, #8f94fb 40%, #FF7B83 90%);
+  background-color: #4CAF50;
   color: white;
-  font-size: 1.3em;
-  font-weight: bold;
   padding: 14px 20px;
   margin: 8px 0;
   border: none;

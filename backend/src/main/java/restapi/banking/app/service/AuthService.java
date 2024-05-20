@@ -12,8 +12,10 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.modelmapper.ModelMapper;
 
@@ -31,10 +33,8 @@ public class AuthService {
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public UserDTO register (RegistrationDTO registrationDTO) {
-        doesEmailExist(registrationDTO.getEmail());
-        isBsnValid(registrationDTO.getBsn());
-        isUserAdult(registrationDTO.getDateOfBirth());
+    public UserDTO register(RegistrationDTO registrationDTO) {
+        validateRegistrationData(registrationDTO);
         User user = modelMapper.map(registrationDTO, User.class);
         user.setPassword(passwordEncoder.encode(registrationDTO.getPassword()));
         user.setRole(UserRole.Customer);
@@ -42,24 +42,34 @@ public class AuthService {
         user.setDailyLimit(0);
         userRepository.saveAndFlush(user);
         return modelMapper.map(user, UserDTO.class);
-        
+
     }
 
-    public LoginResponseDTO login(LoginRequestDTO loginRequest) throws AuthenticationException {
-        UserDetails user = userDetails.loadUserByUsername(loginRequest.getEmail());
+    public LoginResponseDTO login(LoginRequestDTO loginRequest) {
+        UserDetails user ;
+        try {
+            user = userDetails.loadUserByUsername(loginRequest.getEmail());
+        } catch (UsernameNotFoundException ex) {
+            throw new UsernameNotFoundException("Email not found");
+        }
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("Password is incorrect");
+            throw new BadCredentialsException("Password is incorrect");
         }
-        
+
         LoginResponseDTO responseDTO = modelMapper.map(user, LoginResponseDTO.class);
         responseDTO.setJwtToken(JwtService.generateToken(user));
         return responseDTO;
     }
 
-
     // private functions
-    // todo: Would be good to add throws to the functions here?
+    
+    private void validateRegistrationData(RegistrationDTO registrationDTO) {
+        doesEmailExist(registrationDTO.getEmail());
+        isBsnValid(registrationDTO.getBsn());
+        isUserAdult(registrationDTO.getDateOfBirth());
+    }
+
     private void doesEmailExist(String email) {
         if (userRepository.findByEmail(email).isPresent()) {
             throw new IllegalArgumentException("Email already exists");

@@ -9,7 +9,7 @@ export const useAuthStore = defineStore('authStore', {
     }),
 
     getters: {
-        isAuthenticated: (state) => state.jwt !== '',
+        isCustomer: (state) => state.role === 'CUSTOMER',
         isAdmin: (state) => state.role === 'EMPLOYEE',
     },
 
@@ -86,12 +86,19 @@ export const useAuthStore = defineStore('authStore', {
 
         },
 
-        logout() {
-            // clear all state fields
-            this.$reset();
-            // remove all from local storage
-            localStorage.clear();
-            axios.defaults.headers.common['Authorization'] = '';
+        async logout() {
+            
+            try {
+                const response = await axios.post('auth/logout');
+                console.log(response);
+                this.$reset();
+                localStorage.clear();
+                axios.defaults.headers.common['Authorization'] = '';
+                return response;
+            } catch (error) {
+                console.log(error);
+                return error;
+            }
         },
 
     }
