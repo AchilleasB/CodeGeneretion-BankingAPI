@@ -26,12 +26,12 @@ public class UserController {
     private final UserMapper userMapper;
 
 
-    private final UserService userService;
     @PreAuthorize("hasRole('Employee')")
     @GetMapping("/unapproved")
     public ResponseEntity<List<User>> listUnapprovedUsers() {
         List<User> users = userService.findUnapprovedUsers();
         return ResponseEntity.ok(users);
+    }
 
     @GetMapping
     public List<UserDTO> getAllUsers() {
