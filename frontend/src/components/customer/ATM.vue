@@ -12,25 +12,33 @@ const amount = ref(0);
 const successMessage = ref('');
 const errorMessage = ref('');
 
-const isValidAmount = computed(() => {
-    return amount.value >= 0;
-});
+const isValidAmount = ref(true);
+const validateAmount = () => {
+    if (amount.value < 0 || amount.value === 0) {
+        isValidAmount.value = false;
+    } else {
+        isValidAmount.value = true;
+    }
+};
 
 const selectTransactionType = (type) => {
     transactionType.value = type;
 };
 
 const submitATMTransaction = async () => {
-    const selectedAccount = accountStore.getAccountByType(accountType.value);
+
+    validateAmount();
 
     if (!isValidAmount.value) {
-        errorMessage.value = 'Amount must be not be negative and/or higher than 1€';
+        errorMessage.value = 'Amount must be higher than €10.00';
         setTimeout(() => {
             errorMessage.value = '';
             amount.value = 0;
         }, 3000);
         return;
     }
+
+    const selectedAccount = accountStore.getAccountByType(accountType.value);
 
     const transactionDTO = {
         accountId: selectedAccount.id,
@@ -50,6 +58,7 @@ const submitATMTransaction = async () => {
     } catch (error) {
         errorMessage.value = 'Transaction failed: ' + error.message;
     }
+
 
     setTimeout(() => {
         successMessage.value = '';
@@ -181,6 +190,7 @@ button:disabled {
     background-color: #e6ffed;
     padding: 0.5rem;
     text-align: center;
+    font-size: larger;
 }
 
 .errorMessage {
@@ -188,5 +198,6 @@ button:disabled {
     background-color: #ffe6e6;
     padding: 0.5rem;
     text-align: center;
+    font-size: larger;
 }
 </style>
