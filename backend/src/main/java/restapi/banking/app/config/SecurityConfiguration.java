@@ -47,7 +47,7 @@ public class SecurityConfiguration {
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(WHITE_LIST_URL).permitAll()
                 // .antMatchers("/admin/**").hasRole(Employee.name())
-                .requestMatchers("/transactions/atm/**").hasRole(UserRole.CUSTOMER.name())
+                .requestMatchers("/transactions/atm/**").hasRole(UserRole.Customer.name())
                 .anyRequest().authenticated()
                 )
             .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))

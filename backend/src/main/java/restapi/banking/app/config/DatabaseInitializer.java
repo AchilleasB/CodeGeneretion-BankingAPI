@@ -34,11 +34,10 @@ public class DatabaseInitializer {
         superBank.setBsn("123456789");
         superBank.setEmail("superbank@email.com");
         superBank.setPassword(passwordEncoder.encode("password"));
-        superBank.setRole(UserRole.EMPLOYEE);
+        superBank.setRole(UserRole.Employee);
         superBank.setApproved(true);
         superBank.setDailyLimit(1000000);
         userRepository.saveAndFlush(superBank);
-    }
 
 
         User customer1 = new User();
@@ -48,7 +47,7 @@ public class DatabaseInitializer {
         customer1.setBsn("31855867");
         customer1.setEmail("achil@email.com");
         customer1.setPassword(passwordEncoder.encode("achil1234"));
-        customer1.setRole(UserRole.CUSTOMER);
+        customer1.setRole(UserRole.Customer);
         customer1.setApproved(true);
         customer1.setDailyLimit(5000);
 
@@ -84,7 +83,7 @@ public class DatabaseInitializer {
         customer2.setBsn("132456378");
         customer2.setEmail("stark@email.com");
         customer2.setPassword(passwordEncoder.encode("stark1234"));
-        customer2.setRole(UserRole.CUSTOMER);
+        customer2.setRole(UserRole.Customer);
         customer2.setApproved(true);
         customer2.setDailyLimit(5000);
 
@@ -112,9 +111,9 @@ public class DatabaseInitializer {
         account4.setTransactionLimit(BigDecimal.valueOf(1000));
         account4.setActive(true);
         accountRepository.saveAndFlush(account4);
+    }
 
 
     }
 
 
-}
