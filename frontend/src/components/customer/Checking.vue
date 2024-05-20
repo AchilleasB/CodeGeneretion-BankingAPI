@@ -1,37 +1,34 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import { useUserStore } from '../../stores/user'
-import { useAccountStore } from '../../stores/useAccountStore';
+import { useUserStore } from '../../stores/user';
+import { useAccountStore } from '../../stores/account';
 
-import { useRouter } from 'vue-router'
-
-const userStore = useUserStore()
-
-const router = useRouter()
-
+const userStore = useUserStore();
 const accountStore = useAccountStore();
-const iban = ref(null);
+
+const iban = ref('');
 const balance = ref(0);
 const dailyLimit = ref(0);
 const transactionLimit = ref(0);
 const absoluteLimit = ref(0);
 
 onMounted(async () => {
-  await accountStore.loadAccounts();
-  if (accountStore.checkingAccount) {
-    const account = accountStore.checkingAccount;
-    iban.value = account.iban;
-    balance.value = account.balance;
-    dailyLimit.value = account.dailyLimit;
-    transactionLimit.value = account.transactionLimit;
-    absoluteLimit.value = account.absoluteLimit;
+  const userId = userStore.userId;
+  await accountStore.getCustomerAccounts(userId);
+  const checkingAccount = accountStore.getCheckingAccount[0];
+  
+  if (checkingAccount) {
+    iban.value = checkingAccount.iban;
+    balance.value = checkingAccount.balance;
+    dailyLimit.value = checkingAccount.dailyLimit;
+    transactionLimit.value = checkingAccount.transactionLimit;
+    absoluteLimit.value = checkingAccount.absoluteLimit;
   }
 });
-
 </script>
 
 <template>
-  <h1> Checking account</h1>
+  <h1>Checking Account</h1>
   <div class="container text-center">
     <div class="row">
       <div class="row">
@@ -58,7 +55,7 @@ onMounted(async () => {
         <div class="col-4">
           <div class="card">
             <div class="card-body">
-              <button> Send payment</button>
+              <button>Send Payment</button>
             </div>
           </div>
         </div>
@@ -66,7 +63,7 @@ onMounted(async () => {
       <div class="col-4">
         <div class="card">
           <div class="card-body">
-            <p>Daily limit</p>
+            <p>Daily Limit</p>
             <h3>€ {{ dailyLimit }}</h3> 
           </div>
         </div>
@@ -74,7 +71,7 @@ onMounted(async () => {
       <div class="col-4">
         <div class="card">
           <div class="card-body">
-            <p>Transaction limit</p>
+            <p>Transaction Limit</p>
             <h3>€ {{ transactionLimit }}</h3> 
           </div>
         </div>
@@ -82,7 +79,7 @@ onMounted(async () => {
       <div class="col-4">
         <div class="card">
           <div class="card-body">
-            <p>Absolute limit</p>
+            <p>Absolute Limit</p>
             <h3>€ {{ absoluteLimit }}</h3> 
           </div>
         </div>
@@ -100,7 +97,6 @@ h1 {
 .card {
   margin: 10px;
   padding: 10px;
-  /* border: 1px solid #ccc; */
   border-radius: 5px;
   box-shadow: 2px 2px 5px #ccc;
 }

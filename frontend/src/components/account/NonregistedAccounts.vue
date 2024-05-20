@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import { useAccountStore } from '@/stores/Admin';
+import { useAccountStore } from '@/stores/account';
 import { onMounted } from 'vue';
 
 const store = useAccountStore();

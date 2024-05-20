@@ -1,27 +1,26 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import { useUserStore } from '../../stores/user'
-import { useAccountStore } from '../../stores/useAccountStore';
+import { useUserStore } from '../../stores/user';
+import { useAccountStore } from '../../stores/account';
 
-import { useRouter } from 'vue-router'
-
-const userStore = useUserStore()
-const router = useRouter()
-
-
+const userStore = useUserStore();
 const accountStore = useAccountStore();
-const iban = ref(null);
+
+const iban = ref('');
 const balance = ref(0);
 
-
 onMounted(async () => {
-  await accountStore.loadAccounts();
-  if (accountStore.savingsAccount) {
-    const account = accountStore.savingsAccount;
-    iban.value = account.iban;
-    balance.value = account.balance;
+  const userId = userStore.userId;
+  await accountStore.getCustomerAccounts(userId);
+  const savingsAccount = accountStore.getSavingsAccount[0];
+
+  if (savingsAccount) {
+    iban.value = savingsAccount.iban;
+    balance.value = savingsAccount.balance;
   }
 });
+
+
 
 </script>
 

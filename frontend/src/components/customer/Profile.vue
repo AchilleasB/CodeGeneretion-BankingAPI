@@ -1,50 +1,44 @@
-<script>
+<script setup>
+import { useAuthStore } from '@/stores/auth';
 import { useUserStore } from '../../stores/user';
-import { onMounted, computed } from 'vue';
+import { onMounted} from 'vue';
 
-export default {
-    setup() {
-        const userStore = useUserStore();
+const authStore = useAuthStore();
+const userStore = useUserStore();
 
-        onMounted(async () => {
-            if (!userStore.user) {
-                await userStore.getLoggedInUser();
-            }
-        });
+onMounted(async()=>{
+  const userId = authStore.id;
+  await userStore.loadUserDetails(userId);
 
-        const user = computed(() => userStore.user);
+})
 
-        return {
-            user
-        };
-    }
-};
+
 </script>
 
 
 <template>
   <div class="profile">
     <h1>Profile Page</h1>
-    <div v-if="user" class="profile-card">
+    <div class="profile-card">
       <div class="profile-item">
         <span class="profile-label">Full Name:</span> 
-        <span class="profile-value">{{ user.firstName }} {{ user.lastName }}</span>
+        <span class="profile-value">{{ userStore.firstName }} {{ userStore.lastName }}</span>
       </div>
       <div class="profile-item">
         <span class="profile-label">Email:</span> 
-        <span class="profile-value">{{ user.email }}</span>
+        <span class="profile-value">{{ userStore.email }}</span>
       </div>
       <div class="profile-item">
         <span class="profile-label">Role:</span> 
-        <span class="profile-value">{{ user.role }}</span>
+        <span class="profile-value">{{ userStore.role }}</span>
       </div>
       <div class="profile-item">
         <span class="profile-label">Date of Birth:</span> 
-        <span class="profile-value">{{ user.dateOfBirth }}</span>
+        <span class="profile-value">{{ userStore.dateOfBirth }}</span>
       </div>
       <div class="profile-item">
         <span class="profile-label">Phone:</span> 
-        <span class="profile-value">{{ user.phone }}</span>
+        <span class="profile-value">{{ userStore.phone }}</span>
       </div>
     </div>
   
