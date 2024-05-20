@@ -1,21 +1,16 @@
 import { defineStore } from 'pinia';
 import axios from '../axios-auth';
 
-export const useUserStore = defineStore('userStore', {
+export const useAuthStore = defineStore('authStore', {
     state: () => ({
         jwt: '',
         id: 0,
-        fullName: '',
-        email: '',
-        role: '',
-        dateOfBirth: '',
-        phone: '',
-        bsn: '',
+        firstName: ''
     }),
 
     getters: {
         isAuthenticated: (state) => state.jwt !== '',
-        isAdmin: (state) => state.role === 'Employee',
+        isAdmin: (state) => state.role === 'EMPLOYEE',
     },
 
     actions: {
@@ -28,7 +23,7 @@ export const useUserStore = defineStore('userStore', {
                     lastName: lastName,
                     dateOfBirth: formatedDate,
                     phone: phone,
-                    bsn: bsn,
+                    bsn: parseInt(bsn),
                     email: email,
                     password: password
                 });
@@ -49,25 +44,18 @@ export const useUserStore = defineStore('userStore', {
                 });
                 console.log(response);
 
-                this.jwt = response.data.jwt;
-                this.id = response.data.id;
-                this.fullName = response.data.firstName + ' ' + response.data.lastName;
-                this.email = response.data.email;
-                this.role = response.data.role;
-                this.dateOfBirth = response.data.dateOfBirth;
-                this.phone = response.data.phone;
+                this.jwt = response.data.jwtToken;
+                this.id = response.data.userId;
+                this.firstName = response.data.firstName;
 
                 localStorage.setItem('jwt', this.jwt);
                 localStorage.setItem('id', this.id);
-                localStorage.setItem('fullName', this.fullName);
-                localStorage.setItem('email', this.email);
-                localStorage.setItem('role', this.role);
-                localStorage.setItem('dateOfBirth', this.dateOfBirth);
-                localStorage.setItem('phone', this.phone);
+                localStorage.setItem('fullName', this.firstName);
+                localStorage.setItem('role', response.data.role);
 
                 axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.jwt;
 
-                console.log(this.jwt, this.id);
+                console.log(this.jwt, this.id, this.firstName, response.data.role);
 
                 return response;
             } catch (error) {
@@ -79,11 +67,8 @@ export const useUserStore = defineStore('userStore', {
         autoLogin() {
             const jwt = localStorage.getItem('jwt');
             const id = localStorage.getItem('id');
-            const fullName = localStorage.getItem('fullName');
-            const email = localStorage.getItem('email');
+            const firstName = localStorage.getItem('fullName');
             const role = localStorage.getItem('role');
-            const dateOfBirth = localStorage.getItem('dateOfBirth');
-            const phone = localStorage.getItem('phone');
 
             console.log(jwt, id);
 
@@ -91,11 +76,8 @@ export const useUserStore = defineStore('userStore', {
                 axios.defaults.headers.common['Authorization'] = 'Bearer ' + jwt;
                 this.jwt = jwt;
                 this.id = id;
-                this.fullName = fullName;
-                this.email = email;
+                this.firstName = firstName;
                 this.role = role;
-                this.dateOfBirth = dateOfBirth;
-                this.phone = phone;
 
                 return true;
             }

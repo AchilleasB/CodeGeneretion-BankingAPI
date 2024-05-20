@@ -8,16 +8,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import restapi.banking.app.dto.UserDTO;
+import org.springframework.web.bind.annotation.*;
+import restapi.banking.app.dto.UserDTO;
+import restapi.banking.app.dto.mapper.UserMapper;
 import restapi.banking.app.model.User;
 import restapi.banking.app.service.UserService;
-
 import java.util.List;
+import java.util.UUID;
+
 
 @RestController
 @AllArgsConstructor
 @CrossOrigin
 @RequestMapping("/users")
 public class UserController {
+    private final UserService userService;
+    private final UserMapper userMapper;
+
 
     private final UserService userService;
     @PreAuthorize("hasRole('Employee')")
@@ -25,5 +32,15 @@ public class UserController {
     public ResponseEntity<List<User>> listUnapprovedUsers() {
         List<User> users = userService.findUnapprovedUsers();
         return ResponseEntity.ok(users);
+
+    @GetMapping
+    public List<UserDTO> getAllUsers() {
+        return userService.getAllUsers();
+    }
+    @GetMapping("/{userId}")
+    public UserDTO getUserById(@PathVariable UUID userId) {
+        User user = userService.findUserById(userId);
+        return userMapper.convertUserToUserDTO(user);
+
     }
 }

@@ -1,17 +1,17 @@
 <script setup>
 import { RouterView } from 'vue-router'
 import Footer from './components/Footer.vue'
-import { useUserStore } from './stores/user'
+import { useAuthStore } from './stores/auth'
 import { useRouter } from 'vue-router'
 import { onMounted } from 'vue';
 
-const userStore = useUserStore()
+const authStore = useAuthStore()
 const router = useRouter()
 
 onMounted(() => {
-  userStore.autoLogin();
-  
-  if (!userStore.isAuthenticated) {
+  authStore.autoLogin();
+
+  if (!authStore.isAuthenticated) {
     router.push({ name: 'home' })
   }
 })
@@ -20,30 +20,22 @@ onMounted(() => {
 
 <template>
   <div class="app-container">
-    <div class="router-view-container">
-      <RouterView />
-    </div>
+    <RouterView />
     <div class="footer">
-    <Footer />
+      <Footer />
     </div>
   </div>
 </template>
 
 <style scoped>
 .app-container {
-  width: 85vw;
-}
-
-.router-view-container {
-  display: flex; 
+  height: 100vh;
+  display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  /* border: solid 2px aqua; */
-  margin: auto;
 }
 
 .footer {
   margin-top: auto;
+  width: 100vw;
 }
 </style>
