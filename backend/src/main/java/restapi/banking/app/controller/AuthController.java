@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin
@@ -34,4 +36,7 @@ public class AuthController {
         LoginResponseDTO loggingInDTO = authService.login(loginDTO);
         return ResponseEntity.status(200).body(loggingInDTO);
     }
+
+
+
 }

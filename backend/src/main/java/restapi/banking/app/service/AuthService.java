@@ -37,7 +37,7 @@ public class AuthService {
         isUserAdult(registrationDTO.getDateOfBirth());
         User user = modelMapper.map(registrationDTO, User.class);
         user.setPassword(passwordEncoder.encode(registrationDTO.getPassword()));
-        user.setRole(UserRole.CUSTOMER);
+        user.setRole(UserRole.Customer);
         user.setApproved(false);
         user.setDailyLimit(0);
         userRepository.saveAndFlush(user);
@@ -59,7 +59,7 @@ public class AuthService {
 
 
     // private functions
-
+    // todo: Would be good to add throws to the functions here?
     private void doesEmailExist(String email) {
         if (userRepository.findByEmail(email).isPresent()) {
             throw new IllegalArgumentException("Email already exists");

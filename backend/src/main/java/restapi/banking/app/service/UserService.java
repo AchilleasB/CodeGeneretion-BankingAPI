@@ -10,6 +10,8 @@ import restapi.banking.app.repository.UserRepository;
 
 import java.util.List;
 import java.util.UUID;
+
+import java.time.LocalDate;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +32,20 @@ public class UserService {
     public User findUserById(UUID userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + userId));
+    }
+
+    private void isUserAdult(LocalDate dateOfBirth) {
+        if (dateOfBirth == null || dateOfBirth.plusYears(18).isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("User should be at least 18 years old");
+        }
+    }
+
+    public List<User> findUnapprovedUsers() {
+        List<User> unapprovedUsers = userRepository.findByApproved(false);
+        if (unapprovedUsers.isEmpty()) {
+            throw new IllegalArgumentException("No unapproved users found");
+        }
+        return unapprovedUsers;
     }
 
 }
