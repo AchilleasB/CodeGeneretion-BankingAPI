@@ -8,17 +8,10 @@ import restapi.banking.app.dto.mapper.UserMapper;
 import restapi.banking.app.model.User;
 import restapi.banking.app.repository.UserRepository;
 
-import lombok.AllArgsConstructor;
-
-import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.modelmapper.ModelMapper;
-
-import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+import java.time.LocalDate;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,6 +47,5 @@ public class UserService {
         }
         return unapprovedUsers;
     }
-
 
 }

@@ -13,9 +13,9 @@ import restapi.banking.app.dto.UserDTO;
 import restapi.banking.app.dto.mapper.UserMapper;
 import restapi.banking.app.model.User;
 import restapi.banking.app.service.UserService;
+
 import java.util.List;
 import java.util.UUID;
-
 
 @RestController
 @AllArgsConstructor
@@ -24,7 +24,6 @@ import java.util.UUID;
 public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
-
 
     @PreAuthorize("hasRole('Employee')")
     @GetMapping("/unapproved")
@@ -37,6 +36,7 @@ public class UserController {
     public List<UserDTO> getAllUsers() {
         return userService.getAllUsers();
     }
+
     @GetMapping("/{userId}")
     public UserDTO getUserById(@PathVariable UUID userId) {
         User user = userService.findUserById(userId);
