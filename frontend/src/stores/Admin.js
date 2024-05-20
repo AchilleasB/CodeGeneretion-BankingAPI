@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import axios from '../axios-auth';  // Ensure axios-auth is configured correctly
+import axios from '../axios-auth';  
 
 export const useAdminStore = defineStore('adminStore', {
     state: () => ({

@@ -45,12 +45,10 @@ public class SecurityConfiguration {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(WHITE_LIST_URL).permitAll()
-<<<<<<< Updated upstream
-                // .antMatchers("/admin/**").hasRole(Employee.name())
+
                 .requestMatchers("/transactions/atm/**").hasRole(UserRole.Customer.name())
-=======
-                // .requestMatchers("/transactions/atm/**").hasRole(UserRole.CUSTOMER.name())
->>>>>>> Stashed changes
+
+
                 .anyRequest().authenticated()
                 )
             .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
