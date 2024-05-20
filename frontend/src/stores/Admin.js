@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
-import axios from '../axios-auth';
+import axios from '../axios-auth';  // Ensure axios-auth is configured correctly
 
-export const useAccountStore = defineStore('accountStore', {
+export const useAdminStore = defineStore('adminStore', {
     state: () => ({
         unapprovedUsers: [],
         isLoading: false,
@@ -13,13 +13,21 @@ export const useAccountStore = defineStore('accountStore', {
             this.isLoading = true;
             this.error = null;
             try {
-                const response = await axios.get('users/unapproved');
+                const response = await axios.get('users/unapproved');  
                 this.unapprovedUsers = response.data;
             } catch (error) {
                 this.error = error.message;
                 console.error("Failed to fetch unapproved users:", error);
             } finally {
                 this.isLoading = false;
+            }
+        },
+        async approveUser(userId) {
+            try {
+                await axios.post(`users/approve/${userId}`); 
+                this.fetchUnapprovedUsers(); 
+            } catch (error) {
+                console.error('Failed to approve user', error);
             }
         }
     }

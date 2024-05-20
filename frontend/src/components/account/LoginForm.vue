@@ -23,6 +23,8 @@ const login = async () => {
             setTimeout(() => {
                 if (res.data.role === 'CUSTOMER')
                 router.push({ name: 'customer' });
+                else if (res.data.role === 'Employee')
+                router.push({ name: 'admin' });
             }, 2000);
         } else {
             errorMessage.value = res.response.data.errorMessage;
