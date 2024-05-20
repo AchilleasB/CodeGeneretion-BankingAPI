@@ -8,7 +8,9 @@ const Profile = defineAsyncComponent(() => import('../components/customer/Profil
 const ATM = defineAsyncComponent(() => import('../components/customer/ATM.vue'));
 import { useAuthStore } from '../stores/auth';
 import { useAccountStore } from '../stores/account'
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const authStore = useAuthStore();
 const accountStore = useAccountStore();
 // const transactionStore = useTransactionStore();
@@ -19,8 +21,8 @@ const selectComponent = (component) => {
     selectedComponent.value = component;
 }
 
-const logout = () => {
-    authStore.logout();
+const logout = async() => {
+    await authStore.logout();
     router.push({ name: 'home' });
 }
 

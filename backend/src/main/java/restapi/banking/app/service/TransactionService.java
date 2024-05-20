@@ -3,6 +3,7 @@ package restapi.banking.app.service;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import restapi.banking.app.dto.ATMTransactionDTO;
 import restapi.banking.app.dto.TransactionDTO;
@@ -29,17 +30,17 @@ public class TransactionService {
     @Transactional
     public TransactionDTO processATMTransaction(ATMTransactionDTO transactionDTO) {
         Account account = accountRepository.findById(transactionDTO.getAccountId())
-                .orElseThrow(() -> new RuntimeException("Account not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Account not found"));
 
         if (transactionDTO.getTransactionType() == TransactionType.WITHDRAW) {
             if (account.getBalance().compareTo(transactionDTO.getAmount()) < 0) {
-                throw new RuntimeException("Insufficient funds");
+                throw new IllegalArgumentException("Insufficient funds");
             }
             account.setBalance(account.getBalance().subtract(transactionDTO.getAmount()));
         } else if (transactionDTO.getTransactionType() == TransactionType.DEPOSIT) {
             account.setBalance(account.getBalance().add(transactionDTO.getAmount()));
         } else {
-            throw new RuntimeException("Unsupported transaction type");
+            throw new IllegalArgumentException("Unsupported transaction type");
         }
 
 
