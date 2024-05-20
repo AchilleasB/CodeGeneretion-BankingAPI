@@ -21,12 +21,12 @@ onMounted(() => {
   if (localStorage.getItem('jwt')) {
     const role = localStorage.getItem('role');
 
-    if (role === 'CUSTOMER') {
+    if (role === 'Customer') {
       router.push({ name: 'customer' })
     }
 
-    if (role === 'EMPLOYEE') {
-      router.push({ name: 'employee' })
+    if (role === 'Employee') {
+      router.push({ name: 'admin' })
     }
   }
 })

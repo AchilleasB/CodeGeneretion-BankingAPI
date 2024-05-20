@@ -8,11 +8,13 @@ const Profile = defineAsyncComponent(() => import('../components/customer/Profil
 const ATM = defineAsyncComponent(() => import('../components/customer/ATM.vue'));
 import { useAuthStore } from '../stores/auth';
 import { useAccountStore } from '../stores/account'
+import { useUserStore } from '../stores/user'
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const authStore = useAuthStore();
 const accountStore = useAccountStore();
+const userStore = useUserStore();
 // const transactionStore = useTransactionStore();
 
 const selectedComponent = ref('checking');
@@ -28,7 +30,9 @@ const logout = async() => {
 
 onMounted(async () => {
     const userId = authStore.id;
+    console.log(userId);
     await accountStore.getCustomerAccounts(userId);
+    await userStore.loadUserDetails(userId);
     console.log(accountStore.accounts);
 })
 

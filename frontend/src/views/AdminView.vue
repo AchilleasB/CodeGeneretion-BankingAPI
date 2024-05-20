@@ -1,5 +1,5 @@
 <script setup>
-import HomeBanner from '../components/account/HomeBanner.vue'
+import BankBanner from '../components/BankBanner.vue'
 import NonregistedAccounts from '../components/account/NonregistedAccounts.vue'
 import { ref } from 'vue';
 
@@ -7,7 +7,7 @@ import { ref } from 'vue';
 
 <template>
     <main>
-        <HomeBanner />
+        <BankBanner />
         <div class="registration-container">
             <NonregistedAccounts />
         </div>

@@ -41,33 +41,26 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-            .csrf(csrf -> csrf.disable())
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers(WHITE_LIST_URL).permitAll()
-<<<<<<< Updated upstream
-                // .antMatchers("/admin/**").hasRole(Employee.name())
-                .requestMatchers("/transactions/atm/**").hasRole(UserRole.Customer.name())
-=======
-                // .requestMatchers("/transactions/atm/**").hasRole(UserRole.CUSTOMER.name())
->>>>>>> Stashed changes
-                .anyRequest().authenticated()
-                )
-            .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
-            .authenticationProvider(authenticationProvider)
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-            .logout(logout ->
-            logout.logoutUrl("/auth/logout")
-            .addLogoutHandler(this::LogoutHandler)
-            .logoutSuccessHandler(this::logoutSuccessHandler)
-            )
-            .build();
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(WHITE_LIST_URL).permitAll()
+                        // .requestMatchers("/transactions/atm/**").hasRole(UserRole.Customer.name())
+                        .anyRequest().authenticated())
+                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .logout(logout -> logout.logoutUrl("/auth/logout")
+                        .addLogoutHandler(this::LogoutHandler)
+                        .logoutSuccessHandler(this::logoutSuccessHandler))
+                .build();
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // Add your frontend URL here. Make sure to adjust before deployment
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // Add your frontend URL here. Make
+                                                                                 // sure to adjust before deployment
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
@@ -76,8 +69,8 @@ public class SecurityConfiguration {
         return source;
     }
 
-
-    private void LogoutHandler(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    private void LogoutHandler(HttpServletRequest request, HttpServletResponse response,
+            Authentication authentication) {
         // Implement your token invalidation logic here
         String token = request.getHeader("Authorization");
         if (token != null && token.startsWith("Bearer ")) {
@@ -86,9 +79,9 @@ public class SecurityConfiguration {
         SecurityContextHolder.clearContext();
     }
 
-    private void logoutSuccessHandler(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    private void logoutSuccessHandler(HttpServletRequest request, HttpServletResponse response,
+            Authentication authentication) {
         SecurityContextHolder.clearContext();
     }
-     
 
 }

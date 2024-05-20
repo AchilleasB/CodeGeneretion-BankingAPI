@@ -10,8 +10,6 @@ const iban = ref('');
 const balance = ref(0);
 
 onMounted(async () => {
-  const userId = userStore.userId;
-  await accountStore.getCustomerAccounts(userId);
   const savingsAccount = accountStore.getSavingsAccount[0];
 
   if (savingsAccount) {
