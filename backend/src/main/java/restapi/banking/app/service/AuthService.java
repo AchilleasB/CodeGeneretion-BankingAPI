@@ -68,6 +68,7 @@ public class AuthService {
         doesEmailExist(registrationDTO.getEmail());
         isBsnValid(registrationDTO.getBsn());
         isUserAdult(registrationDTO.getDateOfBirth());
+        isPhoneValid(registrationDTO.getPhone());
     }
 
     private void doesEmailExist(String email) {
@@ -78,7 +79,7 @@ public class AuthService {
 
     private void isBsnValid(String bsn) {
         if (bsn == null || bsn.length() != 9 || !bsn.matches("[0-9]+")) {
-            throw new IllegalArgumentException("BSN should contain only numbers");
+            throw new IllegalArgumentException("BSN should contain only numbers and be 9 digits long");
         }
 
         int[] factors = { 9, 8, 7, 6, 5, 4, 3, 2, -1 };
@@ -89,13 +90,20 @@ public class AuthService {
             checksum += digit * factors[i];
         }
 
-        if (checksum % 11 == 0)
-            throw new IllegalArgumentException("BSN is not valid");
+        if (checksum % 11 != 0) {
+            throw new IllegalArgumentException("Invalid BSN");
+        }
     }
 
     private void isUserAdult(LocalDate dateOfBirth) {
         if (dateOfBirth == null || dateOfBirth.plusYears(18).isAfter(LocalDate.now())) {
             throw new IllegalArgumentException("User should be at least 18 years old");
+        }
+    }
+
+    private void isPhoneValid(String phone) {
+        if (phone == null || !phone.matches("[0-9]+") || phone.length() != 10) {
+            throw new IllegalArgumentException("Phone number should contain only numbers and be 10 digits long");
         }
     }
 }

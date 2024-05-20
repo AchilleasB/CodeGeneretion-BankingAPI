@@ -11,10 +11,10 @@ const router = useRouter()
 onMounted(() => {
   authStore.autoLogin();
 
-  if (authStore.role === 'CUSTOMER') {
+  if (authStore.role === 'Customer') {
     router.push({ name: 'customer' });
   }
-  if (authStore.role === 'EMPLOYEE') {
+  if (authStore.role === 'Employee') {
     router.push({ name: 'employee' });
   }
 })

@@ -13,14 +13,12 @@ const transactionLimit = ref(0);
 const absoluteLimit = ref(0);
 
 onMounted(async () => {
-  const userId = userStore.userId;
-  await accountStore.getCustomerAccounts(userId);
   const checkingAccount = accountStore.getCheckingAccount[0];
   
   if (checkingAccount) {
     iban.value = checkingAccount.iban;
     balance.value = checkingAccount.balance;
-    dailyLimit.value = checkingAccount.dailyLimit;
+    dailyLimit.value = userStore.dailyLimit;
     transactionLimit.value = checkingAccount.transactionLimit;
     absoluteLimit.value = checkingAccount.absoluteLimit;
   }

@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import axios from '../axios-auth';
 
-export const useAccountStore = defineStore('accountStore', {
+export const useAdminStore = defineStore('adminStore', {
     state: () => ({
         unapprovedUsers: [],
         isLoading: false,

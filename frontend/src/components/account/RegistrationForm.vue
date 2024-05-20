@@ -21,16 +21,12 @@ const register = async () => {
     const res = await authStore.register(firstName.value, lastName.value, dateOfBirth.value, phone.value, bsn.value, email.value, password.value);
 
     if (res.data) {
-      successMessage.value = `${res.data.firstName} has successfully signed up!`;
-      errorMessage.value = '';
-      setTimeout(() => {
-        router.push({ name: 'home' });
-      }, 2000);
+      successMessage.value = `${res.data.firstName}, your registration request was sent successfully!\n
+                              Please wait for the bank administrators to approve your account`;
     } else {
-      errorMessage.value = res.response.data.errorMessage;
-      successMessage.value = '';
-
-      setTimeout(() => {
+      errorMessage.value = res.response.data.message;
+    }
+    setTimeout(() => {
         successMessage.value = '';
         errorMessage.value = '';
         firstName.value = '';
@@ -40,8 +36,8 @@ const register = async () => {
         bsn.value = '';
         email.value = '';
         password.value = '';
+        router.push({ name: 'home' });
       }, 2000);
-    }
   }
   catch (error) {
     console.log(error);
