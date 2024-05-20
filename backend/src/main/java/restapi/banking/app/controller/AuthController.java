@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin
@@ -23,4 +25,7 @@ public class AuthController {
         UserDTO registeringUserDTO = userService.register(registrationDTO);
         return ResponseEntity.status(201).body(registeringUserDTO);
     }
+
+
+
 }

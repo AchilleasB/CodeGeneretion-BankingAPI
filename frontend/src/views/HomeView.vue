@@ -10,6 +10,7 @@ import { ref } from 'vue';
     <HomeBanner />
     <div class="registration-container">
       <RegistrationForm />
+
     </div>
   </main>
 </template>

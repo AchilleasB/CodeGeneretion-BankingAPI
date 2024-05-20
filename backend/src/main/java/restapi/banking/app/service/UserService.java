@@ -14,6 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -69,4 +71,13 @@ public class UserService {
             throw new IllegalArgumentException("User should be at least 18 years old");
         }
     }
+
+    public List<User> findUnapprovedUsers() {
+        List<User> unapprovedUsers = userRepository.findByApproved(false);
+        if (unapprovedUsers.isEmpty()) {
+            throw new IllegalArgumentException("No unapproved users found");
+        }
+        return unapprovedUsers;
+    }
+
 }
