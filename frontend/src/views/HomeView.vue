@@ -15,6 +15,10 @@ const switchToLogin = () => {
 </script>
 
 <template>
+  <main>
+    <HomeBanner />
+    <div class="registration-container">
+      <RegistrationForm />
   <main class="main-container">
     <div class="image-container">
       <img src="@/assets/banking_image.png" alt="Banking Image" />

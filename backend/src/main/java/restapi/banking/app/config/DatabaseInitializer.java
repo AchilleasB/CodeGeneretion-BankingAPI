@@ -23,8 +23,10 @@ public class DatabaseInitializer {
     private final AccountRepository accountRepository;
     private final PasswordEncoder passwordEncoder;
 
+
     @PostConstruct // This method will be called after the bean has been initialized at the start of the application
     public void initializeData() {
+
         User superBank = new User();
         superBank.setFirstName("Super");
         superBank.setLastName("Bank");
@@ -36,6 +38,8 @@ public class DatabaseInitializer {
         superBank.setApproved(true);
         superBank.setDailyLimit(1000000);
         userRepository.saveAndFlush(superBank);
+    }
+
 
         User customer1 = new User();
         customer1.setFirstName("Achil");
@@ -109,5 +113,8 @@ public class DatabaseInitializer {
         account4.setActive(true);
         accountRepository.saveAndFlush(account4);
 
+
     }
+
+
 }
