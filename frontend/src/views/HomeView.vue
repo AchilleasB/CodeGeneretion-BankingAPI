@@ -1,8 +1,12 @@
 <script setup>
 import RegistrationForm from '../components/account/RegistrationForm.vue'
 import LoginForm from '../components/account/LoginForm.vue'
-import { ref } from 'vue';
+import { useAuthStore } from '../stores/auth'
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
+// const authStore = useAuthStore();
+const router = useRouter();
 const showLoginForm = ref(true);
 
 const switchToRegistration = () => {
@@ -12,6 +16,21 @@ const switchToRegistration = () => {
 const switchToLogin = () => {
   showLoginForm.value = true;
 }
+
+onMounted(() => {
+  if (localStorage.getItem('jwt')) {
+    const role = localStorage.getItem('role');
+
+    if (role === 'CUSTOMER') {
+      router.push({ name: 'customer' })
+    }
+
+    if (role === 'EMPLOYEE') {
+      router.push({ name: 'employee' })
+    }
+  }
+})
+
 </script>
 
 <template>
@@ -38,7 +57,7 @@ const switchToLogin = () => {
 <style scoped>
 .main-container {
   display: grid;
-  grid-template-columns:1fr 1fr;
+  grid-template-columns: 1fr 1fr;
   align-items: center;
   height: 100vh;
 }
