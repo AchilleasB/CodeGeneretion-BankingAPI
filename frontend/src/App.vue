@@ -15,7 +15,7 @@ onMounted(() => {
     router.push({ name: 'customer' });
   }
   if (authStore.role === 'Employee') {
-    router.push({ name: 'employee' });
+    router.push({ name: 'admin' });
   }
 })
 

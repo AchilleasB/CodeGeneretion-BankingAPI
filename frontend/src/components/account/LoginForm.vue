@@ -21,10 +21,12 @@ const login = async () => {
             errorMessage.value = '';
 
             setTimeout(() => {
-                if (res.data.role === 'Customer')
-                router.push({ name: 'customer' });
-                if (res.data.role === 'Employee')
-                router.push({ name: 'employee' });
+                if (res.data.role === 'Customer'){
+                    router.push({ name: 'customer' });
+                }
+                if (res.data.role === 'Employee'){
+                    router.push({ name: 'admin' });
+                }
             }, 2000);
         } else {
             errorMessage.value = res.response.data.errorMessage;
