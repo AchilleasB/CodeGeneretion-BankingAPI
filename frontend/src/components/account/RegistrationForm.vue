@@ -1,10 +1,10 @@
 <script setup>
 import { ref } from 'vue';
-import { useUserStore } from '../../stores/user';
+import { useAuthStore } from '../../stores/auth';
 import { useRouter } from 'vue-router'
 
 const router = useRouter();
-const userStore = useUserStore();
+const authStore = useAuthStore();
 
 const firstName = ref('');
 const lastName = ref('');
@@ -18,19 +18,15 @@ const errorMessage = ref('');
 
 const register = async () => {
   try {
-    const res = await userStore.register(firstName.value, lastName.value, dateOfBirth.value, phone.value, bsn.value, email.value, password.value);
+    const res = await authStore.register(firstName.value, lastName.value, dateOfBirth.value, phone.value, bsn.value, email.value, password.value);
 
     if (res.data) {
-      successMessage.value = `${res.data.firstName} has successfully signed up!`;
-      errorMessage.value = '';
-      setTimeout(() => {
-        router.push({ name: 'home' });
-      }, 2000);
+      successMessage.value = `${res.data.firstName}, your registration request was sent successfully!\n
+                              Please wait for the bank administrators to approve your account`;
     } else {
-      errorMessage.value = res.response.data.errorMessage;
-      successMessage.value = '';
-
-      setTimeout(() => {
+      errorMessage.value = res.response.data.message;
+    }
+    setTimeout(() => {
         successMessage.value = '';
         errorMessage.value = '';
         firstName.value = '';
@@ -40,8 +36,8 @@ const register = async () => {
         bsn.value = '';
         email.value = '';
         password.value = '';
-      }, 2000);
-    }
+        router.push({ name: 'home' });
+      }, 5000);
   }
   catch (error) {
     console.log(error);
@@ -59,40 +55,40 @@ const register = async () => {
       <!-- Form Fields in two-column layout -->
       <div class="form-row mt-5">
         <div class="form-group col-md-6">
-          <label for="firstName">First Name</label>
-          <input v-model="firstName" type="text" class="form-control" id="firstName">
+          <label for="firstName">First Name<span class="required-star">*</span></label>
+          <input v-model="firstName" type="text" class="form-control" id="firstName" required>
         </div>
         <div class="form-group col-md-6">
-          <label for="lastName">Last Name</label>
-          <input v-model="lastName" type="text" class="form-control" id="lastName">
+          <label for="lastName">Last Name<span class="required-star">*</span></label>
+          <input v-model="lastName" type="text" class="form-control" id="lastName" required>
         </div>
       </div>
       <div class="form-row">
         <div class="form-group col-md-6">
-          <label for="dateOfBirth">Date of Birth</label>
-          <input v-model="dateOfBirth" type="date" class="form-control" id="dateOfBirth">
+          <label for="dateOfBirth">Date of Birth<span class="required-star">*</span></label>
+          <input v-model="dateOfBirth" type="date" class="form-control" id="dateOfBirth" required>
         </div>
         <div class="form-group col-md-6">
-          <label for="phone">Phone number</label>
-          <input v-model="phone" type="text" class="form-control" id="phone">
+          <label for="phone">Phone number<span class="required-star">*</span></label>
+          <input v-model="phone" type="text" class="form-control" id="phone" required>
         </div>
       </div>
       <div class="form-row">
         <div class="form-group col-md-12">
-          <label for="bsn">BSN</label>
-          <input v-model="bsn" type="text" class="form-control" id="bsn">
+          <label for="bsn">BSN<span class="required-star">*</span></label>
+          <input v-model="bsn" type="text" class="form-control" id="bsn" required>
         </div>
         <div class="form-group col-md-12">
         </div>
       </div>
       <div class="form-row">
         <div class="form-group col-md-6">
-          <label for="email">Email address</label>
-          <input v-model="email" type="email" class="form-control" id="email">
+          <label for="email">Email address<span class="required-star">*</span></label>
+          <input v-model="email" type="email" class="form-control" id="email" required>
         </div>
         <div class="form-group col-md-6">
-          <label for="password">Password</label>
-          <input v-model="password" type="password" class="form-control" id="password">
+          <label for="password">Password<span class="required-star">*</span></label>
+          <input v-model="password" type="password" class="form-control" id="password" required>
         </div>
       </div>
       <div class="form-group">
@@ -164,6 +160,12 @@ h3 {
   padding: 10px;
   border-radius: 5px;
   margin-bottom: 20px;
+  font-size: larger;
+}
+
+.required-star {
+  color: red;
+  margin-left: 4px;
 }
 
 .h3 {

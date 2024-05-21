@@ -1,18 +1,21 @@
 <script setup>
 import { RouterView } from 'vue-router'
 import Footer from './components/Footer.vue'
-import { useUserStore } from './stores/user'
+import { useAuthStore } from './stores/auth'
 import { useRouter } from 'vue-router'
 import { onMounted } from 'vue';
 
-const userStore = useUserStore()
+const authStore = useAuthStore()
 const router = useRouter()
 
 onMounted(() => {
-  userStore.autoLogin();
+  authStore.autoLogin();
 
-  if (!userStore.isAuthenticated) {
-    router.push({ name: 'home' })
+  if (authStore.role === 'Customer') {
+    router.push({ name: 'customer' });
+  }
+  if (authStore.role === 'Employee') {
+    router.push({ name: 'admin' });
   }
 })
 

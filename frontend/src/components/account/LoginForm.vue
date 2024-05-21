@@ -1,10 +1,10 @@
 <script setup>
 import { ref } from 'vue';
-import { useUserStore } from '../../stores/user';
+import { useAuthStore } from '../../stores/auth';
 import { useRouter } from 'vue-router'
 
 const router = useRouter();
-const userStore = useUserStore();
+const authStore = useAuthStore();
 
 const email = ref('');
 const password = ref('');
@@ -14,15 +14,19 @@ const errorMessage = ref('');
 
 const login = async () => {
     try {
-        const res = await userStore.login(email.value, password.value);
+        const res = await authStore.login(email.value, password.value);
 
         if (res.data) {
             successMessage.value = `You have successfully logged in!`;
             errorMessage.value = '';
 
             setTimeout(() => {
-                if (res.data.role === 'CUSTOMER')
-                router.push({ name: 'customer' });
+                if (res.data.role === 'Customer'){
+                    router.push({ name: 'customer' });
+                }
+                if (res.data.role === 'Employee'){
+                    router.push({ name: 'admin' });
+                }
             }, 2000);
         } else {
             errorMessage.value = res.response.data.errorMessage;
@@ -85,12 +89,12 @@ h3 {
 }
 
 input, button {
-    width: calc(100% - 40px); /* Full width minus padding */
+    width: calc(100% - 40px);
     padding: 10px 20px;
     margin-top: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    box-sizing: border-box; /* Includes padding in width */
+    box-sizing: border-box;
 }
 
 input:focus {

@@ -12,8 +12,10 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.modelmapper.ModelMapper;
 
@@ -31,35 +33,44 @@ public class AuthService {
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
 
-    public UserDTO register (RegistrationDTO registrationDTO) {
-        doesEmailExist(registrationDTO.getEmail());
-        isBsnValid(registrationDTO.getBsn());
-        isUserAdult(registrationDTO.getDateOfBirth());
+    public UserDTO register(RegistrationDTO registrationDTO) {
+        validateRegistrationData(registrationDTO);
         User user = modelMapper.map(registrationDTO, User.class);
         user.setPassword(passwordEncoder.encode(registrationDTO.getPassword()));
-        user.setRole(UserRole.CUSTOMER);
+        user.setRole(UserRole.Customer);
         user.setApproved(false);
         user.setDailyLimit(0);
         userRepository.saveAndFlush(user);
         return modelMapper.map(user, UserDTO.class);
-        
+
     }
 
-    public LoginResponseDTO login(LoginRequestDTO loginRequest) throws AuthenticationException {
-        UserDetails user = userDetails.loadUserByUsername(loginRequest.getEmail());
+    public LoginResponseDTO login(LoginRequestDTO loginRequest) {
+        UserDetails user ;
+        try {
+            user = userDetails.loadUserByUsername(loginRequest.getEmail());
+        } catch (UsernameNotFoundException ex) {
+            throw new UsernameNotFoundException("Email not found");
+        }
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("Password is incorrect");
+            throw new BadCredentialsException("Password is incorrect");
         }
-        
+
         LoginResponseDTO responseDTO = modelMapper.map(user, LoginResponseDTO.class);
         responseDTO.setJwtToken(JwtService.generateToken(user));
         return responseDTO;
     }
 
-
     // private functions
-    // todo: Would be good to add throws to the functions here?
+    
+    private void validateRegistrationData(RegistrationDTO registrationDTO) {
+        doesEmailExist(registrationDTO.getEmail());
+        isBsnValid(registrationDTO.getBsn());
+        isUserAdult(registrationDTO.getDateOfBirth());
+        isPhoneValid(registrationDTO.getPhone());
+    }
+
     private void doesEmailExist(String email) {
         if (userRepository.findByEmail(email).isPresent()) {
             throw new IllegalArgumentException("Email already exists");
@@ -68,7 +79,7 @@ public class AuthService {
 
     private void isBsnValid(String bsn) {
         if (bsn == null || bsn.length() != 9 || !bsn.matches("[0-9]+")) {
-            throw new IllegalArgumentException("BSN should contain only numbers");
+            throw new IllegalArgumentException("BSN should contain only numbers and be 9 digits long");
         }
 
         int[] factors = { 9, 8, 7, 6, 5, 4, 3, 2, -1 };
@@ -79,13 +90,20 @@ public class AuthService {
             checksum += digit * factors[i];
         }
 
-        if (checksum % 11 == 0)
-            throw new IllegalArgumentException("BSN is not valid");
+        if (checksum % 11 != 0) {
+            throw new IllegalArgumentException("Invalid BSN");
+        }
     }
 
     private void isUserAdult(LocalDate dateOfBirth) {
         if (dateOfBirth == null || dateOfBirth.plusYears(18).isAfter(LocalDate.now())) {
             throw new IllegalArgumentException("User should be at least 18 years old");
+        }
+    }
+
+    private void isPhoneValid(String phone) {
+        if (phone == null || !phone.matches("[0-9]+") || phone.length() != 10) {
+            throw new IllegalArgumentException("Phone number should contain only numbers and be 10 digits long");
         }
     }
 }

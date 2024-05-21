@@ -1,20 +1,32 @@
 <script setup>
-import { ref } from 'vue';
-import { useUserStore } from '../../stores/user'
-import { useRouter } from 'vue-router'
+import { onMounted, ref } from 'vue';
+import { useUserStore } from '../../stores/user';
+import { useAccountStore } from '../../stores/account';
 
-const userStore = useUserStore()
+const userStore = useUserStore();
+const accountStore = useAccountStore();
 
-const router = useRouter()
-
+const iban = ref('');
 const balance = ref(0);
+const dailyLimit = ref(0);
+const transactionLimit = ref(0);
+const absoluteLimit = ref(0);
 
-
-
+onMounted(async () => {
+  const checkingAccount = accountStore.getCheckingAccount[0];
+  
+  if (checkingAccount) {
+    iban.value = checkingAccount.iban;
+    balance.value = checkingAccount.balance;
+    dailyLimit.value = userStore.dailyLimit;
+    transactionLimit.value = checkingAccount.transactionLimit;
+    absoluteLimit.value = checkingAccount.absoluteLimit;
+  }
+});
 </script>
 
 <template>
-  <h1> Checking account</h1>
+  <h1>Checking Account</h1>
   <div class="container text-center">
     <div class="row">
       <div class="row">
@@ -22,7 +34,7 @@ const balance = ref(0);
           <div class="card">
             <div class="card-body">
               <p>IBAN</p>
-              <h3>INGB02NL 2340 5678 4321</h3> // This should be replaced with the actual balance
+              <h3>{{ iban }}</h3> 
             </div>
           </div>
         </div>
@@ -32,7 +44,7 @@ const balance = ref(0);
           <div class="card">
             <div class="card-body">
               <p>Total balance</p>
-              <h2>$13,562</h2> // This should be replaced with the actual balance
+              <h2>€ {{ balance }}</h2>
             </div>
           </div>
         </div>
@@ -41,7 +53,7 @@ const balance = ref(0);
         <div class="col-4">
           <div class="card">
             <div class="card-body">
-              <button> Send payment</button>
+              <button>Send Payment</button>
             </div>
           </div>
         </div>
@@ -49,24 +61,24 @@ const balance = ref(0);
       <div class="col-4">
         <div class="card">
           <div class="card-body">
-            <p>Daily limit</p>
-            <h3>$1000</h3> // to be replaced with the actual balance
+            <p>Daily Limit</p>
+            <h3>€ {{ dailyLimit }}</h3> 
           </div>
         </div>
       </div>
       <div class="col-4">
         <div class="card">
           <div class="card-body">
-            <p>Transaction limit</p>
-            <h3>$1000</h3> // to be replaced with the actual balance
+            <p>Transaction Limit</p>
+            <h3>€ {{ transactionLimit }}</h3> 
           </div>
         </div>
       </div>
       <div class="col-4">
         <div class="card">
           <div class="card-body">
-            <p>Absolute limit</p>
-            <h3>$100</h3> // to be replaced with the actual balance
+            <p>Absolute Limit</p>
+            <h3>€ {{ absoluteLimit }}</h3> 
           </div>
         </div>
       </div>
@@ -83,7 +95,6 @@ h1 {
 .card {
   margin: 10px;
   padding: 10px;
-  /* border: 1px solid #ccc; */
   border-radius: 5px;
   box-shadow: 2px 2px 5px #ccc;
 }
