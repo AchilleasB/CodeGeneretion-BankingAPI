@@ -1,9 +1,7 @@
 package restapi.banking.app.controller;
 
-import restapi.banking.app.dto.RegistrationDTO;
 import restapi.banking.app.dto.TransactionDTO;
 import restapi.banking.app.dto.TransactionRequestDTO;
-import restapi.banking.app.dto.UserDTO;
 import restapi.banking.app.service.TransactionService;
 
 import org.springframework.http.ResponseEntity;
