@@ -5,7 +5,6 @@ import restapi.banking.app.dto.TransactionDTO;
 import restapi.banking.app.dto.TransactionRequestDTO;
 import restapi.banking.app.dto.UserDTO;
 import restapi.banking.app.service.TransactionService;
-import restapi.banking.app.service.UserService;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

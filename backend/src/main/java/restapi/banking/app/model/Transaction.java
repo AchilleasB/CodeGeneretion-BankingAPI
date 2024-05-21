@@ -20,17 +20,24 @@ public class Transaction {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
+
     @Column(name="amount")
     private BigDecimal amount; //BigDecimal over double or float due to precision level
-    @Column(name="ibanFrom")
-    private String ibanFrom;
-    @Column(name="ibanTo")
-    private String ibanTo;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_from", referencedColumnName = "id")
+    private Account AccountFrom;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_to", referencedColumnName = "id")
+    private Account AccountTo;
+
     @Column(name="message")
     private String message;
+
     @Column(name="timestamp")
     private LocalDateTime timestamp;
 
-    //todo: change ibans to Accounts
+    //done: change ibans to Accounts
 
 }

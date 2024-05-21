@@ -1,5 +1,6 @@
 package restapi.banking.app.service;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,29 +8,47 @@ import org.springframework.stereotype.Service;
 import restapi.banking.app.dto.TransactionDTO;
 import restapi.banking.app.dto.TransactionRequestDTO;
 import restapi.banking.app.model.Account;
+import restapi.banking.app.model.Transaction;
 import restapi.banking.app.repository.AccountRepository;
+import restapi.banking.app.repository.TransactionRepository;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@Transactional
 public class TransactionService {
 
     private final AccountRepository accountRepository;
+    private final TransactionRepository transactionRepository;
     @Autowired
     private final ModelMapper modelMapper;
     public TransactionDTO createTransaction(TransactionRequestDTO transactionRequestDTO) {
         //todo: handle every kind of exception
         //done: validate IBAN
         IbanValidation(transactionRequestDTO.getIbanTo());
-        Account account = accountRepository.getReferenceById(transactionRequestDTO.getIbanFrom());
+        doesIbanExists(transactionRequestDTO.getIbanTo());
         //TODO: check the limits
-        return null;
+        Account accountFrom = accountRepository.findByIban(transactionRequestDTO.getIbanFrom());
+        Account accountTo = accountRepository.findByIban(transactionRequestDTO.getIbanTo());
+        BigDecimal amount = transactionRequestDTO.getAmount();
+        transfer(accountFrom, accountTo, amount);
+        //todo: check how it saves in the database
+        Transaction transaction = modelMapper.map(transactionRequestDTO, Transaction.class);
+        //todo:how to set the info to the database if here we have Accounts but in the database that's just id;
+        transaction.setAccountFrom(accountFrom);
+        transaction.setAccountTo(accountTo);
+        transaction.setTimestamp(LocalDateTime.now()); //timezones?
+        transactionRepository.saveAndFlush(transaction);
+        TransactionDTO transactionDTO = modelMapper.map(transaction, TransactionDTO.class);
+        transactionDTO.setIbanFrom(accountFrom.getIban());
+        transactionDTO.setIbanTo(accountTo.getIban());
+        return transactionDTO;
     }
-
 
     private void IbanValidation(String iban)
     {
@@ -45,7 +64,7 @@ public class TransactionService {
     }
     private void doesIbanExists(String iban)
     {
-        if(accountRepository.getReferenceById(iban) == null)
+        if(accountRepository.findByIban(iban) == null)
             throw new NoSuchElementException("Account by Iban does not exist");
     }
     private void isEnoughBalance(Account accountFrom, BigDecimal amountToTransfer)
@@ -53,7 +72,7 @@ public class TransactionService {
         if(accountFrom.getBalance().compareTo(amountToTransfer) < 0)
             throw new IllegalArgumentException("Not enough balance to transfer");
     }
-    private static void checksum(String iban)
+    private void checksum(String iban)
     {
         String accountNumber = iban.substring(8);
         /* needs to be done only for creating a new account but not while checking
@@ -76,5 +95,23 @@ public class TransactionService {
         String checkDigits = iban.substring(2,4);
         if(!twoDigits.equals(checkDigits))
             throw new IllegalArgumentException("Invalid IBAN");
+    }
+    private void checkLimits()
+    {
+        //todo: check transfer limit
+
+        //todo: check daily limit
+
+    }
+    private void transfer(Account accountFrom, Account accountTo, BigDecimal amount)
+    {
+        BigDecimal newBalanceFrom = accountFrom.getBalance().subtract(amount);
+        accountFrom.setBalance(newBalanceFrom);
+
+        BigDecimal newBalanceTo = accountTo.getBalance().add(amount);
+        accountTo.setBalance(newBalanceTo);
+
+        accountRepository.save(accountFrom);
+        accountRepository.save(accountTo);
     }
 }
