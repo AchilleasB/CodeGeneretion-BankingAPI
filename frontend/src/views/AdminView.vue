@@ -1,10 +1,13 @@
 <script setup>
 import { ref, defineAsyncComponent, onMounted } from 'vue';
 import AdminBanner from '../components/admin/AdminBanner.vue';
+import { useRouter } from 'vue-router';
 const UnapprovedUsers = defineAsyncComponent(() => import('../components/admin/UnapprovedUsers.vue'));
+const ApprovedUsers = defineAsyncComponent(() => import('../components/admin/ApprovedUsers.vue'));
 import { useAuthStore } from '../stores/auth';
 import { useAdminStore } from '../stores/Admin';
 
+const router = useRouter();
 const authStore = useAuthStore();
 const adminStore = useAdminStore();
 
@@ -12,16 +15,20 @@ const selectedComponent = ref('unapprovedUsers');
 
 const selectComponent = (component) => {
     selectedComponent.value = component;
+    if (component === 'approvedUsers') {
+        adminStore.fetchApprovedUsers();
+    }
 }
 
 const logout = () => {
     authStore.logout();
-    router.push({ name: 'home' });
+    router.push('/');
 }
 
 onMounted(async () => {
+    await adminStore.fetchApprovedUsers();
     await adminStore.fetchUnapprovedUsers();
-})
+});
 </script>
 
 <template>
@@ -33,15 +40,14 @@ onMounted(async () => {
                     <h3>Welcome, {{ authStore.firstName }}</h3>
                 </div>
                 <ul class="nav-items">
-                    <li id="unapprovedUsers" class="nav-item" @click="selectComponent('unapprovedUsers')">Unapproved Users</li>
+                    <li id="unapprovedUsers" class="nav-item" @click="selectComponent('unapprovedUsers')">Users Request</li>
+                    <li id="approvedUsers" class="nav-item" @click="selectComponent('approvedUsers')">Create Account</li>
                     <li id="logout" class="nav-item" @click="logout">Logout</li>
                 </ul>
             </div>
             <div class="content-container">
                 <UnapprovedUsers v-if="selectedComponent === 'unapprovedUsers'" />
-                <ManageUsers v-if="selectedComponent === 'manageUsers'" />
-                <Reports v-if="selectedComponent === 'reports'" />
-                <Settings v-if="selectedComponent === 'settings'" />
+                <ApprovedUsers v-if="selectedComponent === 'approvedUsers'" />
             </div>
         </div>
     </main>
@@ -91,14 +97,9 @@ li {
 }
 
 #unapprovedUsers:hover,
-#manageUsers:hover,
-#reports:hover,
-#settings:hover {
-    background-color: hsla(160, 100%, 40%, 0.2);
-}
-
+#approvedUsers:hover,
 #logout:hover {
-    background-color: hsla(14, 100%, 40%, 0.2);
+    background-color: hsla(160, 100%, 40%, 0.2);
 }
 
 @media (max-width: 768px) {

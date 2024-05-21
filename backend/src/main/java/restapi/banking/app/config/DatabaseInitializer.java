@@ -51,6 +51,8 @@ public class DatabaseInitializer {
         customer1.setApproved(false);
         customer1.setDailyLimit(5000);
 
+
+
         userRepository.saveAndFlush(customer1);
 
         Account account1 = new Account();

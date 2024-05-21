@@ -9,6 +9,7 @@ import restapi.banking.app.model.User;
 import restapi.banking.app.repository.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import java.time.LocalDate;
@@ -47,5 +48,35 @@ public class UserService {
         }
         return unapprovedUsers;
     }
+
+    public List<User>findApprovedUsers() {
+        List<User> approvedUsers = userRepository.findByApproved(true);
+        if (approvedUsers.isEmpty()) {
+            throw new IllegalArgumentException("No approved users found");
+        }
+        return approvedUsers;
+    }
+
+    public void approveUser(UUID userId) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setApproved(true);
+            userRepository.save(user);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + userId);
+        }
+    }
+
+    public boolean declineUser(UUID id) {
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
 
 }

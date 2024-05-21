@@ -58,7 +58,9 @@ public class User implements UserDetails{
 
     @Column(name="daily_limit")
     private double dailyLimit;
-    
+
+
+
     // UserDetails interface methods
 
     @Override
