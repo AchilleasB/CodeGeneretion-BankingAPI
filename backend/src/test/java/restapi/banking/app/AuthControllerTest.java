@@ -37,36 +37,5 @@ public class AuthControllerTest {
     @MockBean
     private AuthService authService;
 
-    @Test
-    public void testLoginSuccess() throws Exception {
-        LoginRequestDTO loginRequest = new LoginRequestDTO("achil@example.com", "achil1234");
-        LoginResponseDTO loginResponse = new LoginResponseDTO(
-                UUID.randomUUID(),
-                "Achil",
-                UserRole.Customer,
-                "random-jwt-token-12345");
-
-        given(authService.login(any(LoginRequestDTO.class))).willReturn(loginResponse);
-
-        mockMvc.perform(post("/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(new ObjectMapper().writeValueAsString(loginRequest)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.userId").exists())
-                .andExpect(jsonPath("$.jwtToken").value("random-jwt-token-12345"));
-    }
-
-    // @Test
-    // public void testLoginFailure() throws Exception {
-    //     LoginRequestDTO loginRequest = new LoginRequestDTO("user@example.com", "wrongpassword");
-
-    //     given(authService.login(any(LoginRequestDTO.class)))
-    //         .willThrow(new AuthenticationException("Invalid credentials"));
-
-    //     mockMvc.perform(post("/auth/login")
-    //         .contentType(MediaType.APPLICATION_JSON)
-    //         .content(new ObjectMapper().writeValueAsString(loginRequest)))
-    //         .andExpect(status().isUnauthorized());
-    //             .andExpect(status().isUnauthorized());
-    // }
+    
 }

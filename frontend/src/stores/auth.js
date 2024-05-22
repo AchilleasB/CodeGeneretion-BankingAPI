@@ -6,7 +6,7 @@ export const useAuthStore = defineStore('authStore', {
         jwt: '',
         id: 0,
         firstName: '',
-        role: ''
+        role: '',
     }),
 
     getters: {
@@ -46,8 +46,10 @@ export const useAuthStore = defineStore('authStore', {
                 console.log(response);
 
                 this.jwt = response.data.jwtToken;
-                this.id = response.data.userId;
-                this.firstName = response.data.firstName;
+                const user = response.data.user;
+                this.id = user.id;
+                this.firstName = user.firstName;
+                this.role = user.role;
 
                 localStorage.setItem('jwt', this.jwt);
                 localStorage.setItem('id', this.id);
