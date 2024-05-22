@@ -34,7 +34,6 @@ import java.time.LocalDate;
 public class TransactionService {
 
     private final AccountRepository accountRepository;
-    private final UserRepository userRepository;
     private final TransactionRepository transactionRepository;
     @Autowired
     private final TransactionMapper transactionMapper;
@@ -80,7 +79,7 @@ public class TransactionService {
         doesIbanExists(transactionRequestDTO.getIbanTo());
         Account accountFrom = accountRepository.findByIban(transactionRequestDTO.getIbanFrom());
         isEnoughBalance(accountFrom, transactionRequestDTO.getAmount());
-        checkLimits(accountFrom, transactionRequestDTO.getAmount)
+        //checkLimits(accountFrom, transactionRequestDTO.getAmount)
         Account accountTo = accountRepository.findByIban(transactionRequestDTO.getIbanTo());
         BigDecimal amount = transactionRequestDTO.getAmount();
         transfer(accountFrom, accountTo, amount);
@@ -111,39 +110,38 @@ public class TransactionService {
         if (!iban.substring(2).matches("\\d{2}[A-Z]{4}\\d{10}"))
             throw new IllegalArgumentException("Invalid IBAN format");
         checksum(iban);
-
     }
     private void doesIbanExists(String iban)
     {
         if(accountRepository.findByIban(iban) == null)
-            throw new NoSuchElementException("Account by Iban does not exist");
+            throw new IllegalArgumentException("Invalid IBAN");
     }
     private void isEnoughBalance(Account accountFrom, BigDecimal amountToTransfer)
     {
         if(accountFrom.getBalance().compareTo(amountToTransfer) < 0)
             throw new IllegalArgumentException("Not enough balance to transfer");
     }
-    private void checkLimits(Account accountFrom, BigDecimal amountToTransfer)
-    {
-//        Optional<User> user = userRepository.findByIban(ibanFrom);
+//    private void checkLimits(Account accountFrom, BigDecimal amountToTransfer)
+//    {
+////        Optional<User> user = userRepository.findByIban(ibanFrom);
+////
+////        if (user.isEmpty()) {
+////            throw new IllegalArgumentException("User with Iban does not exist");
+////        }
+////        User factualUser = user.get();
 //
-//        if (user.isEmpty()) {
-//            throw new IllegalArgumentException("User with Iban does not exist");
-//        }
-//        User factualUser = user.get();
-
-        //check daily limit
-        User user = accountFrom.getUser();
-        BigDecimal transferredAmount = transactionRepository.TotalTransferred(user.getId(), LocalDate.now());
-        transferredAmount.add(amountToTransfer); //adding amount to transfer to compare with the limit
-        if(transferredAmount.compareTo(BigDecimal.valueOf(user.getDailyLimit())) >= 0)
-            throw new IllegalArgumentException("User's daily limit exceeded ");
-        //check absolute limit
-        BigDecimal accountBalance = accountFrom.getBalance();
-        accountBalance.subtract(amountToTransfer);
-        if(accountBalance.compareTo(accountFrom.getAbsoluteLimit()) <= 0)
-            throw new IllegalArgumentException("Account's absolute limit is exceeded");
-    }
+//        //check daily limit
+//        User user = accountFrom.getUser();
+//        BigDecimal transferredAmount = transactionRepository.TotalTransferred(user.getId(), LocalDate.now());
+//        transferredAmount.add(amountToTransfer); //adding amount to transfer to compare with the limit
+//        if(transferredAmount.compareTo(BigDecimal.valueOf(user.getDailyLimit())) >= 0)
+//            throw new IllegalArgumentException("User's daily limit exceeded ");
+//        //check absolute limit
+//        BigDecimal accountBalance = accountFrom.getBalance();
+//        accountBalance.subtract(amountToTransfer);
+//        if(accountBalance.compareTo(accountFrom.getAbsoluteLimit()) <= 0)
+//            throw new IllegalArgumentException("Account's absolute limit is exceeded");
+//    }
     private void checksum(String iban)
     {
         String accountNumber = iban.substring(8);
