@@ -4,9 +4,7 @@ import restapi.banking.app.dto.ATMTransactionDTO;
 import restapi.banking.app.dto.RegistrationDTO;
 import restapi.banking.app.dto.TransactionDTO;
 import restapi.banking.app.dto.TransactionRequestDTO;
-import restapi.banking.app.dto.UserDTO;
 import restapi.banking.app.service.TransactionService;
-import restapi.banking.app.service.UserService;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -24,11 +22,13 @@ public class TransactionController {
 
     private final TransactionService transactionService;
 
-    @PostMapping("/createTransaction")
+    @PostMapping("/transfer")
     public ResponseEntity<TransactionDTO> create(@Valid @RequestBody TransactionRequestDTO transactionRequestDTO) {
         TransactionDTO createdTransactionDTO = transactionService.createTransaction(transactionRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTransactionDTO);
     }
+
+    //todo: /transfer/{iban}
 
     @PostMapping("/atm/withdraw")
     public ResponseEntity<TransactionDTO> atmWithdraw(@Valid @RequestBody ATMTransactionDTO withdrawDTO) {
