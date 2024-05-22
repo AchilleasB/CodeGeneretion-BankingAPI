@@ -12,7 +12,11 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,14 +25,12 @@ import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;
 
-import javax.naming.AuthenticationException;
-
 @Service
 @AllArgsConstructor
 public class AuthService {
 
     private final UserRepository userRepository;
-    private final UserDetailsService userDetails;
+    private final AuthenticationManager authenticationManager;
     @Autowired
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
@@ -46,21 +48,29 @@ public class AuthService {
     }
 
     public LoginResponseDTO login(LoginRequestDTO loginRequest) {
-        UserDetails user ;
-        try {
-            user = userDetails.loadUserByUsername(loginRequest.getEmail());
-        } catch (UsernameNotFoundException ex) {
-            throw new UsernameNotFoundException("Email not found");
-        }
+    try {
+        // Use AuthenticationManager to authenticate the user
+        Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
+        );
 
-        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new BadCredentialsException("Password is incorrect");
-        }
+        // Get the authenticated user details and cast it to User
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        User user = (User) userDetails;
+        
+        String jwtToken = JwtService.generateToken(userDetails);
 
-        LoginResponseDTO responseDTO = modelMapper.map(user, LoginResponseDTO.class);
-        responseDTO.setJwtToken(JwtService.generateToken(user));
+        LoginResponseDTO responseDTO = new LoginResponseDTO();
+        responseDTO.setJwtToken(jwtToken);
+        responseDTO.setUser(user);
+
         return responseDTO;
+
+    } catch (AuthenticationException ex) {
+        throw new BadCredentialsException("Invalid email or password", ex);
     }
+}
+
 
     // private functions
     

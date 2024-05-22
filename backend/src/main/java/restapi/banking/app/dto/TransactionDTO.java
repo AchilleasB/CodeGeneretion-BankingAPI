@@ -8,6 +8,7 @@ import restapi.banking.app.model.TransactionType;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -21,6 +22,7 @@ import jakarta.validation.constraints.Min;
 @NoArgsConstructor
 public class TransactionDTO {
     
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UUID id;
 
     private TransactionType type;
@@ -38,6 +40,9 @@ public class TransactionDTO {
     private String message;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
-    private LocalDate timestamp;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss")
+    private LocalDateTime timestamp;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private UUID userId;
 }

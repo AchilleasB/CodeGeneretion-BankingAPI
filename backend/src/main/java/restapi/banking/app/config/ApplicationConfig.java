@@ -23,7 +23,9 @@ public class ApplicationConfig {
 
     @Bean 
     public UserDetailsService userDetailsService() {
-        return username -> userRepository.findByEmail(username)
+        // username is the @param of the interface UserDetailsService #loadUserByUsername method
+        // which is assigned to the email of the user
+        return email -> userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     } 
 

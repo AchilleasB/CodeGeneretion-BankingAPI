@@ -7,10 +7,11 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Data
 @ToString
@@ -44,6 +45,9 @@ public class Transaction {
     private String message;
 
     @Column(name="timestamp")
-    private LocalDate timestamp;
+    private LocalDateTime timestamp;
+
+    @Column(name="user_id")
+    private UUID userId;
 
 }

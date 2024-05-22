@@ -11,6 +11,7 @@ import jakarta.transaction.Transactional;
 import restapi.banking.app.dto.ATMTransactionDTO;
 import restapi.banking.app.dto.TransactionDTO;
 import restapi.banking.app.dto.TransactionRequestDTO;
+
 import restapi.banking.app.dto.mapper.TransactionMapper;
 import restapi.banking.app.model.Account;
 import restapi.banking.app.model.Transaction;
@@ -20,6 +21,7 @@ import restapi.banking.app.repository.AccountRepository;
 import restapi.banking.app.repository.TransactionRepository;
 import restapi.banking.app.repository.UserRepository;
 
+
 import javax.swing.text.html.Option;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -27,6 +29,9 @@ import java.time.LocalDateTime;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.time.LocalDate;
+
+// import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -62,7 +67,7 @@ public class TransactionService {
         transaction.setAccountTo(transactionDTO.getTransactionType() == TransactionType.DEPOSIT ? account : null);
         transaction.setAmount(transactionDTO.getAmount());
         transaction.setType(transactionDTO.getTransactionType());
-        transaction.setTimestamp(LocalDate.now());
+        transaction.setTimestamp(LocalDateTime.now()); // todo: add the time as well
         transactionRepository.save(transaction);
 
         TransactionDTO responseDTO = transactionMapper.convertToDTO(transaction);
@@ -71,6 +76,7 @@ public class TransactionService {
 
         return responseDTO;
     }
+
 
     public TransactionDTO createTransaction(TransactionRequestDTO transactionRequestDTO) {
         testBalance(transactionRequestDTO);
@@ -87,7 +93,7 @@ public class TransactionService {
         //todo:how to set the info to the database if here we have Accounts but in the database that's just id;
         transaction.setAccountFrom(accountFrom);
         transaction.setAccountTo(accountTo);
-        transaction.setTimestamp(LocalDate.now()); //timezones?
+        // transaction.setTimestamp(LocalDate.now()); //timezones?
         transactionRepository.saveAndFlush(transaction);
         TransactionDTO transactionDTO = transactionMapper.convertToDTO(transaction);
 
@@ -185,4 +191,5 @@ public class TransactionService {
         System.out.println("AccountTo Balance: " + accountTo.getBalance().toString());
         System.out.println();
     }
+
 }
