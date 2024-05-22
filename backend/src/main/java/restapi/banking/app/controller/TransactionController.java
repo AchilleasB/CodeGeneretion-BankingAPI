@@ -22,11 +22,13 @@ public class TransactionController {
 
     private final TransactionService transactionService;
 
-    @PostMapping("/createTransaction")
+    @PostMapping("/transfer")
     public ResponseEntity<TransactionDTO> create(@Valid @RequestBody TransactionRequestDTO transactionRequestDTO) {
         TransactionDTO createdTransactionDTO = transactionService.createTransaction(transactionRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTransactionDTO);
     }
+
+    //todo: /transfer/{iban}
 
     @PostMapping("/atm/withdraw")
     public ResponseEntity<TransactionDTO> atmWithdraw(@Valid @RequestBody ATMTransactionDTO withdrawDTO) {

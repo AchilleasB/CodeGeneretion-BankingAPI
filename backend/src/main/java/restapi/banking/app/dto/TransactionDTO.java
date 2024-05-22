@@ -29,7 +29,7 @@ public class TransactionDTO {
     private BigDecimal amount;
 
     // the account IBAN from which the transaction is made 
-    private String accountFrom;
+    private String accountFrom; //todo: string or Account?????
 
     // the account IBAN to which the transaction is made
     private String accountTo;

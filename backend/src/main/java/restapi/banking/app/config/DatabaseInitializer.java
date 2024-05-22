@@ -90,7 +90,7 @@ public class DatabaseInitializer {
         userRepository.saveAndFlush(customer2);
 
         Account account3 = new Account();
-        account3.setIban("NL01INHO3456089001");
+        account3.setIban("NL41INHO3456089001");
         account3.setBalance(BigDecimal.valueOf(32480));
         account3.setAccountType(AccountType.CHECKING);
         account3.setOpeningDate(LocalDate.now());
@@ -102,7 +102,7 @@ public class DatabaseInitializer {
 
 
         Account account4 = new Account();
-        account4.setIban("NL01INHO7634150001");
+        account4.setIban("NL42INHO7634150001");
         account4.setBalance(BigDecimal.valueOf(128450));
         account4.setAccountType(AccountType.SAVINGS);
         account4.setOpeningDate(LocalDate.now());
