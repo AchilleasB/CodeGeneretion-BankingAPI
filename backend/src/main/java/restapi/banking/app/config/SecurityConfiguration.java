@@ -3,6 +3,7 @@ package restapi.banking.app.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
@@ -16,7 +17,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import restapi.banking.app.model.UserRole;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -24,10 +24,11 @@ import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
-    private static final String[] WHITE_LIST_URL = {
+    private static final String[] LIST_URLs = {
             "/auth/**",
             "/users/**",
             "/accounts/**",
@@ -41,31 +42,25 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-            .csrf(csrf -> csrf.disable())
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .authorizeHttpRequests(authorize -> authorize
-                .requestMatchers(WHITE_LIST_URL).permitAll()
 
-                .requestMatchers("/transactions/atm/**").hasRole(UserRole.Customer.name())
-
-
-                .anyRequest().authenticated()
-                )
-            .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
-            .authenticationProvider(authenticationProvider)
-            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-            .logout(logout ->
-            logout.logoutUrl("/auth/logout")
-            .addLogoutHandler(this::LogoutHandler)
-            .logoutSuccessHandler(this::logoutSuccessHandler)
-            )
-            .build();
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(LIST_URLs).permitAll()
+                        .anyRequest().authenticated())
+                .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
+                .authenticationProvider(authenticationProvider)
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .logout(logout -> logout.logoutUrl("/auth/logout")
+                        .addLogoutHandler(this::logoutHandler)
+                        .logoutSuccessHandler(this::logoutSuccessHandler))
+                .build();
     }
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // Add your frontend URL here. Make sure to adjust before deployment
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // Store a evnironment property. Ensure to adjust before deployment
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
@@ -74,8 +69,8 @@ public class SecurityConfiguration {
         return source;
     }
 
-
-    private void LogoutHandler(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    private void logoutHandler(HttpServletRequest request, HttpServletResponse response,
+            Authentication authentication) {
         // Implement your token invalidation logic here
         String token = request.getHeader("Authorization");
         if (token != null && token.startsWith("Bearer ")) {
@@ -84,9 +79,9 @@ public class SecurityConfiguration {
         SecurityContextHolder.clearContext();
     }
 
-    private void logoutSuccessHandler(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    private void logoutSuccessHandler(HttpServletRequest request, HttpServletResponse response,
+            Authentication authentication) {
         SecurityContextHolder.clearContext();
     }
-     
 
 }

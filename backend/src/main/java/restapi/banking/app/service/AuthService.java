@@ -12,7 +12,11 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,14 +25,12 @@ import org.modelmapper.ModelMapper;
 
 import java.time.LocalDate;
 
-import javax.naming.AuthenticationException;
-
 @Service
 @AllArgsConstructor
 public class AuthService {
 
     private final UserRepository userRepository;
-    private final UserDetailsService userDetails;
+    private final AuthenticationManager authenticationManager;
     @Autowired
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
@@ -46,21 +48,29 @@ public class AuthService {
     }
 
     public LoginResponseDTO login(LoginRequestDTO loginRequest) {
-        UserDetails user ;
-        try {
-            user = userDetails.loadUserByUsername(loginRequest.getEmail());
-        } catch (UsernameNotFoundException ex) {
-            throw new UsernameNotFoundException("Email not found");
-        }
+    try {
+        // Use AuthenticationManager to authenticate the user
+        Authentication authentication = authenticationManager.authenticate(
+            new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
+        );
 
-        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new BadCredentialsException("Password is incorrect");
-        }
+        // Get the authenticated user details and cast it to User
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        User user = (User) userDetails;
+        
+        String jwtToken = JwtService.generateToken(userDetails);
 
-        LoginResponseDTO responseDTO = modelMapper.map(user, LoginResponseDTO.class);
-        responseDTO.setJwtToken(JwtService.generateToken(user));
+        LoginResponseDTO responseDTO = new LoginResponseDTO();
+        responseDTO.setJwtToken(jwtToken);
+        responseDTO.setUser(user);
+
         return responseDTO;
+
+    } catch (AuthenticationException ex) {
+        throw new BadCredentialsException("Invalid email or password", ex);
     }
+}
+
 
     // private functions
     
@@ -68,6 +78,7 @@ public class AuthService {
         doesEmailExist(registrationDTO.getEmail());
         isBsnValid(registrationDTO.getBsn());
         isUserAdult(registrationDTO.getDateOfBirth());
+        isPhoneValid(registrationDTO.getPhone());
     }
 
     private void doesEmailExist(String email) {
@@ -78,7 +89,7 @@ public class AuthService {
 
     private void isBsnValid(String bsn) {
         if (bsn == null || bsn.length() != 9 || !bsn.matches("[0-9]+")) {
-            throw new IllegalArgumentException("BSN should contain only numbers");
+            throw new IllegalArgumentException("BSN should contain only numbers and be 9 digits long");
         }
 
         int[] factors = { 9, 8, 7, 6, 5, 4, 3, 2, -1 };
@@ -89,13 +100,20 @@ public class AuthService {
             checksum += digit * factors[i];
         }
 
-        if (checksum % 11 == 0)
-            throw new IllegalArgumentException("BSN is not valid");
+        if (checksum % 11 != 0) {
+            throw new IllegalArgumentException("Invalid BSN");
+        }
     }
 
     private void isUserAdult(LocalDate dateOfBirth) {
         if (dateOfBirth == null || dateOfBirth.plusYears(18).isAfter(LocalDate.now())) {
             throw new IllegalArgumentException("User should be at least 18 years old");
+        }
+    }
+
+    private void isPhoneValid(String phone) {
+        if (phone == null || !phone.matches("[0-9]+") || phone.length() != 10) {
+            throw new IllegalArgumentException("Phone number should contain only numbers and be 10 digits long");
         }
     }
 }

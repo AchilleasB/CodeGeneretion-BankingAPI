@@ -11,12 +11,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class TransactionRequestDTO {
     private BigDecimal amount;
-    private String ibanFrom; //has to be changes to jwt
+    private String ibanFrom;
     private String ibanTo;
     private String message;
-    /*---------------Do we need those?----------------
-    private String nameFrom
-    private String nameTo
-    ------------------------------------------------*/
 
 }

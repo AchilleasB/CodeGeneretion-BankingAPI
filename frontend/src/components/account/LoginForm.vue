@@ -21,10 +21,14 @@ const login = async () => {
             errorMessage.value = '';
 
             setTimeout(() => {
-                if (res.data.role === 'CUSTOMER')
-                router.push({ name: 'customer' });
-                else if (res.data.role === 'Employee')
-                router.push({ name: 'admin' });
+
+                if (authStore.isCustomer){
+                    router.push({ name: 'customer' });
+                }
+                if (authStore.isAdmin){
+                    router.push({ name: 'admin' });
+                }
+
             }, 2000);
         } else {
             errorMessage.value = res.response.data.errorMessage;
@@ -87,12 +91,12 @@ h3 {
 }
 
 input, button {
-    width: calc(100% - 40px); /* Full width minus padding */
+    width: calc(100% - 40px);
     padding: 10px 20px;
     margin-top: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
-    box-sizing: border-box; /* Includes padding in width */
+    box-sizing: border-box;
 }
 
 input:focus {

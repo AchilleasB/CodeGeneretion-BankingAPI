@@ -16,8 +16,6 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
     List<Account> findAccountsByUserId(@Param("userId") UUID userId);
 
 
-
-
-
+    Account findByIban(String iban);
 
 }

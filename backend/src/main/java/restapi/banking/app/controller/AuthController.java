@@ -11,6 +11,7 @@ import javax.naming.AuthenticationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +46,7 @@ public class AuthController {
     // security configuration handles logout
     // should I make a LogoutDTO and return it?
     @PostMapping("/logout")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> logout(HttpServletRequest request, HttpServletResponse response) {
         SecurityContextHolder.clearContext();
         return ResponseEntity.status(HttpStatus.OK).build();

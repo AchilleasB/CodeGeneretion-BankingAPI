@@ -5,12 +5,13 @@ export const useAuthStore = defineStore('authStore', {
     state: () => ({
         jwt: '',
         id: 0,
-        firstName: ''
+        firstName: '',
+        role: '',
     }),
 
     getters: {
-        isCustomer: (state) => state.role === 'CUSTOMER',
-        isAdmin: (state) => state.role === 'EMPLOYEE',
+        isCustomer: (state) => state.role === 'Customer',
+        isAdmin: (state) => state.role === 'Employee',
     },
 
     actions: {
@@ -23,7 +24,7 @@ export const useAuthStore = defineStore('authStore', {
                     lastName: lastName,
                     dateOfBirth: formatedDate,
                     phone: phone,
-                    bsn: parseInt(bsn),
+                    bsn: bsn,
                     email: email,
                     password: password
                 });
@@ -45,17 +46,19 @@ export const useAuthStore = defineStore('authStore', {
                 console.log(response);
 
                 this.jwt = response.data.jwtToken;
-                this.id = response.data.userId;
-                this.firstName = response.data.firstName;
+                const user = response.data.user;
+                this.id = user.id;
+                this.firstName = user.firstName;
+                this.role = user.role;
 
                 localStorage.setItem('jwt', this.jwt);
                 localStorage.setItem('id', this.id);
                 localStorage.setItem('fullName', this.firstName);
-                localStorage.setItem('role', response.data.role);
+                localStorage.setItem('role', this.role);
 
                 axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.jwt;
 
-                console.log(this.jwt, this.id, this.firstName, response.data.role);
+                console.log(this.jwt, this.id, this.firstName, this.role);
 
                 return response;
             } catch (error) {

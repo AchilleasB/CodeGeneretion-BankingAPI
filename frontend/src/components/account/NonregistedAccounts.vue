@@ -13,10 +13,10 @@
 </template>
 
 <script setup>
-import { useAccountStore } from '@/stores/account';
+import { useAdminStore } from '@/stores/admin';
 import { onMounted } from 'vue';
 
-const store = useAccountStore();
+const store = useAdminStore();
 const { unapprovedUsers, fetchUnapprovedUsers, isLoading, error } = store;
 
 onMounted(() => {

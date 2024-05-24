@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import axios from '../axios-auth';
 
 export const useAdminStore = defineStore('adminStore', {
+
   state: () => ({
     approvedUsers: [],
     unapprovedUsers: [],
@@ -9,6 +10,7 @@ export const useAdminStore = defineStore('adminStore', {
     isLoading: false,
     error: null,
   }),
+
 
   actions: {
     async fetchUnapprovedUsers() {

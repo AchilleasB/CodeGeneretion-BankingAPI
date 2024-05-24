@@ -1,4 +1,5 @@
 <script setup>
+
 import { ref, defineAsyncComponent, onMounted, watch } from 'vue';
 import AdminBanner from '../components/admin/AdminBanner.vue';
 import { useRouter } from 'vue-router';
@@ -6,6 +7,7 @@ const UnapprovedUsers = defineAsyncComponent(() => import('../components/admin/U
 const ApprovedUsers = defineAsyncComponent(() => import('../components/admin/ApprovedUsers.vue'));
 import { useAuthStore } from '../stores/auth';
 import { useAdminStore } from '../stores/Admin';
+
 
 const router = useRouter();
 const authStore = useAuthStore();
@@ -38,12 +40,14 @@ onMounted(async () => {
 </script>
 
 <template>
+
   <main>
     <div class="admin-container">
       <div class="side-menu">
         <AdminBanner />
         <div class="welcome">
           <h3>Welcome, {{ authStore.firstName }}</h3>
+
         </div>
         <ul class="nav-items">
           <li id="unapprovedUsers" class="nav-item" @click="selectComponent('unapprovedUsers')">Users Request</li>

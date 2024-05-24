@@ -6,12 +6,11 @@ import { onMounted} from 'vue';
 const authStore = useAuthStore();
 const userStore = useUserStore();
 
-onMounted(async()=>{
-  const userId = authStore.id;
-  await userStore.loadUserDetails(userId);
+// onMounted(async()=>{
+//   const userId = authStore.id;
+//   await userStore.loadUserDetails(userId);
 
-})
-
+// })
 
 </script>
 

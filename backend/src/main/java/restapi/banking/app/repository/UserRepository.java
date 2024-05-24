@@ -18,5 +18,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     List<User> findByApprovedAndRole(boolean isApproved, UserRole role);
 
 
+    List<User> findByApproved(boolean isApproved);
+    //Optional<User> findByIban(String iban);
 
 }

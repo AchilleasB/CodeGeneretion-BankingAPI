@@ -17,6 +17,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @Data
 @Builder
 @AllArgsConstructor // constructor to initialize all the fields of the class
@@ -61,12 +63,16 @@ public class User implements UserDetails{
     private double dailyLimit;
 
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("user")
+    private List<Account> accounts;
+    
 
     // UserDetails interface methods
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name().toUpperCase()));
     }
 
     @Override
