@@ -2,15 +2,14 @@ package restapi.banking.app.service;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import restapi.banking.app.dto.ATMTransactionDTO;
 import restapi.banking.app.dto.TransactionDTO;
-import restapi.banking.app.dto.TransactionRequestDTO;
 
 import restapi.banking.app.dto.mapper.TransactionMapper;
 import restapi.banking.app.model.Account;
@@ -19,19 +18,16 @@ import restapi.banking.app.model.TransactionType;
 import restapi.banking.app.model.User;
 import restapi.banking.app.repository.AccountRepository;
 import restapi.banking.app.repository.TransactionRepository;
-import restapi.banking.app.repository.UserRepository;
 
 
-import javax.swing.text.html.Option;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.time.LocalDateTime;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 // import java.time.LocalDate;
-import java.time.LocalDateTime;
+
 
 @Service
 @AllArgsConstructor
@@ -71,39 +67,54 @@ public class TransactionService {
         transactionRepository.save(transaction);
 
         TransactionDTO responseDTO = transactionMapper.convertToDTO(transaction);
-        responseDTO.setAccountFrom(transactionDTO.getTransactionType() == TransactionType.WITHDRAW ? account.getIban() : null);
-        responseDTO.setAccountTo(transactionDTO.getTransactionType() == TransactionType.DEPOSIT ? account.getIban() : null);
+        responseDTO.setIbanFrom(transactionDTO.getTransactionType() == TransactionType.WITHDRAW ? account.getIban() : null);
+        responseDTO.setIbanTo(transactionDTO.getTransactionType() == TransactionType.DEPOSIT ? account.getIban() : null);
 
         return responseDTO;
     }
 
 
-    public TransactionDTO createTransaction(TransactionRequestDTO transactionRequestDTO) {
-        testBalance(transactionRequestDTO);
+    public TransactionDTO createTransaction(TransactionDTO requestDTO) {
+        testBalance(requestDTO);
 
-        IbanValidation(transactionRequestDTO.getIbanTo());
-        doesIbanExists(transactionRequestDTO.getIbanTo());
-        Account accountFrom = accountRepository.findByIban(transactionRequestDTO.getIbanFrom());
-        isEnoughBalance(accountFrom, transactionRequestDTO.getAmount());
-        //checkLimits(accountFrom, transactionRequestDTO.getAmount)
-        Account accountTo = accountRepository.findByIban(transactionRequestDTO.getIbanTo());
-        BigDecimal amount = transactionRequestDTO.getAmount();
-        transfer(accountFrom, accountTo, amount);
-        Transaction transaction = transactionMapper.convertToEntity(transactionRequestDTO);
-        //todo:how to set the info to the database if here we have Accounts but in the database that's just id;
-        transaction.setAccountFrom(accountFrom);
+        //general Iban checks
+        IbanValidation(requestDTO.getIbanTo());
+        doesIbanExists(requestDTO.getIbanTo());
+
+        //AccountFrom checks
+        Account accountFrom = accountRepository.findByIban(requestDTO.getIbanFrom());
+        isEnoughBalance(accountFrom, requestDTO.getAmount());
+        checkLimits(accountFrom, requestDTO.getAmount());
+
+        //transferring
+        Account accountTo = accountRepository.findByIban(requestDTO.getIbanTo());
+        BigDecimal amount = requestDTO.getAmount();
+        transferAmounts(accountFrom, accountTo, amount);
+
+        // Using authentication to get a user's ID
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+
+        Transaction transaction = new Transaction(); //needs to be done that way to pass correct UUID in the response
         transaction.setAccountTo(accountTo);
-        // transaction.setTimestamp(LocalDate.now()); //timezones?
+        transaction.setAccountFrom(accountFrom);
+        transaction.setAmount(amount);
+        transaction.setTimestamp(LocalDateTime.now());
+        transaction.setType(requestDTO.getType());
+        transaction.setUserId(user.getId());
         transactionRepository.saveAndFlush(transaction);
-        TransactionDTO transactionDTO = transactionMapper.convertToDTO(transaction);
 
-        //transactionDTO.setIbanFrom(accountFrom.getIban());
-        //transactionDTO.setIbanTo(accountTo.getIban());
+        TransactionDTO responceDTO = transactionMapper.convertToDTO(transaction);
+        responceDTO.setIbanTo(accountTo.getIban());
+        responceDTO.setIbanFrom(accountFrom.getIban());
 
-        transactionDTO.setAccountFrom(accountFrom.getIban());
-        transactionDTO.setAccountTo(accountTo.getIban());
-        testBalance(transactionRequestDTO);
-        return transactionDTO;
+        //requestDTO.setIbanFrom(accountFrom.getIban());
+        //requestDTO.setIbanTo(accountTo.getIban());
+
+//        requestDTO.setAccountFrom(accountFrom.getIban());
+//        requestDTO.setAccountTo(accountTo.getIban());
+        testBalance(responceDTO);
+        return responceDTO;
     }
 
     private void IbanValidation(String iban)
@@ -127,27 +138,21 @@ public class TransactionService {
         if(accountFrom.getBalance().compareTo(amountToTransfer) < 0)
             throw new IllegalArgumentException("Not enough balance to transfer");
     }
-//    private void checkLimits(Account accountFrom, BigDecimal amountToTransfer)
-//    {
-////        Optional<User> user = userRepository.findByIban(ibanFrom);
-////
-////        if (user.isEmpty()) {
-////            throw new IllegalArgumentException("User with Iban does not exist");
-////        }
-////        User factualUser = user.get();
-//
-//        //check daily limit
-//        User user = accountFrom.getUser();
-//        BigDecimal transferredAmount = transactionRepository.TotalTransferred(user.getId(), LocalDate.now());
-//        transferredAmount.add(amountToTransfer); //adding amount to transfer to compare with the limit
-//        if(transferredAmount.compareTo(BigDecimal.valueOf(user.getDailyLimit())) >= 0)
-//            throw new IllegalArgumentException("User's daily limit exceeded ");
-//        //check absolute limit
-//        BigDecimal accountBalance = accountFrom.getBalance();
-//        accountBalance.subtract(amountToTransfer);
-//        if(accountBalance.compareTo(accountFrom.getAbsoluteLimit()) <= 0)
-//            throw new IllegalArgumentException("Account's absolute limit is exceeded");
-//    }
+    private void checkLimits(Account accountFrom, BigDecimal amountToTransfer)
+    {
+        //check daily limit
+        User user = accountFrom.getUser();
+        LocalDate localDate = LocalDate.now();
+        BigDecimal transferredAmount = transactionRepository.totalTransferred(user.getId(), localDate.atStartOfDay(), localDate.atTime(LocalTime.MAX));
+        transferredAmount.add(amountToTransfer); //adding amount to transfer to compare with the limit
+        if(transferredAmount.compareTo(BigDecimal.valueOf(user.getDailyLimit())) >= 0)
+            throw new IllegalArgumentException("User's daily limit exceeded ");
+        //check absolute limit
+        BigDecimal accountBalance = accountFrom.getBalance();
+        accountBalance.subtract(amountToTransfer);
+        if(accountBalance.compareTo(accountFrom.getAbsoluteLimit()) <= 0)
+            throw new IllegalArgumentException("Account's absolute limit is exceeded");
+    }
     private void checksum(String iban)
     {
         String accountNumber = iban.substring(8);
@@ -170,7 +175,7 @@ public class TransactionService {
             throw new IllegalArgumentException("Invalid IBAN");
     }
 
-    private void transfer(Account accountFrom, Account accountTo, BigDecimal amount)
+    private void transferAmounts(Account accountFrom, Account accountTo, BigDecimal amount)
     {
         BigDecimal newBalanceFrom = accountFrom.getBalance().subtract(amount);
         accountFrom.setBalance(newBalanceFrom);
@@ -182,10 +187,10 @@ public class TransactionService {
         accountRepository.save(accountTo);
     }
 
-    private void testBalance(TransactionRequestDTO transactionRequestDTO)
+    private void testBalance(TransactionDTO transactionDTO)
     {
-        Account accountFrom = accountRepository.findByIban(transactionRequestDTO.getIbanFrom());
-        Account accountTo = accountRepository.findByIban(transactionRequestDTO.getIbanTo());
+        Account accountFrom = accountRepository.findByIban(transactionDTO.getIbanFrom());
+        Account accountTo = accountRepository.findByIban(transactionDTO.getIbanTo());
 
         System.out.println("AccountFrom Balance: " + accountFrom.getBalance().toString());
         System.out.println("AccountTo Balance: " + accountTo.getBalance().toString());

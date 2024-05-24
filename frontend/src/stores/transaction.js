@@ -27,6 +27,14 @@ export const useTransactionStore = defineStore('transactionStore', {
                 throw new Error('Failed to withdraw: ' + error.response.message);
             }
         },
+        async transfer(transactionDTO) {
+            try {
+                const response = await axios.post('/transactions/transfer', transactionDTO);
+                return response.data;
+            } catch (error) {
+                throw new Error('Failed to transfer: ' + error.response.message);
+            }
+        },
 
     },
 
