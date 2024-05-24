@@ -45,13 +45,14 @@ public class DatabaseInitializer {
         customer1.setLastName("Ballanos");
         customer1.setDateOfBirth(LocalDate.of(1990, 1, 1));
         customer1.setBsn("31855867");
+        customer1.setPhone("0675431290");
         customer1.setEmail("achil@email.com");
         customer1.setPassword(passwordEncoder.encode("achil1234"));
         customer1.setRole(UserRole.Customer);
-        customer1.setApproved(true);
+        customer1.setApproved(false);
         customer1.setDailyLimit(5000);
-
         userRepository.saveAndFlush(customer1);
+
 
         Account account1 = new Account();
         account1.setIban("NL01INHO3456000021");
@@ -81,6 +82,7 @@ public class DatabaseInitializer {
         customer2.setLastName("Stark");
         customer2.setDateOfBirth(LocalDate.of(1970, 1, 1));
         customer2.setBsn("132456378");
+        customer1.setPhone("0612563090");
         customer2.setEmail("stark@email.com");
         customer2.setPassword(passwordEncoder.encode("stark1234"));
         customer2.setRole(UserRole.Customer);
@@ -90,7 +92,7 @@ public class DatabaseInitializer {
         userRepository.saveAndFlush(customer2);
 
         Account account3 = new Account();
-        account3.setIban("NL01INHO3456089001");
+        account3.setIban("NL41INHO3456089001");
         account3.setBalance(BigDecimal.valueOf(32480));
         account3.setAccountType(AccountType.CHECKING);
         account3.setOpeningDate(LocalDate.now());
@@ -102,7 +104,7 @@ public class DatabaseInitializer {
 
 
         Account account4 = new Account();
-        account4.setIban("NL01INHO7634150001");
+        account4.setIban("NL42INHO7634150001");
         account4.setBalance(BigDecimal.valueOf(128450));
         account4.setAccountType(AccountType.SAVINGS);
         account4.setOpeningDate(LocalDate.now());
@@ -111,6 +113,7 @@ public class DatabaseInitializer {
         account4.setTransactionLimit(BigDecimal.valueOf(1000));
         account4.setActive(true);
         accountRepository.saveAndFlush(account4);
+
     }
 
 

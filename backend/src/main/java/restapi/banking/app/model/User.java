@@ -1,5 +1,6 @@
 package restapi.banking.app.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +16,8 @@ import java.util.UUID;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Data
 @Builder
@@ -58,12 +61,18 @@ public class User implements UserDetails{
 
     @Column(name="daily_limit")
     private double dailyLimit;
+
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("user")
+    private List<Account> accounts;
     
+
     // UserDetails interface methods
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role.name().toUpperCase()));
     }
 
     @Override
@@ -95,5 +104,6 @@ public class User implements UserDetails{
     public boolean isEnabled() {
         return true;
     }
+
 
 }

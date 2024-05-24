@@ -34,10 +34,11 @@ public class Account {
     @Column(name = "opening_date")
     private LocalDate openingDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+   @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @JsonIgnoreProperties("accounts")
     private User user;
+
 
     @Column(name = "absolute_limit")
     private BigDecimal absoluteLimit;
@@ -50,5 +51,7 @@ public class Account {
 
     @Column(name = "active")
     private boolean active;
+
+
 
 }

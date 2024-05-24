@@ -18,4 +18,7 @@ public class AccountMapper {
     }
 
 
+    public Account convertAccountToAccount(AccountDTO accountDTO) {
+        return modelMapper.map(accountDTO, Account.class);
+    }
 }

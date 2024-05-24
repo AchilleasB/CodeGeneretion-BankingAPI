@@ -5,6 +5,7 @@ import org.modelmapper.PropertyMap;
 import org.springframework.stereotype.Component;
 
 import restapi.banking.app.dto.TransactionDTO;
+import restapi.banking.app.dto.TransactionRequestDTO;
 import restapi.banking.app.model.Transaction;
 
 @Component
@@ -22,5 +23,8 @@ public class TransactionMapper {
 
     public Transaction convertToEntity(TransactionDTO transactionDTO) {
         return modelMapper.map(transactionDTO, Transaction.class);
+    }
+    public Transaction convertToEntity(TransactionRequestDTO transactionRequestDTO) {
+        return modelMapper.map(transactionRequestDTO, Transaction.class);
     }
 }
