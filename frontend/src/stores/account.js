@@ -25,7 +25,6 @@ export const useAccountStore = defineStore('accountStore', {
     async createAccount(accountData) {
       try {
         await axios.post(`/accounts/${accountData.userId}`, accountData);
-        // You might want to refresh the accounts list or handle success here
       } catch (error) {
         this.error = error.message;
         console.error('Failed to create account:', error);

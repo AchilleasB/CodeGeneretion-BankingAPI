@@ -18,28 +18,28 @@ import java.util.UUID;
 public class UserController {
     private final UserService userService;
 
-    @PreAuthorize("hasRole('Employee')")
+    @PreAuthorize("hasRole('EMPLOYEE') or @securityExpressions.isSameUserOrEmployee(authentication, #userId)")
     @GetMapping("/unapproved")
     public ResponseEntity<List<UserDTO>> listUnapprovedUsers() {
         List<UserDTO> userDTOs = userService.findUnapprovedUsers();
         return ResponseEntity.ok(userDTOs);
     }
 
-    @PreAuthorize("hasRole('Employee')")
+    @PreAuthorize("hasRole('EMPLOYEE') or @securityExpressions.isSameUserOrEmployee(authentication, #userId)")
     @GetMapping("/approved")
     public ResponseEntity<List<UserDTO>> listApprovedUsers() {
         List<UserDTO> userDTOs = userService.findApprovedUsers();
         return ResponseEntity.ok(userDTOs);
     }
 
-    @PreAuthorize("hasRole('Employee')")
+    @PreAuthorize("hasRole('EMPLOYEE') or @securityExpressions.isSameUserOrEmployee(authentication, #userId)")
     @PostMapping("/approve/{userId}")
     public ResponseEntity<String> approveUser(@PathVariable UUID userId) {
         userService.approveUser(userId);
         return ResponseEntity.status(HttpStatus.OK).body("User approved successfully.");
     }
 
-    @PreAuthorize("hasRole('Employee')")
+    @PreAuthorize("hasRole('EMPLOYEE') or @securityExpressions.isSameUserOrEmployee(authentication, #userId)")
     @DeleteMapping("/decline/{id}")
     public ResponseEntity<String> declineUser(@PathVariable UUID id) {
         userService.declineUser(id);
