@@ -22,6 +22,7 @@ const { unapprovedUsers, fetchUnapprovedUsers, isLoading, error } = store;
 onMounted(() => {
     fetchUnapprovedUsers();
 });
+
 </script>
 
 <style>
