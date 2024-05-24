@@ -36,8 +36,9 @@ public class AccountController {
     }
 
     @GetMapping("/{userId}")
-    public List<AccountDTO> getAccountsByUserId(@PathVariable UUID userId) {
-        return accountService.findAccountByUserId(userId);
+    public ResponseEntity<List<AccountDTO>> getAccountsByUserId(@PathVariable UUID userId) {
+        List<AccountDTO> accounts = accountService.findAccountByUserId(userId);
+        return ResponseEntity.ok(accounts);
     }
 
 }

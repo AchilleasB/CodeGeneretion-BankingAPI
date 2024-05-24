@@ -17,11 +17,12 @@ const accountStore = useAccountStore();
 const userStore = useUserStore();
 // const transactionStore = useTransactionStore();
 
-const selectedComponent = ref('checking');
+const selectedComponent = ref('');
 
 const selectComponent = (component) => {
     selectedComponent.value = component;
 }
+
 
 const logout = async() => {
     await authStore.logout();
@@ -34,6 +35,7 @@ onMounted(async () => {
     await accountStore.getCustomerAccounts(userId);
     await userStore.loadUserDetails(userId);
     console.log(accountStore.accounts);
+    selectedComponent.value = 'checking';
 })
 
 </script>
