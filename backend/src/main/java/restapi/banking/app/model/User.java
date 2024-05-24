@@ -1,5 +1,6 @@
 package restapi.banking.app.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -61,10 +62,12 @@ public class User implements UserDetails{
     @Column(name="daily_limit")
     private double dailyLimit;
 
+
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnoreProperties("user")
     private List<Account> accounts;
     
+
     // UserDetails interface methods
 
     @Override
@@ -101,5 +104,6 @@ public class User implements UserDetails{
     public boolean isEnabled() {
         return true;
     }
+
 
 }

@@ -30,4 +30,10 @@ public class AccountController {
         return accountService.findAccountByUserId(userId);
     }
 
+    @PostMapping("/{userId}")
+    public ResponseEntity<AccountDTO> createAccount(@RequestBody AccountDTO accountDTO) {
+        AccountDTO createdAccount = accountService.createAccount(accountDTO);
+        return new ResponseEntity<>(createdAccount, HttpStatus.CREATED);
+    }
+
 }

@@ -49,10 +49,10 @@ public class DatabaseInitializer {
         customer1.setEmail("achil@email.com");
         customer1.setPassword(passwordEncoder.encode("achil1234"));
         customer1.setRole(UserRole.Customer);
-        customer1.setApproved(true);
+        customer1.setApproved(false);
         customer1.setDailyLimit(5000);
-
         userRepository.saveAndFlush(customer1);
+
 
         Account account1 = new Account();
         account1.setIban("NL01INHO3456000021");
@@ -113,6 +113,7 @@ public class DatabaseInitializer {
         account4.setTransactionLimit(BigDecimal.valueOf(1000));
         account4.setActive(true);
         accountRepository.saveAndFlush(account4);
+
     }
 
 

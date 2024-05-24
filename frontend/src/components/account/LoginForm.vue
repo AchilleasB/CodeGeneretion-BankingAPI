@@ -21,12 +21,14 @@ const login = async () => {
             errorMessage.value = '';
 
             setTimeout(() => {
+
                 if (authStore.isCustomer){
                     router.push({ name: 'customer' });
                 }
                 if (authStore.isAdmin){
                     router.push({ name: 'admin' });
                 }
+
             }, 2000);
         } else {
             errorMessage.value = res.response.data.errorMessage;
