@@ -63,15 +63,17 @@ public class UserService {
         return approvedUserDTOs;
     }
 
-    public void approveUser(UUID userId) {
+    public UserDTO approveUser(UUID userId) {
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             user.setApproved(true);
             userRepository.save(user);
+            return userMapper.convertUserToUserDTO(user);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + userId);
         }
+
     }
 
     public void declineUser(UUID id) {

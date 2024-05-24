@@ -34,13 +34,14 @@ public class UserController {
 
     @PreAuthorize("hasRole('EMPLOYEE') or @securityExpressions.isSameUserOrEmployee(authentication, #userId)")
     @PostMapping("/approve/{userId}")
-    public ResponseEntity<String> approveUser(@PathVariable UUID userId) {
-        userService.approveUser(userId);
-        return ResponseEntity.status(HttpStatus.OK).body("User approved successfully.");
+    public ResponseEntity<UserDTO> approveUser(@PathVariable UUID userId) {
+        UserDTO approvedUser=userService.approveUser(userId);
+        return ResponseEntity.status(HttpStatus.OK).body(approvedUser);
     }
 
     @PreAuthorize("hasRole('EMPLOYEE') or @securityExpressions.isSameUserOrEmployee(authentication, #userId)")
     @DeleteMapping("/decline/{id}")
+    //TODO convert this to dto
     public ResponseEntity<String> declineUser(@PathVariable UUID id) {
         userService.declineUser(id);
         return ResponseEntity.status(HttpStatus.OK).body("User declined successfully.");
