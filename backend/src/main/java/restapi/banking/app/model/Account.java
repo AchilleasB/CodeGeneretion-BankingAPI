@@ -1,9 +1,8 @@
 package restapi.banking.app.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -34,9 +33,9 @@ public class Account {
     @Column(name = "opening_date")
     private LocalDate openingDate;
 
-   @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @JsonIgnoreProperties("accounts")
+    @JsonBackReference // Prevents cyclic serialization
     private User user;
 
 
@@ -51,7 +50,4 @@ public class Account {
 
     @Column(name = "active")
     private boolean active;
-
-
-
 }

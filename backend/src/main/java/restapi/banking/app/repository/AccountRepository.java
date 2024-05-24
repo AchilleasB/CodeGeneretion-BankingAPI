@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import restapi.banking.app.model.Account;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -16,6 +17,7 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
     List<Account> findAccountsByUserId(@Param("userId") UUID userId);
 
 
+    @Query("SELECT a FROM Account a WHERE a.iban = :iban")
     Account findByIban(String iban);
 
 }

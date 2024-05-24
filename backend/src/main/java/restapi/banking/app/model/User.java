@@ -1,12 +1,13 @@
 package restapi.banking.app.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -17,15 +18,13 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 @Data
 @Builder
-@AllArgsConstructor // constructor to initialize all the fields of the class
-@NoArgsConstructor // constructor to create instances of the class without passing any arguments
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "users")
-public class User implements UserDetails{
+public class User implements UserDetails {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -64,10 +63,9 @@ public class User implements UserDetails{
 
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JsonIgnoreProperties("user")
+    @JsonManagedReference // Prevents cyclic serialization
     private List<Account> accounts;
     
-
     // UserDetails interface methods
 
     @Override
@@ -104,6 +102,4 @@ public class User implements UserDetails{
     public boolean isEnabled() {
         return true;
     }
-
-
 }
