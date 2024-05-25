@@ -2,7 +2,6 @@ package restapi.banking.app.controller;
 
 import restapi.banking.app.dto.ATMTransactionDTO;
 import restapi.banking.app.dto.TransactionDTO;
-import restapi.banking.app.dto.TransactionRequestDTO;
 import restapi.banking.app.service.TransactionService;
 
 import org.springframework.http.HttpStatus;
@@ -22,8 +21,8 @@ public class TransactionController {
     private final TransactionService transactionService;
 
     @PostMapping("/transfer")
-    public ResponseEntity<TransactionDTO> create(@Valid @RequestBody TransactionRequestDTO transactionRequestDTO) {
-        TransactionDTO createdTransactionDTO = transactionService.createTransaction(transactionRequestDTO);
+    public ResponseEntity<TransactionDTO> create(@Valid @RequestBody TransactionDTO transferDTO) {
+        TransactionDTO createdTransactionDTO = transactionService.createTransaction(transferDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTransactionDTO);
     }
 

@@ -102,6 +102,8 @@ public class DatabaseInitializer {
         account3.setActive(true);
         accountRepository.saveAndFlush(account3);
 
+        Account test = accountRepository.findByIban("NL41INHO3456089001");
+        User testUser = test.getUser();
 
         Account account4 = new Account();
         account4.setIban("NL42INHO7634150001");
