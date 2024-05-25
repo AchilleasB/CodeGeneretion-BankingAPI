@@ -68,8 +68,9 @@ public class AuthService {
 
         LoginResponseDTO responseDTO = new LoginResponseDTO();
         responseDTO.setJwtToken(jwtToken);
-        user.setPassword(null);
-        responseDTO.setUser(user);
+
+        UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+        responseDTO.setUser(userDTO);
 
         return responseDTO;
 
