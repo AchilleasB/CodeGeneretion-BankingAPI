@@ -13,8 +13,7 @@ onMounted(() => {
 
   if (authStore.isCustomer) {
     router.push({ name: 'customer' });
-  }
-  if (authStore.isAdmin) {
+  } else if (authStore.isAdmin) {
     router.push({ name: 'admin' });
   }
 })

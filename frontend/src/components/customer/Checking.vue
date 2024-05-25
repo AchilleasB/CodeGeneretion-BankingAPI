@@ -18,6 +18,7 @@ const absoluteLimit = ref(0);
 const showPaymentForm = ref(false);
 const ibanTo = ref('');
 const transferAmount = ref(0);
+const message = ref('');
 const errorMessage = ref('');
 const successMessage = ref('');
 
@@ -38,13 +39,15 @@ const togglePaymentForm = () => {
 };
 
 const submitTransfer = async () => {
+
+  const transactionType = 'TRANSFER';
   try {
     const transactionDTO = {
       amount: transferAmount.value,
       ibanTo: ibanTo.value,
       ibanFrom: iban.value,
-      type: "TRANSFER", //todo : set it as a variable
-      message: "test"
+      type: transactionType, 
+      message: message.value,
     };
 
     const response = await transactionStore.transfer(transactionDTO);
@@ -124,6 +127,10 @@ const submitTransfer = async () => {
         <div class="form-group">
           <label for="transferAmount">Amount</label>
           <input type="number" id="transferAmount" v-model="transferAmount" required />
+        </div>
+        <div class="form-group">
+          <label for="transferAmount">Description</label>
+          <input type="text" id="description" v-model="message" required />
         </div>
         <div class="form-group button-group">
           <button type="submit" @click.prevent="submitTransfer">Submit</button>

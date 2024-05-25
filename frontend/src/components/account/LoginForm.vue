@@ -31,7 +31,7 @@ const login = async () => {
 
             }, 2000);
         } else {
-            errorMessage.value = res.response.data.errorMessage;
+            errorMessage.value = res.response.data.message;
             successMessage.value = '';
 
             setTimeout(() => {

@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -58,10 +59,16 @@ public class AuthService {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User user = (User) userDetails;
         
+        // Check if the user is approved
+        if (!user.isApproved()) {
+            throw new AccessDeniedException("User not approved yet");
+        }
+        
         String jwtToken = JwtService.generateToken(userDetails);
 
         LoginResponseDTO responseDTO = new LoginResponseDTO();
         responseDTO.setJwtToken(jwtToken);
+        user.setPassword(null);
         responseDTO.setUser(user);
 
         return responseDTO;

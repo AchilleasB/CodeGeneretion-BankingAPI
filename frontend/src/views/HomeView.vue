@@ -17,19 +17,19 @@ const switchToLogin = () => {
   showLoginForm.value = true;
 }
 
-onMounted(() => {
-  if (localStorage.getItem('jwt')) {
-    const role = localStorage.getItem('role');
+// onMounted(() => {
+//   if (localStorage.getItem('jwt')) {
+//     const role = localStorage.getItem('role');
 
-    if (role === 'Customer') {
-      router.push({ name: 'customer' })
-    }
+//     if (role === 'Customer') {
+//       router.push({ name: 'customer' })
+//     }
 
-    if (role === 'Employee') {
-      router.push({ name: 'admin' })
-    }
-  }
-})
+//     if (role === 'Employee') {
+//       router.push({ name: 'admin' })
+//     }
+//   }
+// })
 
 </script>
 

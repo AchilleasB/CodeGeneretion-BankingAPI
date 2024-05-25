@@ -27,9 +27,9 @@
 </template>
 
 <script>
-import { useAdminStore } from '@/stores/Admin';
+import { useAdminStore } from '@/stores/admin';
 import { computed, onMounted, ref } from 'vue';
-import AccountForm from '../account/AccountForm.vue';
+import AccountForm from './AccountForm.vue';
 
 export default {
   name: 'ApprovedUsers',

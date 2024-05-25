@@ -3,7 +3,10 @@ import axios from '../axios-auth';
 
 export const useTransactionStore = defineStore('transactionStore', {
     state: () => ({
-
+        transactions: [],
+        page: 0,
+        size: 10,
+        hasMore: true
     }),
 
     getters: {
@@ -11,6 +14,26 @@ export const useTransactionStore = defineStore('transactionStore', {
     },
 
     actions: {
+        async fetchCustomerTransactions(userId) {
+            try {
+                const response = await axios.get(`/transactions/${userId}`, {
+                  params: {
+                    page: this.page,
+                    size: this.size
+                  }
+                });
+                
+                if (response.data.length < this.size) {
+                  this.hasMore = false;
+                }
+                this.transactions = [...this.transactions, ...response.data];
+                this.page += 1;
+
+              } catch (error) {
+                console.error('Failed to fetch transactions:', error);
+              }
+
+        },
         async deposit(transactionDTO) {
             try {
                 const response = await axios.post('/transactions/atm/deposit', transactionDTO);
@@ -35,6 +58,12 @@ export const useTransactionStore = defineStore('transactionStore', {
                 throw new Error('Failed to transfer: ' + error.response.message);
             }
         },
+
+        resetTransactions() {
+            this.transactions = [];
+            this.page = 0;
+            this.hasMore = true;
+          },
 
     },
 

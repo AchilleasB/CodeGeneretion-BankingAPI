@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import restapi.banking.app.model.Transaction;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -23,4 +25,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
     @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t WHERE t.accountFrom.user.id = :userId AND t.timestamp BETWEEN :timeFrom AND :timeTo")
     BigDecimal totalTransferred(@Param("userId") UUID userId, @Param("timeFrom") LocalDateTime timeFrom, @Param("timeTo") LocalDateTime timeTo);
 
+
+    @Query("SELECT t FROM Transaction t WHERE t.userId = :userId ORDER BY t.timestamp DESC")
+    Page<Transaction> findByUserId(@Param("userId") UUID userId, Pageable pageable);
 }
