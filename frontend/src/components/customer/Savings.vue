@@ -31,7 +31,7 @@ onMounted(async () => {
           <div class="card">
             <div class="card-body">
               <p>IBAN</p>
-              <h3>€ {{ iban }}</h3> 
+              <h3>€ {{ iban }}</h3>
             </div>
           </div>
         </div>
@@ -43,7 +43,7 @@ onMounted(async () => {
             </div>
           </div>
         </div>
-        <div class="col-6" id="handle-balance">
+        <div class="col-6" id="transfer-forms">
           <div class="card">
             <div class="card-body">
               <div class="from-checking">
@@ -53,14 +53,12 @@ onMounted(async () => {
               </div>
             </div>
           </div>
-          <div class="col-6">
-            <div class="card">
-              <div class="card-body">
-                <div class="to-checking">
-                  <p>Transfer TO checking account</p>
-                  <input type="number" placeholder="Enter amount" />
-                  <button> Transfer OUT</button>
-                </div>
+          <div class="card">
+            <div class="card-body">
+              <div class="to-checking">
+                <p>Transfer TO checking account</p>
+                <input type="number" placeholder="Enter amount" />
+                <button> Transfer OUT</button>
               </div>
             </div>
           </div>
@@ -79,15 +77,14 @@ h1 {
 .card {
   margin: 10px;
   padding: 10px;
-  /* border: 1px solid #ccc; */
   border-radius: 5px;
   box-shadow: 2px 2px 5px #ccc;
 }
 
-#handle-balance {
+#transfer-forms {
   display: flex;
-  justify-content: center;
   align-items: center;
+  width: fit-content;
   margin: 0 auto;
 }
 
@@ -106,4 +103,10 @@ input {
   margin: 10px 0;
   width: 100%;
 }
+
+/* @media screen and (max-width: 768px){
+  #transfer-forms {
+    flex-direction: wrap;
+  }
+} */
 </style>
