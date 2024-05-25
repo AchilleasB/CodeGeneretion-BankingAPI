@@ -30,10 +30,10 @@ const logout = async() => {
 
 onMounted(async () => {
     const userId = authStore.id;
-    console.log(userId);
+    // console.log(userId);
     await accountStore.getCustomerAccounts(userId);
     await userStore.loadUserDetails(userId);
-    console.log(accountStore.accounts);
+    // console.log(accountStore.accounts);
 })
 
 </script>
@@ -129,7 +129,7 @@ li {
     background-color: hsla(14, 100%, 40%, 0.2);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 790px) {
     .customer-container {
         flex-direction: column;
     }
