@@ -1,0 +1,579 @@
+openapi: 3.0.0
+info:
+  title: Banking API
+  description: API documentation for the banking application
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Local server
+
+components:
+  schemas:
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        iban:
+          type: string
+        balance:
+          type: number
+          format: double
+        accountType:
+          type: string
+          enum: [SAVINGS, CHECKING]
+        openingDate:
+          type: string
+          format: date
+        user:
+          $ref: '#/components/schemas/User'
+        absoluteLimit:
+          type: number
+          format: double
+        transactionLimit:
+          type: number
+          format: double
+        active:
+          type: boolean
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        firstName:
+          type: string
+        lastName:
+          type: string
+        dateOfBirth:
+          type: string
+          format: date
+        email:
+          type: string
+        password:
+          type: string
+        bsn:
+          type: string
+        phone:
+          type: string
+        role:
+          type: string
+          enum: [CUSTOMER, EMPLOYEE]
+        approved:
+          type: boolean
+        dailyLimit:
+          type: number
+          format: double
+        accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/Account'
+    UserDTO:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - email
+        - bsn
+        - phone
+      properties:
+        id:
+          type: string
+          format: uuid
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        bsn:
+          type: string
+        phone:
+          type: string
+        dateOfBirth:
+          type: string
+          format: date
+        role:
+          type: string
+          enum: [CUSTOMER, EMPLOYEE]
+        approved:
+          type: boolean
+        dailyLimit:
+          type: number
+          format: double
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [DEPOSIT, WITHDRAW, TRANSFER]
+        amount:
+          type: number
+          format: double
+        accountFrom:
+          $ref: '#/components/schemas/Account'
+        accountTo:
+          $ref: '#/components/schemas/Account'
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        userId:
+          type: string
+          format: uuid
+    RegistrationDTO:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        dateOfBirth:
+          type: string
+          format: date
+        email:
+          type: string
+        password:
+          type: string
+        bsn:
+          type: string
+        phone:
+          type: string
+    LoginRequestDTO:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+    LoginResponseDTO:
+      type: object
+      properties:
+        token:
+          type: string
+        user:
+          $ref: '#/components/schemas/UserDTO'
+    AccountDTO:
+      type: object
+      properties:
+        iban:
+          type: string
+        balance:
+          type: number
+          format: double
+        accountType:
+          type: string
+          enum: [SAVINGS, CHECKING]
+        absoluteLimit:
+          type: number
+          format: double
+        transactionLimit:
+          type: number
+          format: double
+        active:
+          type: boolean
+    TransactionDTO:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [DEPOSIT, WITHDRAW, TRANSFER]
+        amount:
+          type: number
+          format: double
+        accountFrom:
+          type: string
+          format: uuid
+        accountTo:
+          type: string
+          format: uuid
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+    ATMTransactionDTO:
+      type: object
+      properties:
+        accountId:
+          type: string
+          format: uuid
+        amount:
+          type: number
+          format: double
+
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegistrationDTO'
+            examples:
+              example:
+                value:
+                  firstName: John
+                  lastName: Doe
+                  dateOfBirth: 1990-01-01
+                  email: john.doe@example.com
+                  password: password123
+                  bsn: 123456789
+                  phone: 123-456-7890
+      responses:
+        '201':
+          description: User registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+
+  /auth/login:
+    post:
+      summary: Login a user
+      tags: [Authentication]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequestDTO'
+            examples:
+              example:
+                value:
+                  email: john.doe@example.com
+                  password: password123
+      responses:
+        '200':
+          description: User logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponseDTO'
+            examples:
+              example:
+                value:
+                  token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  user:
+                    id: "123e4567-e89b-12d3-a456-426614174000"
+                    firstName: "John"
+                    lastName: "Doe"
+                    dateOfBirth: "01-01-1990"
+                    email: "john.doe@example.com"
+                    bsn: "123456789"
+                    phone: "123-456-7890"
+                    role: "CUSTOMER"
+                    approved: true
+                    dailyLimit: 500.0
+
+  /auth/logout:
+    post:
+      summary: Logout a user
+      tags: [Authentication]
+      responses:
+        '200':
+          description: User logged out
+
+  /accounts:
+    get:
+      summary: Get all accounts
+      tags: [Accounts]
+      responses:
+        '200':
+          description: A list of accounts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+    post:
+      summary: Create a new account
+      tags: [Accounts]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountDTO'
+            examples:
+              example:
+                value:
+                  iban: NL91ABNA0417164300
+                  balance: 1000.0
+                  accountType: CHECKING
+                  absoluteLimit: 0.0
+                  transactionLimit: 500.0
+                  active: true
+      responses:
+        '201':
+          description: Account created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+
+  /accounts/{userId}:
+    get:
+      summary: Get accounts by user ID
+      tags: [Accounts]
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: A list of accounts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+    post:
+      summary: Create a new account for a user
+      tags: [Accounts]
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountDTO'
+            examples:
+              example:
+                value:
+                  iban: NL91ABNA0417164300
+                  balance: 1000.0
+                  accountType: CHECKING
+                  absoluteLimit: 0.0
+                  transactionLimit: 500.0
+                  active: true
+      responses:
+        '201':
+          description: Account created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+
+  /transactions/{userId}:
+    get:
+      summary: Get user transactions
+      tags: [Transactions]
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: A list of transactions
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Transaction'
+
+  /transactions/transfer:
+    post:
+      summary: Create a transfer transaction
+      tags: [Transactions]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransactionDTO'
+            examples:
+              example:
+                value:
+                  type: TRANSFER
+                  amount: 100.0
+                  accountFrom: 123e4567-e89b-12d3-a456-426614174000
+                  accountTo: 123e4567-e89b-12d3-a456-426614174001
+                  message: Payment for services
+                  timestamp: 2023-05-01T12:00:00Z
+      responses:
+        '201':
+          description: Transaction created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+
+  /transactions/atm/withdraw:
+    post:
+      summary: ATM withdraw transaction
+      tags: [Transactions]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ATMTransactionDTO'
+            examples:
+              example:
+                value:
+                  accountId: 123e4567-e89b-12d3-a456-426614174000
+                  amount: 100.0
+      responses:
+        '201':
+          description: Transaction created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+
+  /transactions/atm/deposit:
+    post:
+      summary: ATM deposit transaction
+      tags: [Transactions]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ATMTransactionDTO'
+            examples:
+              example:
+                value:
+                  accountId: 123e4567-e89b-12d3-a456-426614174000
+                  amount: 200.0
+      responses:
+        '201':
+          description: Transaction created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+
+  /users:
+    get:
+      summary: Get all users
+      tags: [Users]
+      responses:
+        '200':
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDTO'
+
+  /users/unapproved:
+    get:
+      summary: List unapproved users
+      tags: [Users]
+      responses:
+        '200':
+          description: A list of unapproved users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDTO'
+
+  /users/approved:
+    get:
+      summary: List approved users
+      tags: [Users]
+      responses:
+        '200':
+          description: A list of approved users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserDTO'
+
+  /users/approve/{userId}:
+    post:
+      summary: Approve a user
+      tags: [Users]
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: User approved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
+
+  /users/decline/{id}:
+    delete:
+      summary: Decline a user
+      tags: [Users]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: User declined
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "User declined successfully."
+
+  /users/{userId}:
+    get:
+      summary: Get a user by ID
+      tags: [Users]
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: A user object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDTO'
