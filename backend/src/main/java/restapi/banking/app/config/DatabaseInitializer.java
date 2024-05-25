@@ -2,6 +2,7 @@ package restapi.banking.app.config;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -10,9 +11,12 @@ import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import restapi.banking.app.model.Account;
 import restapi.banking.app.model.AccountType;
+import restapi.banking.app.model.Transaction;
+import restapi.banking.app.model.TransactionType;
 import restapi.banking.app.model.User;
 import restapi.banking.app.model.UserRole;
 import restapi.banking.app.repository.AccountRepository;
+import restapi.banking.app.repository.TransactionRepository;
 import restapi.banking.app.repository.UserRepository;
 
 @Component
@@ -21,12 +25,14 @@ public class DatabaseInitializer {
 
     private final UserRepository userRepository;
     private final AccountRepository accountRepository;
+    private final TransactionRepository transactionRepository;
     private final PasswordEncoder passwordEncoder;
 
-
-    @PostConstruct // This method will be called after the bean has been initialized at the start of the application
+    @PostConstruct // This method will be called after the bean has been initialized at the start
+                   // of the application
     public void initializeData() {
 
+        // Admin user
         User superBank = new User();
         superBank.setFirstName("Super");
         superBank.setLastName("Bank");
@@ -39,6 +45,7 @@ public class DatabaseInitializer {
         superBank.setDailyLimit(1000000);
         userRepository.saveAndFlush(superBank);
 
+        // Customer 1
 
         User customer1 = new User();
         customer1.setFirstName("Achil");
@@ -52,7 +59,6 @@ public class DatabaseInitializer {
         customer1.setApproved(false);
         customer1.setDailyLimit(5000);
         userRepository.saveAndFlush(customer1);
-
 
         Account account1 = new Account();
         account1.setIban("NL01INHO3456000021");
@@ -76,6 +82,9 @@ public class DatabaseInitializer {
         account2.setActive(true);
         accountRepository.saveAndFlush(account2);
 
+        initilizeTransactions(customer1, account1);
+
+        // Customer 2
 
         User customer2 = new User();
         customer2.setFirstName("Tony");
@@ -116,9 +125,30 @@ public class DatabaseInitializer {
         account4.setActive(true);
         accountRepository.saveAndFlush(account4);
 
+        initilizeTransactions(customer2, account3);
+
     }
 
+    private void initilizeTransactions(User customer, Account account) {
+        Transaction transaction1 = new Transaction();
+        transaction1.setAccountFrom(account);
+        transaction1.setAccountTo(null);
+        transaction1.setAmount(BigDecimal.valueOf(1000));
+        transaction1.setTimestamp(LocalDateTime.now());
+        transaction1.setType(TransactionType.WITHDRAW);
+        transaction1.setMessage("ATM");
+        transaction1.setUserId(customer.getId());
+        transactionRepository.saveAndFlush(transaction1);
 
+        Transaction transaction2 = new Transaction();
+        transaction2.setAccountFrom(null);
+        transaction2.setAccountTo(account);
+        transaction2.setAmount(BigDecimal.valueOf(2000));
+        transaction2.setTimestamp(LocalDateTime.now());
+        transaction2.setType(TransactionType.DEPOSIT);
+        transaction2.setMessage("ATM");
+        transaction2.setUserId(customer.getId());
+        transactionRepository.saveAndFlush(transaction2);
     }
 
-
+}

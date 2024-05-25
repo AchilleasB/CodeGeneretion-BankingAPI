@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { useAdminStore } from '@/stores/Admin';
+import { useAdminStore } from '@/stores/admin';
 
 export default {
   name: 'UnapprovedUsers',

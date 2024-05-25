@@ -12,7 +12,6 @@ const routes = [
   { path: '/admin', component: AdminView, name: 'admin'},
   { path: '/about', component: AboutView, name: 'about'},
   { path: '/:pathMatch(.*)*', name: 'NotFound', redirect: { name: 'home' } },
-  { path: '/admin', component: AdminView, name: 'admin' },
   
 ]
 

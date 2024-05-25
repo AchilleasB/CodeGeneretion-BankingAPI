@@ -1,7 +1,10 @@
 package restapi.banking.app.exception;
 
+import java.nio.file.AccessDeniedException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -18,6 +21,24 @@ public class GlobalExceptionHandler {
                 ex.getClass().getSimpleName(),
                 ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ExceptionDTO> handleBadCredentialsException(BadCredentialsException ex) {
+        ExceptionDTO response = new ExceptionDTO(
+                HttpStatus.UNAUTHORIZED.value(),
+                ex.getClass().getSimpleName(),
+                ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ExceptionDTO> handleAccessDeniedException (AccessDeniedException ex) {
+        ExceptionDTO response = new ExceptionDTO(
+                HttpStatus.FORBIDDEN.value(),
+                ex.getClass().getSimpleName(),
+                ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(value = { IllegalArgumentException.class, IllegalStateException.class })

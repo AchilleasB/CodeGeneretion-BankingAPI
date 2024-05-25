@@ -42,9 +42,6 @@ public class Account {
     @Column(name = "absolute_limit")
     private BigDecimal absoluteLimit;
 
-    @Column(name = "daily_limit")
-    private BigDecimal dailyLimit;
-
     @Column(name = "transaction_limit")
     private BigDecimal transactionLimit;
 

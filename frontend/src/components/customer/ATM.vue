@@ -64,7 +64,7 @@ const submitATMTransaction = async () => {
         successMessage.value = '';
         errorMessage.value = '';
         amount.value = 0;
-    }, 5000);
+    }, 3000);
 
 };
 </script>
