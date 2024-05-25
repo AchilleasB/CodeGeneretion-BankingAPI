@@ -63,7 +63,7 @@ public class TransactionService {
         transaction.setAccountTo(transactionDTO.getTransactionType() == TransactionType.DEPOSIT ? account : null);
         transaction.setAmount(transactionDTO.getAmount());
         transaction.setType(transactionDTO.getTransactionType());
-        transaction.setTimestamp(LocalDateTime.now()); // todo: add the time as well
+        transaction.setTimestamp(LocalDateTime.now());
         transactionRepository.save(transaction);
 
         TransactionDTO responseDTO = transactionMapper.convertToDTO(transaction);
