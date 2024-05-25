@@ -47,6 +47,7 @@ export const useAuthStore = defineStore('authStore', {
 
                 this.jwt = response.data.jwtToken;
                 const user = response.data.user;
+                console.log(user);
                 this.id = user.id;
                 this.firstName = user.firstName;
                 this.role = user.role;

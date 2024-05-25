@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import restapi.banking.app.model.User;
 
 @Data
 @Builder
@@ -12,5 +11,5 @@ import restapi.banking.app.model.User;
 @NoArgsConstructor
 public class LoginResponseDTO {
     private String jwtToken;
-    private User user;
+    private UserDTO user;
 }
