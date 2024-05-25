@@ -27,13 +27,13 @@ public class AccountController {
     }
 
     @GetMapping("/{userId}")
-    @PreAuthorize("hasRole('EMPLOYEE') or @securityExpressions.isSameUserOrEmployee(authentication, #userId)")
+    @PreAuthorize("@securityExpressions.isSameUserOrEmployee(authentication, #userId)")
     public List<AccountDTO> getAccountsByUserId(@PathVariable UUID userId) {
         return accountService.findAccountByUserId(userId);
     }
 
     @PostMapping("/{userId}")
-    @PreAuthorize("hasRole('EMPLOYEE') or @securityExpressions.isSameUserOrEmployee(authentication, #userId)")
+    @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<AccountDTO> createAccount(@RequestBody AccountDTO accountDTO) {
         AccountDTO createdAccount = accountService.createAccount(accountDTO);
         return new ResponseEntity<>(createdAccount, HttpStatus.CREATED);
