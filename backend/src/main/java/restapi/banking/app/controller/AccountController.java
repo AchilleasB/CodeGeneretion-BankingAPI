@@ -34,9 +34,12 @@ public class AccountController {
 
     @PostMapping("/{userId}")
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<AccountDTO> createAccount(@RequestBody AccountDTO accountDTO) {
-        AccountDTO createdAccount = accountService.createAccount(accountDTO);
-        return new ResponseEntity<>(createdAccount, HttpStatus.CREATED);
+    public ResponseEntity<List<AccountDTO>> createAccounts(@RequestBody AccountDTO accountDTO) {
+        List<AccountDTO> createdAccounts = accountService.createAccounts(accountDTO);
+        return new ResponseEntity<>(createdAccounts, HttpStatus.CREATED);
     }
+
+
+
 
 }

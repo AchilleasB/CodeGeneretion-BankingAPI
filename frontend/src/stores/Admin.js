@@ -21,7 +21,6 @@ export const useAdminStore = defineStore('adminStore', {
         this.unapprovedUsers = response.data;
       } catch (error) {
         this.error = error.message;
-        console.error('Failed to fetch unapproved users:', error);
       } finally {
         this.isLoading = false;
       }
@@ -32,7 +31,7 @@ export const useAdminStore = defineStore('adminStore', {
         this.unapprovedUsers = this.unapprovedUsers.filter(user => user.id !== userId);
       } catch (error) {
         this.error = error.message;
-        console.error('Failed to reject user:', error);
+       
       }
     },
     async approveUser(userId) {
@@ -43,18 +42,16 @@ export const useAdminStore = defineStore('adminStore', {
         this.approvedUsers.push({ ...user, accountCreated: false });
       } catch (error) {
         this.error = error.message;
-        console.error('Failed to approve user:', error);
+      
       }
     },
     async fetchApprovedUsers() {
       this.isLoading = true;
-      this.error = null;
       try {
         const response = await axios.get('users/approved');
         this.approvedUsers = response.data.map(user => ({ ...user, accountCreated: false }));
       } catch (error) {
         this.error = error.message;
-        console.error('Failed to fetch approved users:', error);
       } finally {
         this.isLoading = false;
       }

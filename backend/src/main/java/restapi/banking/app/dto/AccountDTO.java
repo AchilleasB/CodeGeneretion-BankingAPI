@@ -43,8 +43,7 @@ public class AccountDTO {
 
     @Min(value = 0, message = "Transaction Limit must be greater than or equal to 0")
     private BigDecimal transactionLimit;
-    @Min(value = 0,message="Daily Limit must be greater than or equal to 100")
-    private BigDecimal dailyLimit;
+
 
     private boolean active;
 
