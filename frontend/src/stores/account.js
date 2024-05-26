@@ -15,20 +15,25 @@ export const useAccountStore = defineStore('accountStore', {
 
   actions: {
     async getCustomerAccounts(userId) {
+      this.error = null;
       try {
         const response = await axios.get(`/accounts/${userId}`);
         this.accounts = response.data;
       } catch (error) {
+        this.error = error.message;
         console.error('Failed to fetch customer accounts:', error);
       }
     },
-    async createAccount(accountData) {
+
+    async createAccounts(accountData) {
+      this.error = null;
       try {
-        await axios.post(`/accounts/${accountData.userId}`, accountData);
+        const response = await axios.post(`/accounts/${accountData.userId}`, accountData);
+        this.accounts.push(response.data);
       } catch (error) {
         this.error = error.message;
         console.error('Failed to create account:', error);
       }
-    },
-  },
+    }
+  }
 });
