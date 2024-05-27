@@ -39,4 +39,29 @@ public class AccountController {
         return new ResponseEntity<>(createdAccount, HttpStatus.CREATED);
     }
 
+    @PutMapping("/{userId}")
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<AccountDTO> updateAccount(@PathVariable UUID userId, @RequestBody AccountDTO accountDTO) {
+        try {
+            AccountDTO updatedAccount = accountService.updateAccount(userId, accountDTO);
+            return new ResponseEntity<>(updatedAccount, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/deactivate/{accountId}")
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<AccountDTO> closeAccount(@PathVariable UUID accountId) {
+        try {
+            AccountDTO updatedAccount = accountService.closeAccount(accountId);
+            return new ResponseEntity<>(updatedAccount, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+
+
 }

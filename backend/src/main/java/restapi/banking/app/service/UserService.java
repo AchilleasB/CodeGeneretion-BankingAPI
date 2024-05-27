@@ -81,4 +81,15 @@ public class UserService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + id));
         userRepository.delete(user);
     }
+
+    public UserDTO updateDailyLimit(UUID userId, double newDailyLimit) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + userId));
+
+        user.setDailyLimit(newDailyLimit);
+        userRepository.save(user);
+
+        return userMapper.convertUserToUserDTO(user);
+    }
+
 }
