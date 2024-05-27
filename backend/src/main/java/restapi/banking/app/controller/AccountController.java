@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import restapi.banking.app.dto.AccountDTO;
+import restapi.banking.app.dto.IbanDTO;
 import restapi.banking.app.service.AccountService;
 
 import java.util.List;
@@ -39,7 +40,11 @@ public class AccountController {
         return new ResponseEntity<>(createdAccounts, HttpStatus.CREATED);
     }
 
-
-
+    @GetMapping("/ibans")
+    @PreAuthorize("hasRole('EMPLOYEE') or hasRole('CUSTOMER')")
+    public ResponseEntity<List<IbanDTO>> getIbansByUserName(@RequestParam String firstName, @RequestParam String lastName) {
+        List<IbanDTO> ibans = accountService.findIbansByUserName(firstName, lastName);
+        return ResponseEntity.status(HttpStatus.OK).body(ibans);
+    }
 
 }

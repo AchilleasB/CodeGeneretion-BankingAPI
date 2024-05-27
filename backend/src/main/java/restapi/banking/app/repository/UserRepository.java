@@ -20,5 +20,7 @@ public interface UserRepository extends JpaRepository<User, UUID> {
 
     List<User> findByApproved(boolean isApproved);
     //Optional<User> findByIban(String iban);
+    
+    Optional<User> findByFirstNameAndLastName(String firstName, String lastName);
 
 }

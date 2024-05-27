@@ -34,6 +34,24 @@ export const useAccountStore = defineStore('accountStore', {
         this.error = error.message;
         console.error('Failed to create account:', error);
       }
-    }
+    },
+
+    async searchIbansByUsername(firstName, lastName) {
+      try {
+        const response = await axios.get('accounts/ibans', {
+          params: {
+            firstName,
+            lastName
+          }
+        });
+
+        console.log(response);
+        return response;
+      } catch (error) {
+        console.error('Error fetching IBANs:', error);
+        return error;
+      }
+    },
+
   }
 });
