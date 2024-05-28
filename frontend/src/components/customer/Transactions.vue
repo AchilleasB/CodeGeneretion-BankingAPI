@@ -74,7 +74,7 @@ h2 {
 
 .transactions-grid {
   display: grid;
-  grid-template-columns: 1fr 0.8fr 0.8fr 2fr 1fr 1fr;
+  grid-template-columns: 1.4fr 1.4fr 1.4fr 1.4fr 1.4fr 1fr;
   gap: 10px;
   width: 100%;
 }
@@ -122,7 +122,7 @@ button:hover {
   color: green;
 }
 
-@media (max-width: 1110px) {
+@media (max-width: 1390px) {
   .transactions-grid {
     grid-template-columns: 1fr;
   }
