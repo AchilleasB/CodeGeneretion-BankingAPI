@@ -33,11 +33,10 @@ public class Account {
     @Column(name = "opening_date")
     private LocalDate openingDate;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @JsonBackReference // Prevents cyclic serialization
     private User user;
-
 
     @Column(name = "absolute_limit")
     private BigDecimal absoluteLimit;

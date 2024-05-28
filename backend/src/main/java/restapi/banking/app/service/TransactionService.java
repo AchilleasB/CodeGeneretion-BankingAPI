@@ -14,10 +14,7 @@ import restapi.banking.app.dto.ATMTransactionDTO;
 import restapi.banking.app.dto.TransactionDTO;
 
 import restapi.banking.app.dto.mapper.TransactionMapper;
-import restapi.banking.app.model.Account;
-import restapi.banking.app.model.Transaction;
-import restapi.banking.app.model.TransactionType;
-import restapi.banking.app.model.User;
+import restapi.banking.app.model.*;
 import restapi.banking.app.repository.AccountRepository;
 import restapi.banking.app.repository.TransactionRepository;
 
@@ -89,11 +86,21 @@ public class TransactionService {
     }
 
     public TransactionDTO createTransaction(TransactionDTO requestDTO) {
-        testBalance(requestDTO);
+//        testBalance(requestDTO);
 
-        // general Iban checks
-        // IbanValidation(requestDTO.getIbanTo());
-        doesIbanExists(requestDTO.getIbanTo());
+        // Using authentication to get a user's ID
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+
+        if(user.getRole().equals(UserRole.Employee))
+        {
+            IbanValidation(requestDTO.getIbanFrom(), "Sender");
+            doesIbanExists(requestDTO.getIbanFrom(), "Sender");
+        }
+
+        //general Iban checks
+        IbanValidation(requestDTO.getIbanTo(), "Recipient");
+        doesIbanExists(requestDTO.getIbanTo(), "Recipient");
 
         // AccountFrom checks
         Account accountFrom = accountRepository.findByIban(requestDTO.getIbanFrom());
@@ -105,9 +112,6 @@ public class TransactionService {
         BigDecimal amount = requestDTO.getAmount();
         transferAmounts(accountFrom, accountTo, amount);
 
-        // Using authentication to get a user's ID
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
 
         Transaction transaction = new Transaction(); // needs to be done that way to pass correct UUID in the response
         transaction.setAccountTo(accountTo);
@@ -123,29 +127,26 @@ public class TransactionService {
         responceDTO.setIbanTo(accountTo.getIban());
         responceDTO.setIbanFrom(accountFrom.getIban());
 
-        // requestDTO.setIbanFrom(accountFrom.getIban());
-        // requestDTO.setIbanTo(accountTo.getIban());
-
-        // requestDTO.setAccountFrom(accountFrom.getIban());
-        // requestDTO.setAccountTo(accountTo.getIban());
         testBalance(responceDTO);
         return responceDTO;
     }
 
-    private void IbanValidation(String iban) {
+    private void IbanValidation(String iban, String whichIban)
+    {
         iban = iban.replaceAll("\\s+", "");
         if (iban.length() != 18)
-            throw new IllegalArgumentException("IBAN must be 18 characters");
+            throw new IllegalArgumentException(whichIban + "'s IBAN must be 18 characters");
         if (!iban.startsWith("NL"))
-            throw new IllegalArgumentException("IBAN must start with \'NL\'");
+            throw new IllegalArgumentException(whichIban + "'s IBAN must start with \'NL\'");
         if (!iban.substring(2).matches("\\d{2}[A-Z]{4}\\d{10}"))
-            throw new IllegalArgumentException("Invalid IBAN format");
+            throw new IllegalArgumentException(whichIban + "'s IBAN format is invalid");
         checksum(iban);
     }
-
-    private void doesIbanExists(String iban) {
-        if (accountRepository.findByIban(iban) == null)
-            throw new IllegalArgumentException("Invalid IBAN");
+    private void doesIbanExists(String iban, String whichIban)
+    {
+        Account account = accountRepository.findByIban(iban);
+        if(accountRepository.findByIban(iban) == null)
+            throw new IllegalArgumentException(whichIban + "'s IBAN does not exist");
     }
 
     private void isEnoughBalance(Account accountFrom, BigDecimal amountToTransfer) {

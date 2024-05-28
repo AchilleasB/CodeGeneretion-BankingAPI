@@ -55,7 +55,7 @@ export const useTransactionStore = defineStore('transactionStore', {
                 const response = await axios.post('/transactions/transfer', transactionDTO);
                 return response.data;
             } catch (error) {
-                throw new Error('Failed to transfer: ' + error.response.message);
+                throw new Error('Failed to transfer: ' + error.response.data.message);
             }
         },
 

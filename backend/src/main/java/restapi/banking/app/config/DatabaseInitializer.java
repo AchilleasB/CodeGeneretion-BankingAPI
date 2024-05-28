@@ -61,7 +61,7 @@ public class DatabaseInitializer {
         userRepository.saveAndFlush(customer1);
 
         Account account1 = new Account();
-        account1.setIban("NL01INHO3456000021");
+        account1.setIban("NL05INHO3456000021");
         account1.setBalance(BigDecimal.valueOf(20560));
         account1.setAccountType(AccountType.CHECKING);
         account1.setOpeningDate(LocalDate.now());
@@ -72,7 +72,7 @@ public class DatabaseInitializer {
         accountRepository.saveAndFlush(account1);
 
         Account account2 = new Account();
-        account2.setIban("NL01INHO7634150005");
+        account2.setIban("NL31INHO7634150005");
         account2.setBalance(BigDecimal.valueOf(16450));
         account2.setAccountType(AccountType.SAVINGS);
         account2.setOpeningDate(LocalDate.now());
@@ -111,8 +111,8 @@ public class DatabaseInitializer {
         account3.setActive(true);
         accountRepository.saveAndFlush(account3);
 
-        Account test = accountRepository.findByIban("NL41INHO3456089001");
-        User testUser = test.getUser();
+//        Account test = accountRepository.findByIban("NL41INHO3456089001");
+//        User testUser = test.getUser();
 
         Account account4 = new Account();
         account4.setIban("NL42INHO7634150001");

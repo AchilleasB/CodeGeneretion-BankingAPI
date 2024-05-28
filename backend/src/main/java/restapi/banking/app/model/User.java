@@ -1,6 +1,5 @@
 package restapi.banking.app.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -61,11 +60,10 @@ public class User implements UserDetails {
     @Column(name="daily_limit")
     private double dailyLimit;
 
-
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference // Prevents cyclic serialization
     private List<Account> accounts;
-    
+
     // UserDetails interface methods
 
     @Override
