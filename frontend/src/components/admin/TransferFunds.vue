@@ -20,14 +20,37 @@ const validateAmount = () => {
     }
 };
 
+const areIbansTheSame = ref(false);
+const checkIbans = () => {
+    if (ibanFrom.value === ibanTo.value){
+      areIbansTheSame.value = true;
+    } else {
+      areIbansTheSame.value = false;
+    }
+};
+
 const transferFunds = async () => {
-    validateAmount();
+  errorMessage.value = '';
+  successMessage.value = '';  
+  
+  validateAmount();
 
     if (!isValidAmount.value) {
         errorMessage.value = 'Failed to transfer: Amount must be higher than €0.00';
         setTimeout(() => {
             errorMessage.value = '';
             transferAmount.value = 0;
+        }, 3000);
+        return;
+    }
+
+    checkIbans();
+
+    if(areIbansTheSame.value) {
+      errorMessage.value = 'Failed to transfer: IBAN of recipient and sender must be different ';
+        setTimeout(() => {
+            errorMessage.value = '';
+            ibanTo.value = '';
         }, 3000);
         return;
     }
@@ -72,7 +95,7 @@ const transferFunds = async () => {
                   <input type="text" id="ibanTo" v-model="ibanTo" required placeholder="e.g. : NL01INHO0987654321"/>
                 </div>
                 <div class="form-group">
-                  <label for="transferAmount">Amount</label>
+                  <label for="transferAmount">Amount (€)</label>
                   <input type="number" id="transferAmount" v-model="transferAmount" required placeholder="e.g. : 100"/>
                 </div>
                 <button type="submit" @click.prevent="transferFunds">Transfer</button>
@@ -113,31 +136,31 @@ button {
   border: none;
   cursor: pointer;
   width: 100%;
-  font-size: 16px; /* increased font size */
-  transition: background-color 0.3s; /* hover transition */
+  font-size: 16px; 
+  transition: background-color 0.3s; 
 }
 
 button:hover {
-  background-color: #45A049; /* slightly darker color */
+  background-color: #45A049; 
 }
 
 input {
   padding: 10px;
   margin: 10px 0;
-  width: calc(100% - 20px); /* adjust width to account for margin */
-  margin-right: 20px; /* added margin to the right */
+  width: calc(100% - 20px); 
+  margin-right: 20px; 
 }
 
 .form-group {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 15px; /* increased gap between blocks */
+  margin-bottom: 15px; 
 }
 
 label {
   margin-right: 10px;
-  width: 30%; /* fixed width for labels */
+  width: 30%; 
 }
 
 .error {

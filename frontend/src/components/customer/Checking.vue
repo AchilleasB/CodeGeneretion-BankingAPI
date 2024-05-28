@@ -36,9 +36,31 @@ onMounted(async () => {
 
 const togglePaymentForm = () => {
   showPaymentForm.value = !showPaymentForm.value;
+
+};
+
+const areIbansTheSame = ref(false);
+const checkIbans = () => {
+    if (iban.value === ibanTo.value){
+      areIbansTheSame.value = true;
+    } else {
+      areIbansTheSame.value = false;
+    }
 };
 
 const submitTransfer = async () => {
+  errorMessage.value = '';
+  successMessage.value = '';
+  
+  checkIbans();
+
+  if(areIbansTheSame.value) {
+    errorMessage.value = 'Failed to transfer: IBAN of recipient and sender must be different ';
+      setTimeout(() => {
+          errorMessage.value = '';
+      }, 3000);
+      return;
+  }
 
   const transactionType = 'TRANSFER';
   try {
@@ -56,7 +78,12 @@ const submitTransfer = async () => {
   } catch (error) {
     errorMessage.value = 'Transaction failed: ' + error.message;
   }
+  setTimeout(() => {
+    errorMessage.value = '';
+    successMessage.value = '';
+  }, 4000);
 };
+
 </script>
 
 <template>
@@ -125,7 +152,7 @@ const submitTransfer = async () => {
           <input type="text" id="ibanTo" v-model="ibanTo" required />
         </div>
         <div class="form-group">
-          <label for="transferAmount">Amount</label>
+          <label for="transferAmount">Amount (€)</label>
           <input type="number" id="transferAmount" v-model="transferAmount" required />
         </div>
         <div class="form-group">

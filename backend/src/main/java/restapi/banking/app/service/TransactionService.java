@@ -104,6 +104,7 @@ public class TransactionService {
 
         // AccountFrom checks
         Account accountFrom = accountRepository.findByIban(requestDTO.getIbanFrom());
+        User userFrom = accountFrom.getUser();
         isEnoughBalance(accountFrom, requestDTO.getAmount());
         checkLimits(accountFrom, requestDTO.getAmount());
 
@@ -160,7 +161,7 @@ public class TransactionService {
         LocalDate localDate = LocalDate.now();
         BigDecimal transferredAmount = transactionRepository.totalTransferred(user.getId(), localDate.atStartOfDay(),
                 localDate.atTime(LocalTime.MAX));
-        transferredAmount.add(amountToTransfer); // adding amount to transfer to compare with the limit
+        transferredAmount = transferredAmount.add(amountToTransfer); // adding amount to transfer to compare with the limit
         if (transferredAmount.compareTo(BigDecimal.valueOf(user.getDailyLimit())) >= 0)
             throw new IllegalArgumentException("User's daily limit exceeded ");
         // check absolute limit
