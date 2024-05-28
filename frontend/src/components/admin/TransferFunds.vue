@@ -2,14 +2,18 @@
 <script setup>
 import { ref } from 'vue';
 import { useTransactionStore } from '../../stores/transaction';
+import loadingGif from '../../assets/loading-gif.gif';
+
 
 const transactionStore = useTransactionStore();
 
 const ibanFrom = ref('');
 const ibanTo = ref('');
 const transferAmount = ref(0);
+const description = ref('');
 const errorMessage = ref('');
 const successMessage = ref('');
+const isLoading = ref(false);
 
 const isValidAmount = ref(true);
 const validateAmount = () => {
@@ -32,11 +36,13 @@ const checkIbans = () => {
 const transferFunds = async () => {
   errorMessage.value = '';
   successMessage.value = '';  
+  isLoading.value = true;
   
   validateAmount();
 
     if (!isValidAmount.value) {
         errorMessage.value = 'Failed to transfer: Amount must be higher than €0.00';
+        isLoading.value = false;
         setTimeout(() => {
             errorMessage.value = '';
             transferAmount.value = 0;
@@ -48,6 +54,7 @@ const transferFunds = async () => {
 
     if(areIbansTheSame.value) {
       errorMessage.value = 'Failed to transfer: IBAN of recipient and sender must be different ';
+      isLoading.value = false;
         setTimeout(() => {
             errorMessage.value = '';
             ibanTo.value = '';
@@ -61,7 +68,7 @@ const transferFunds = async () => {
             ibanTo: ibanTo.value,
             ibanFrom: ibanFrom.value,
             type: "TRANSFER",
-            message: "test"
+            message: description.value
         };
         const response = await transactionStore.transfer(transactionDTO);
         console.log(response);
@@ -69,6 +76,8 @@ const transferFunds = async () => {
     } catch (error) {
         errorMessage.value = error.message;
     }
+
+    isLoading.value = false;
 
     setTimeout(() => {
         successMessage.value = '';
@@ -98,10 +107,15 @@ const transferFunds = async () => {
                   <label for="transferAmount">Amount (€)</label>
                   <input type="number" id="transferAmount" v-model="transferAmount" required placeholder="e.g. : 100"/>
                 </div>
+                <div class="form-group">
+                  <label for="description">Description</label>
+                  <input type="text" id="description" v-model="description" placeholder="e.g. : Business expences"/>
+                </div>
                 <button type="submit" @click.prevent="transferFunds">Transfer</button>
                 <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
                 <p v-if="successMessage" class="success">{{ successMessage }}</p>
               </form>
+              <img v-if="isLoading" :src="loadingGif" alt="Loading" class="loading-gif">
             </div>
           </div>
         </div>
@@ -169,5 +183,14 @@ label {
 
 .success {
   color: green;
+}
+
+.loading-gif {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  z-index: 1000;
 }
 </style>
