@@ -10,7 +10,7 @@ export const useUserStore = defineStore('userStore', {
     bsn: "",
     phone: "",
     role: "",
-    dailyLimit: "",
+    dailyLimit: 0,
     approved: ""
   }),
 

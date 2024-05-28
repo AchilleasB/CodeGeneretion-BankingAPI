@@ -50,13 +50,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ExceptionDTO> handleGenericException(Exception ex) {
-        ExceptionDTO response = new ExceptionDTO(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                ex.getClass().getSimpleName(),
-                "An unexpected error has occurred.");
-        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    // @ExceptionHandler(Exception.class)
+    // public ResponseEntity<ExceptionDTO> handleGenericException(Exception ex) {
+    //     ExceptionDTO response = new ExceptionDTO(
+    //             HttpStatus.INTERNAL_SERVER_ERROR.value(),
+    //             ex.getClass().getSimpleName(),
+    //             "An unexpected error has occurred.");
+    //     return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    // }
 
 }

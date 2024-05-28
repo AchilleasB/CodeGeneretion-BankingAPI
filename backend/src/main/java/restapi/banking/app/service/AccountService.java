@@ -3,10 +3,12 @@ package restapi.banking.app.service;
 
 
 import org.springframework.stereotype.Service;
+
+import jakarta.persistence.EntityNotFoundException;
 import restapi.banking.app.dto.mapper.AccountMapper;
 import restapi.banking.app.model.Account;
 import restapi.banking.app.dto.AccountDTO;
-
+import restapi.banking.app.dto.IbanDTO;
 import restapi.banking.app.model.AccountType;
 import restapi.banking.app.model.User;
 import restapi.banking.app.repository.AccountRepository;
@@ -56,6 +58,26 @@ public class AccountService {
 
         return List.of(savingsAccountDTO, checkingAccountDTO);
     }
+
+    public List<IbanDTO> findIbansByUserName(String firstName, String lastName) {
+        Optional<User> user = userRepository.findByFirstNameAndLastName(firstName, lastName);
+        
+        if (user.isPresent()) {
+            List<Account> accounts = accountRepository.findAccountsByUserId(user.get().getId());
+
+            if (accounts.isEmpty()) {
+                throw new EntityNotFoundException(firstName + " " + lastName + " has no approved accounts yet.");
+            }
+
+            return accounts.stream()
+                    .map(account -> new IbanDTO(account.getIban(), account.getAccountType()))
+                    .collect(Collectors.toList());
+
+        } else {
+           throw new EntityNotFoundException("Customer not found");
+        }
+    }
+
 
     //Private functions
     private User getUserFromRepository(UUID userId) {

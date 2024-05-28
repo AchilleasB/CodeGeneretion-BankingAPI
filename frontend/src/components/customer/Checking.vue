@@ -2,12 +2,10 @@
 import { onMounted, ref } from 'vue';
 import { useUserStore } from '../../stores/user';
 import { useAccountStore } from '../../stores/account';
-import { useTransactionStore } from '../../stores/transaction';
-import axios from 'axios';
+import TransferFunds from './TransferFunds.vue';
 
 const userStore = useUserStore();
 const accountStore = useAccountStore();
-const transactionStore = useTransactionStore();
 
 const iban = ref('');
 const balance = ref(0);
@@ -16,15 +14,14 @@ const transactionLimit = ref(0);
 const absoluteLimit = ref(0);
 
 const showPaymentForm = ref(false);
-const ibanTo = ref('');
-const transferAmount = ref(0);
-const message = ref('');
-const errorMessage = ref('');
-const successMessage = ref('');
+
+const togglePaymentForm = () => {
+  showPaymentForm.value = !showPaymentForm.value;
+};
 
 onMounted(async () => {
   const checkingAccount = accountStore.getCheckingAccount[0];
-  
+
   if (checkingAccount) {
     iban.value = checkingAccount.iban;
     balance.value = checkingAccount.balance;
@@ -33,11 +30,6 @@ onMounted(async () => {
     absoluteLimit.value = checkingAccount.absoluteLimit;
   }
 });
-
-const togglePaymentForm = () => {
-  showPaymentForm.value = !showPaymentForm.value;
-
-};
 
 const areIbansTheSame = ref(false);
 const checkIbans = () => {
@@ -95,7 +87,7 @@ const submitTransfer = async () => {
           <div class="card">
             <div class="card-body">
               <p>IBAN</p>
-              <h3>{{ iban }}</h3> 
+              <h3>{{ iban }}</h3>
             </div>
           </div>
         </div>
@@ -104,7 +96,7 @@ const submitTransfer = async () => {
         <div class="card">
           <div class="card-body">
             <p>Daily Limit</p>
-            <h3>€ {{ dailyLimit }}</h3> 
+            <h3>€ {{ dailyLimit }}</h3>
           </div>
         </div>
       </div>
@@ -112,7 +104,7 @@ const submitTransfer = async () => {
         <div class="card">
           <div class="card-body">
             <p>Transaction Limit</p>
-            <h3>€ {{ transactionLimit }}</h3> 
+            <h3>€ {{ transactionLimit }}</h3>
           </div>
         </div>
       </div>
@@ -120,7 +112,7 @@ const submitTransfer = async () => {
         <div class="card">
           <div class="card-body">
             <p>Absolute Limit</p>
-            <h3>€ {{ absoluteLimit }}</h3> 
+            <h3>€ {{ absoluteLimit }}</h3>
           </div>
         </div>
       </div>
@@ -135,16 +127,18 @@ const submitTransfer = async () => {
         </div>
       </div>
     </div>
-    <div class="row justify-content-center">
+
+    <!-- Show Payment Button -->
+    <div class="row justify-content-center" v-if="!showPaymentForm">
       <div class="col-4">
-        <div class="card" v-if="!showPaymentForm">
+        <div class="card">
           <div class="card-body">
             <button @click="togglePaymentForm">Send Payment</button>
           </div>
         </div>
       </div>
     </div>
-    <div v-if="showPaymentForm" class="payment-form card">
+    <!-- <div v-if="showPaymentForm" class="payment-form card">
       <h2>Transfer Funds</h2>
       <form method="POST">
         <div class="form-group">
@@ -166,7 +160,10 @@ const submitTransfer = async () => {
       </form>
       <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
       <p v-if="successMessage" class="success">{{ successMessage }}</p>
-    </div>
+    </div> -->
+
+    <!-- Payment Form -->
+    <TransferFunds v-if="showPaymentForm" :iban-from="iban" @cancel="togglePaymentForm" />
   </div>
 </template>
 
@@ -184,63 +181,27 @@ h1 {
 }
 
 button {
-  background-color: #4CAF50;
-  color: white;
-  padding: 14px 20px;
+  padding: 10px 15px;
   margin: 8px 0;
   border: none;
   cursor: pointer;
-}
-
-.payment-form {
-  margin-top: 20px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 10px;
-}
-
-.form-group input {
-  flex: 1;
-  padding: 10px;
-  margin: 0 10px;
-  width: 100%;
-}
-
-.button-group {
-  display: flex;
-  justify-content: space-between;
-}
-
-.error {
-  color: red;
-}
-
-.success {
-  color: green;
-}
-
-input {
-  padding: 10px;
-  width: 100%;
-  margin: 10px 0;
+  background-color: #28A745;
+  color: white;
 }
 
 @media (min-width: 576px) {
   .form-group {
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
   }
-  
+
   .form-group label {
     margin-right: 10px;
     width: 150px;
   }
 
   .button-group {
-    flex-direction: row;
     justify-content: flex-end;
   }
 
