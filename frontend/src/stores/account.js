@@ -70,7 +70,7 @@ export const useAccountStore = defineStore('accountStore', {
     async updateAccount(account) {
       try {
         // Update the account limits
-        await axios.put(`/accounts/${account.userId}`, {
+        await axios.put(`/accounts/${account.id}`, {
           id: account.id,
           transactionLimit: account.transactionLimit,
           absoluteLimit: account.absoluteLimit,

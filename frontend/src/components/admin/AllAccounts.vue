@@ -30,17 +30,17 @@
         <form @submit.prevent="confirmEdit">
           <label>
             Transaction Limit:
-            <input type="number" v-model="selectedAccount.transactionLimit" />
+            <input type="number" v-model="selectedAccount.transactionLimit" min="1"/>
           </label>
           <br />
           <label>
             Absolute Limit:
-            <input type="number" v-model="selectedAccount.absoluteLimit" />
+            <input type="number" v-model="selectedAccount.absoluteLimit" min="1"/>
           </label>
           <br />
           <label>
             Daily Limit:
-            <input type="number" v-model="selectedAccount.userDailyLimit" />
+            <input type="number" v-model="selectedAccount.userDailyLimit" min="1" />
           </label>
           <br />
           <button type="submit">Confirm</button>
@@ -71,30 +71,26 @@ onMounted(async () => {
 });
 
 const editAccount = (account) => {
-  selectedAccount.value = { ...account };  // Initialize selectedAccount with account details
+  selectedAccount.value = { ...account };  
   isModalOpen.value = true;
 };
 
 const deactivateAccount = async (account) => {
   await accountStore.deactivateAccount(account);
-  account.active = false; // Assuming the account status is updated after deactivation
+  account.active = false; 
 }
 
 const confirmEdit = async () => {
   try {
-    // Update the account on the server
     const updatedAccountData = await accountStore.updateAccount({
       ...selectedAccount.value,
-      // Only send the properties you want to update to the server
       transactionLimit: selectedAccount.value.transactionLimit,
       absoluteLimit: selectedAccount.value.absoluteLimit,
       userDailyLimit: selectedAccount.value.userDailyLimit
     });
 
-    // Find the index of the updated account in the local list
     const index = allAccounts.value.findIndex(a => a.id === selectedAccount.value.id);
 
-    // Preserve user details and update only the relevant properties
     if (index !== -1) {
       allAccounts.value[index] = {
         ...allAccounts.value[index],
@@ -108,7 +104,6 @@ const confirmEdit = async () => {
     closeModal();
   } catch (error) {
     console.error('Failed to update account:', error);
-    // Optionally, handle error display to the user
   }
 };
 
