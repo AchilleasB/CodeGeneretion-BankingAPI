@@ -30,7 +30,9 @@ public class UserDTO {
     private String phone;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate dateOfBirth;
+    @NotBlank(message = "Role is mandatory")
     private UserRole role;
     private boolean approved;
+    @NotBlank(message = "Daily limit is mandatory")
     private double dailyLimit;
 }

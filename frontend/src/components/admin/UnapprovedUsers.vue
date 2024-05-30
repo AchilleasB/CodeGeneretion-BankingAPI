@@ -17,6 +17,8 @@
 
 <script>
 import { useAdminStore } from '@/stores/admin';
+import { onMounted } from 'vue';
+
 
 export default {
   name: 'UnapprovedUsers',
@@ -39,10 +41,13 @@ export default {
       approveUser,
       declineUser,
     };
+    onMounted(async() => {
+      const response = await adminStore.fetchUnapprovedUsers();
+      
+    });
+
   },
-  mounted() {
-    this.fetchUnapprovedUsers();
-  }
+  
 };
 </script>
 

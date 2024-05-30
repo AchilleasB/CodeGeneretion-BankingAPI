@@ -31,6 +31,7 @@ import { useAdminStore } from '@/stores/admin';
 import { computed, onMounted, ref } from 'vue';
 import AccountForm from './AccountForm.vue';
 
+
 export default {
   name: 'ApprovedUsers',
   components: {
@@ -41,14 +42,19 @@ export default {
     const approvedUsers = computed(() => adminStore.approvedUsers);
     const isLoading = computed(() => adminStore.isLoading);
     const selectedUserId = ref(null);
+    const message = ref("");
 
     onMounted(async () => {
-      await adminStore.fetchApprovedUsers();
+      const response= await adminStore.fetchApprovedUsers();
+      
+
     });
 
     const showForm = (userId) => {
-      selectedUserId.value = userId;
-    };
+   selectedUserId.value = userId;
+
+};
+
 
     const handleAccountCreated = (userId) => {
       adminStore.markAccountCreated(userId);
