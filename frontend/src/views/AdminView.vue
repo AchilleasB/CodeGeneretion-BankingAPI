@@ -5,6 +5,8 @@ import AdminBanner from '../components/admin/AdminBanner.vue';
 import { useRouter } from 'vue-router';
 const UnapprovedUsers = defineAsyncComponent(() => import('../components/admin/UnapprovedUsers.vue'));
 const ApprovedUsers = defineAsyncComponent(() => import('../components/admin/ApprovedUsers.vue'));
+const TransferFunds = defineAsyncComponent(() => import('../components/admin/TransferFunds.vue'));
+const AllAccounts = defineAsyncComponent(() => import('../components/admin/AllAccounts.vue'));
 import { useAuthStore } from '../stores/auth';
 import { useAdminStore } from '../stores/Admin';
 
@@ -36,6 +38,8 @@ watch(selectedComponent, () => {
 onMounted(async () => {
   await adminStore.fetchApprovedUsers();
   await adminStore.fetchUnapprovedUsers();
+  //todo: do i need it here?
+
 });
 </script>
 
@@ -52,12 +56,16 @@ onMounted(async () => {
         <ul class="nav-items">
           <li id="unapprovedUsers" class="nav-item" @click="selectComponent('unapprovedUsers')">Users Request</li>
           <li id="approvedUsers" class="nav-item" @click="selectComponent('approvedUsers')">Create Account</li>
+          <li id="transferFunds" class="nav-item" @click="selectComponent('transferFunds')">Transfer Funds</li>
+          <li id="allAccounts" class="nav-item" @click="selectComponent('allAccounts')">Account list</li>
           <li id="logout" class="nav-item" @click="logout">Logout</li>
         </ul>
       </div>
       <div class="content-container">
         <UnapprovedUsers v-if="selectedComponent === 'unapprovedUsers'" />
         <ApprovedUsers v-if="selectedComponent === 'approvedUsers'" />
+        <TransferFunds v-if="selectedComponent === 'transferFunds'" />
+        <AllAccounts v-if="selectedComponent === 'allAccounts'"/>
       </div>
     </div>
   </main>
@@ -108,6 +116,7 @@ li {
 
 #unapprovedUsers:hover,
 #approvedUsers:hover,
+#transferFunds:hover,
 #logout:hover {
   background-color: hsla(160, 100%, 40%, 0.2);
 }

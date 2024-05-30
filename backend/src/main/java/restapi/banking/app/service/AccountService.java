@@ -1,12 +1,13 @@
 package restapi.banking.app.service;
 
-
-
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import jakarta.persistence.EntityNotFoundException;
 import restapi.banking.app.dto.mapper.AccountMapper;
 import restapi.banking.app.model.Account;
 import restapi.banking.app.dto.AccountDTO;
-
+import restapi.banking.app.dto.IbanDTO;
 import restapi.banking.app.model.AccountType;
 import restapi.banking.app.model.User;
 import restapi.banking.app.repository.AccountRepository;
@@ -21,17 +22,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class AccountService {
     private final AccountRepository accountRepository;
     private final AccountMapper accountMapper;
     private final UserRepository userRepository;
 
-
-    public AccountService(AccountRepository accountRepository, AccountMapper accountMapper, UserRepository userRepository) {
-        this.accountMapper = accountMapper;
-        this.accountRepository = accountRepository;
-        this.userRepository = userRepository;
-    }
 
     public List<AccountDTO> getAllAccounts() {
         return accountRepository.findAll().stream()
@@ -57,6 +53,26 @@ public class AccountService {
 
         return List.of(savingsAccountDTO, checkingAccountDTO);
     }
+
+    public List<IbanDTO> findIbansByUserName(String firstName, String lastName) {
+        Optional<User> user = userRepository.findByFirstNameAndLastName(firstName, lastName);
+        
+        if (user.isPresent()) {
+            List<Account> accounts = accountRepository.findAccountsByUserId(user.get().getId());
+
+            if (accounts.isEmpty()) {
+                throw new EntityNotFoundException(firstName + " " + lastName + " has no approved accounts yet.");
+            }
+
+            return accounts.stream()
+                    .map(account -> new IbanDTO(account.getIban(), account.getAccountType()))
+                    .collect(Collectors.toList());
+
+        } else {
+           throw new EntityNotFoundException("Customer not found");
+        }
+    }
+
 
     //Private functions
     private User getUserFromRepository(UUID userId) {
@@ -100,7 +116,24 @@ public class AccountService {
         return accountMapper.convertAccountToAccountDTO(savedAccount);
     }
 
+    // update account by account id
+    public AccountDTO updateAccount(UUID accountId, AccountDTO accountDTO) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+        account.setAbsoluteLimit(accountDTO.getAbsoluteLimit());
+        account.setTransactionLimit(accountDTO.getTransactionLimit());
 
+        Account savedAccount = accountRepository.save(account); // save updated account to repository
+        return accountMapper.convertAccountToAccountDTO(savedAccount);
+    }
+
+    public AccountDTO deactivateAccount(UUID accountId) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+        account.setActive(false);
+        Account updatedAccount = accountRepository.save(account);
+        return accountMapper.convertAccountToAccountDTO(updatedAccount);
+    }
 
 
     //TODO: Check with Dan
@@ -140,7 +173,6 @@ public class AccountService {
         return createdAccounts;
     }
     */
-
 
 }
 

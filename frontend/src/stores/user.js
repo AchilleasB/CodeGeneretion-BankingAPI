@@ -10,7 +10,7 @@ export const useUserStore = defineStore('userStore', {
     bsn: "",
     phone: "",
     role: "",
-    dailyLimit: "",
+    dailyLimit: 0,
     approved: ""
   }),
 
@@ -31,5 +31,16 @@ export const useUserStore = defineStore('userStore', {
         console.error("Error loading user details:", err);
       }
     },
+    async updateUserDailyLimit(userId, dailyLimit) {
+      try {
+        const response = await axios.put(`/users/${userId}`, { dailyLimit });
+        this.userDetails = { ...this.userDetails, dailyLimit: response.data.dailyLimit };
+      } catch (error) {
+        console.error('Failed to update user daily limit:', error);
+        throw error;
+      }
+    },
+
   },
+
 });

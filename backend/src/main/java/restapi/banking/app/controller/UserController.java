@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import restapi.banking.app.dto.AccountDTO;
 import restapi.banking.app.dto.UserDTO;
 import restapi.banking.app.service.UserService;
 
@@ -48,12 +49,32 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserDTO> getAllUsers() {
-        return userService.getAllUsers();
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        List<UserDTO> users = userService.getAllUsers();
+        return ResponseEntity.ok(users);
     }
 
+    @PreAuthorize("hasRole('EMPLOYEE') or @securityExpressions.isSameUserOrEmployee(authentication, #userId)")
     @GetMapping("/{userId}")
-    public UserDTO getUserById(@PathVariable UUID userId) {
-        return userService.findUserById(userId);
+    public ResponseEntity<UserDTO> getUserById(@PathVariable UUID userId) {
+        UserDTO user = userService.findUserById(userId);
+        return ResponseEntity.ok(user);
     }
+
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    @PutMapping("/{userId}")
+    public ResponseEntity<UserDTO> updateDailyLimit(
+            @PathVariable UUID userId,
+            @RequestBody UserDTO userDTO) {
+        if (userDTO.getDailyLimit() <= 0) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        UserDTO updatedUser = userService.updateDailyLimit(userId, userDTO.getDailyLimit());
+        return ResponseEntity.ok(updatedUser);
+    }
+
+
+
+
 }

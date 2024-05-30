@@ -8,6 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import restapi.banking.app.dto.AccountDTO;
+import restapi.banking.app.dto.IbanDTO;
 import restapi.banking.app.service.AccountService;
 
 import java.util.List;
@@ -37,6 +38,35 @@ public class AccountController {
     public ResponseEntity<List<AccountDTO>> createAccounts(@RequestBody AccountDTO accountDTO) {
         List<AccountDTO> createdAccounts = accountService.createAccounts(accountDTO);
         return new ResponseEntity<>(createdAccounts, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/ibans")
+    @PreAuthorize("hasRole('EMPLOYEE') or hasRole('CUSTOMER')")
+    public ResponseEntity<List<IbanDTO>> getIbansByUserName(@RequestParam String firstName, @RequestParam String lastName) {
+        List<IbanDTO> ibans = accountService.findIbansByUserName(firstName, lastName);
+        return ResponseEntity.status(HttpStatus.OK).body(ibans);
+    }
+
+    @PutMapping("/{accountId}")
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<AccountDTO> updateAccount(@PathVariable UUID accountId, @RequestBody AccountDTO accountDTO) {
+        try {
+            AccountDTO updatedAccount = accountService.updateAccount(accountId, accountDTO);
+            return new ResponseEntity<>(updatedAccount, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/deactivate/{accountId}")
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<AccountDTO> deactivateAccount(@PathVariable UUID accountId) {
+        try {
+            AccountDTO updatedAccount = accountService.deactivateAccount(accountId);
+            return new ResponseEntity<>(updatedAccount, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 
