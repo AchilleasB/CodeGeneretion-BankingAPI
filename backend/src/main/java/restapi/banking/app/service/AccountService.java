@@ -80,11 +80,6 @@ public class AccountService {
         return account;
     }
 
-    private AccountDTO createAndSaveAccount(AccountDTO accountDTO, AccountType accountType, String iban, LocalDate openingDate, User user) {
-        Account account = createAccount(accountDTO, accountType, iban, openingDate, user);
-        Account savedAccount = accountRepository.save(account);
-        return accountMapper.convertAccountToAccountDTO(savedAccount);
-    }
 
     private void validateAccountDTO(AccountDTO accountDTO) {
         if (accountDTO.getBalance().compareTo(BigDecimal.ZERO) < 0) {
@@ -97,7 +92,15 @@ public class AccountService {
             throw new IllegalArgumentException("Transaction limit cannot be negative");
         }
     }
-    
+
+
+    private AccountDTO createAndSaveAccount(AccountDTO accountDTO, AccountType accountType, String iban, LocalDate openingDate, User user) {
+        Account account = createAccount(accountDTO, accountType, iban, openingDate, user);
+        Account savedAccount = accountRepository.save(account);
+        return accountMapper.convertAccountToAccountDTO(savedAccount);
+    }
+
+
 
 
 
