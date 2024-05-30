@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Data
-@Table(name= "accounts")
+@Table(name = "accounts")
 public class Account {
     @Id
     @Column(name = "id")
@@ -33,11 +33,10 @@ public class Account {
     @Column(name = "opening_date")
     private LocalDate openingDate;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     @JsonBackReference // Prevents cyclic serialization
     private User user;
-
 
     @Column(name = "absolute_limit")
     private BigDecimal absoluteLimit;
