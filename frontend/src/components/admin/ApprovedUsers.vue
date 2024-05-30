@@ -18,7 +18,6 @@
         <AccountForm
           v-if="selectedUserId === user.id"
           :userId="user.id"
-          :accountCreated="user.accountCreated"
           @accountCreated="handleAccountCreated"
         />
       </li>
@@ -27,10 +26,9 @@
 </template>
 
 <script>
-import { useAdminStore } from '@/stores/admin';
+import { useAdminStore } from '@/stores/Admin';
 import { computed, onMounted, ref } from 'vue';
 import AccountForm from './AccountForm.vue';
-
 
 export default {
   name: 'ApprovedUsers',
@@ -42,23 +40,18 @@ export default {
     const approvedUsers = computed(() => adminStore.approvedUsers);
     const isLoading = computed(() => adminStore.isLoading);
     const selectedUserId = ref(null);
-    const message = ref("");
 
     onMounted(async () => {
-      const response= await adminStore.fetchApprovedUsers();
-      
-
+      await adminStore.fetchApprovedUsers();
     });
 
     const showForm = (userId) => {
-   selectedUserId.value = userId;
+      selectedUserId.value = userId;
+    };
 
-};
-
-
-    const handleAccountCreated = (userId) => {
-      adminStore.markAccountCreated(userId);
-      selectedUserId.value = null; // Reset the form display
+    const handleAccountCreated = async () => {
+      await adminStore.fetchApprovedUsers(); // Refresh the list after account creation
+      selectedUserId.value = null; // Reset the selected user
     };
 
     return {

@@ -43,6 +43,7 @@ public class AccountService {
 
 
     public List<AccountDTO> createAccounts(AccountDTO accountDTO) {
+        validateAccountDTO(accountDTO);
         LocalDate today = LocalDate.now();
         User user = getUserFromRepository(accountDTO.getUserId());
         Map<String, String> ibans = getIBANsForAccounts();
@@ -95,6 +96,20 @@ public class AccountService {
         return account;
     }
 
+
+    private void validateAccountDTO(AccountDTO accountDTO) {
+        if (accountDTO.getBalance().compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Balance cannot be negative");
+        }
+        if (accountDTO.getAbsoluteLimit().compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Absolute limit cannot be negative");
+        }
+        if (accountDTO.getTransactionLimit().compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Transaction limit cannot be negative");
+        }
+    }
+
+
     private AccountDTO createAndSaveAccount(AccountDTO accountDTO, AccountType accountType, String iban, LocalDate openingDate, User user) {
         Account account = createAccount(accountDTO, accountType, iban, openingDate, user);
         Account savedAccount = accountRepository.save(account);
@@ -119,6 +134,7 @@ public class AccountService {
         Account updatedAccount = accountRepository.save(account);
         return accountMapper.convertAccountToAccountDTO(updatedAccount);
     }
+
 
     //TODO: Check with Dan
     /*public List<AccountDTO> createAccounts(AccountDTO accountDTO) {

@@ -10,7 +10,6 @@
         <label for="absoluteLimit">Absolute Limit:</label>
         <input type="number" id="absoluteLimit" v-model="account.absoluteLimit" required min="0" />
       </div>
-      
       <div>
         <label for="transactionLimit">Transaction Limit:</label>
         <input type="number" id="transactionLimit" v-model="account.transactionLimit" required min="0" />
@@ -30,10 +29,6 @@ export default {
       type: String,
       required: true,
     },
-    accountCreated: {
-      type: Boolean,
-      default: false,
-    },
   },
   data() {
     return {
@@ -50,7 +45,7 @@ export default {
       const accountStore = useAccountStore();
       try {
         await accountStore.createAccounts({ ...this.account, userId: this.userId });
-        this.$emit('accountCreated', this.userId); // Emit the event with userId
+        this.$emit('accountCreated', this.userId); // Emit the event after successful creation
       } catch (error) {
         console.error('Failed to create account:', error);
       }
