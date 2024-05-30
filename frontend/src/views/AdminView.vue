@@ -6,7 +6,7 @@ import { useRouter } from 'vue-router';
 const UnapprovedUsers = defineAsyncComponent(() => import('../components/admin/UnapprovedUsers.vue'));
 const ApprovedUsers = defineAsyncComponent(() => import('../components/admin/ApprovedUsers.vue'));
 import { useAuthStore } from '../stores/auth';
-import { useAdminStore } from '../stores/admin';
+import { useAdminStore } from '../stores/Admin';
 
 
 const router = useRouter();
