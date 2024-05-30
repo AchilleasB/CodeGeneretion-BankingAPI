@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { useAdminStore } from '@/stores/admin';
+import { useAdminStore } from '@/stores/Admin';
 import { onMounted } from 'vue';
 
 
