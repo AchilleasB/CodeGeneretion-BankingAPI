@@ -6,6 +6,7 @@ import { useRouter } from 'vue-router';
 const UnapprovedUsers = defineAsyncComponent(() => import('../components/admin/UnapprovedUsers.vue'));
 const ApprovedUsers = defineAsyncComponent(() => import('../components/admin/ApprovedUsers.vue'));
 const TransferFunds = defineAsyncComponent(() => import('../components/admin/TransferFunds.vue'));
+const AllAccounts = defineAsyncComponent(() => import('../components/admin/AllAccounts.vue'));
 import { useAuthStore } from '../stores/auth';
 import { useAdminStore } from '../stores/admin';
 
@@ -56,6 +57,7 @@ onMounted(async () => {
           <li id="unapprovedUsers" class="nav-item" @click="selectComponent('unapprovedUsers')">Users Request</li>
           <li id="approvedUsers" class="nav-item" @click="selectComponent('approvedUsers')">Create Account</li>
           <li id="transferFunds" class="nav-item" @click="selectComponent('transferFunds')">Transfer Funds</li>
+          <li id="allAccounts" class="nav-item" @click="selectComponent('allAccounts')">Account list</li>
           <li id="logout" class="nav-item" @click="logout">Logout</li>
         </ul>
       </div>
@@ -63,6 +65,7 @@ onMounted(async () => {
         <UnapprovedUsers v-if="selectedComponent === 'unapprovedUsers'" />
         <ApprovedUsers v-if="selectedComponent === 'approvedUsers'" />
         <TransferFunds v-if="selectedComponent === 'transferFunds'" />
+        <AllAccounts v-if="selectedComponent === 'allAccounts'"/>
       </div>
     </div>
   </main>

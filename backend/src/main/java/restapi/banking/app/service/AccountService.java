@@ -1,7 +1,6 @@
 package restapi.banking.app.service;
 
-
-
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -23,17 +22,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class AccountService {
     private final AccountRepository accountRepository;
     private final AccountMapper accountMapper;
     private final UserRepository userRepository;
 
-
-    public AccountService(AccountRepository accountRepository, AccountMapper accountMapper, UserRepository userRepository) {
-        this.accountMapper = accountMapper;
-        this.accountRepository = accountRepository;
-        this.userRepository = userRepository;
-    }
 
     public List<AccountDTO> getAllAccounts() {
         return accountRepository.findAll().stream()
@@ -107,7 +101,24 @@ public class AccountService {
         return accountMapper.convertAccountToAccountDTO(savedAccount);
     }
 
+    // update account by account id
+    public AccountDTO updateAccount(UUID accountId, AccountDTO accountDTO) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+        account.setAbsoluteLimit(accountDTO.getAbsoluteLimit());
+        account.setTransactionLimit(accountDTO.getTransactionLimit());
 
+        Account savedAccount = accountRepository.save(account); // save updated account to repository
+        return accountMapper.convertAccountToAccountDTO(savedAccount);
+    }
+
+    public AccountDTO deactivateAccount(UUID accountId) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+        account.setActive(false);
+        Account updatedAccount = accountRepository.save(account);
+        return accountMapper.convertAccountToAccountDTO(updatedAccount);
+    }
 
     //TODO: Check with Dan
     /*public List<AccountDTO> createAccounts(AccountDTO accountDTO) {
@@ -146,7 +157,6 @@ public class AccountService {
         return createdAccounts;
     }
     */
-
 
 }
 
