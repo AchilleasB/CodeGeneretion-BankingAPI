@@ -28,7 +28,7 @@ public class UserController {
     @PreAuthorize("hasRole('EMPLOYEE') or @securityExpressions.isSameUserOrEmployee(authentication, #userId)")
     @GetMapping("/approved")
     public ResponseEntity<List<UserDTO>> listApprovedUsers() {
-        List<UserDTO> userDTOs = userService.findApprovedUsers();
+        List<UserDTO> userDTOs = userService.findApprovedUsersWithoutAccount();
         return ResponseEntity.ok(userDTOs);
     }
 

@@ -2,15 +2,12 @@ import { defineStore } from 'pinia';
 import axios from '../axios-auth';
 
 export const useAdminStore = defineStore('adminStore', {
-
   state: () => ({
     approvedUsers: [],
     unapprovedUsers: [],
-    usersWithCreatedAccounts: [],
     isLoading: false,
     error: null,
   }),
-
 
   actions: {
     async fetchUnapprovedUsers() {
@@ -31,7 +28,6 @@ export const useAdminStore = defineStore('adminStore', {
         this.unapprovedUsers = this.unapprovedUsers.filter(user => user.id !== userId);
       } catch (error) {
         this.error = error.message;
-       
       }
     },
     async approveUser(userId) {
@@ -42,27 +38,18 @@ export const useAdminStore = defineStore('adminStore', {
         this.approvedUsers.push({ ...user, accountCreated: false });
       } catch (error) {
         this.error = error.message;
-      
       }
     },
     async fetchApprovedUsers() {
       this.isLoading = true;
       try {
         const response = await axios.get('users/approved');
-        this.approvedUsers = response.data.map(user => ({ ...user, accountCreated: false }));
+        this.approvedUsers = response.data;
       } catch (error) {
         this.error = error.message;
       } finally {
         this.isLoading = false;
       }
     },
-    async markAccountCreated(userId) {
-      const userIndex = this.approvedUsers.findIndex(user => user.id === userId);
-      if (userIndex !== -1) {
-        const user = this.approvedUsers.splice(userIndex, 1)[0];
-        user.accountCreated = true;
-        this.usersWithCreatedAccounts.push(user);
-      }
-    }
   }
 });

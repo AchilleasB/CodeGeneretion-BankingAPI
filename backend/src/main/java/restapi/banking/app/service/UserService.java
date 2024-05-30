@@ -1,16 +1,19 @@
 package restapi.banking.app.service;
 
+
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import restapi.banking.app.dto.UserDTO;
 import restapi.banking.app.dto.mapper.UserMapper;
+
 import restapi.banking.app.model.User;
 import restapi.banking.app.model.UserRole;
 import restapi.banking.app.repository.UserRepository;
 
-import java.math.BigDecimal;
+import java.lang.Double;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -21,13 +24,17 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final AccountService accountRepository;
     @Value("${default.dailyLimit:5000}")
+
     private Double dailyLimit;
 
-    public UserService(UserRepository userRepository, UserMapper userMapper) {
+    public UserService(UserRepository userRepository, UserMapper userMapper, AccountService accountRepository) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.accountRepository = accountRepository;
     }
+
 
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream()
@@ -56,12 +63,11 @@ public class UserService {
         }
         return unapprovedUserDTOs;
     }
-
-    public List<UserDTO> findApprovedUsers() {
+    public List<UserDTO> findApprovedUsersWithoutAccount() {
         return userRepository.findByApprovedAndRole(true, UserRole.Customer).stream()
+                .filter(user -> accountRepository.findAccountByUserId(user.getId()).isEmpty())
                 .map(userMapper::convertUserToUserDTO)
                 .collect(Collectors.toList());
-
     }
 
     public UserDTO approveUser(UUID userId) {
