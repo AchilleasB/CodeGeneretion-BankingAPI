@@ -40,6 +40,7 @@ export const useAdminStore = defineStore('adminStore', {
         this.error = error.message;
       }
     },
+    
     async fetchApprovedUsers() {
       this.isLoading = true;
       try {
