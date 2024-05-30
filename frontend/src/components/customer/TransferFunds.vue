@@ -108,7 +108,7 @@ const submitTransfer = async () => {
       </div>
       <div class="card">
         <label for="description">Description</label>
-        <textarea id="description" v-model="message" required maxlength="150" placeholder="Enter description (max 150 characters)"></textarea>
+        <textarea id="description" v-model="message" maxlength="150" placeholder="Enter description (max 150 characters)"></textarea>
       </div>
       <div class="card button-card">
         <button type="submit" class="btn-green" @click.prevent="submitTransfer">Submit</button>

@@ -1,11 +1,11 @@
-<!-- File path: src/components/TransferFundsAdmin.vue -->
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { useTransactionStore } from '../../stores/transaction';
+import { useAccountStore } from '../../stores/account';
 import loadingGif from '../../assets/loading-gif.gif';
 
-
 const transactionStore = useTransactionStore();
+const accountStore = useAccountStore();
 
 const ibanFrom = ref('');
 const ibanTo = ref('');
@@ -43,9 +43,9 @@ const transferFunds = async () => {
     if (!isValidAmount.value) {
         errorMessage.value = 'Failed to transfer: Amount must be higher than €0.00';
         isLoading.value = false;
+        transferAmount.value = 0;
         setTimeout(() => {
             errorMessage.value = '';
-            transferAmount.value = 0;
         }, 3000);
         return;
     }
@@ -74,7 +74,8 @@ const transferFunds = async () => {
         console.log(response);
         successMessage.value = 'Transfer successful!';
     } catch (error) {
-        errorMessage.value = error.message;
+      console.log(error   )
+      errorMessage.value = error.message;
     }
 
     isLoading.value = false;
@@ -84,15 +85,52 @@ const transferFunds = async () => {
         errorMessage.value = '';
     }, 4000);
 };
+
+// Сode for searching IBANs
+const searchUsername = ref('');
+const ibanResults = ref([]);
+const ibanField = ref('');
+
+const searchIbans = async () => {
+  if (searchUsername.value.trim() === '') {
+    alert('Please enter a valid username.');
+    return;
+  }
+
+  const [firstName, lastName] = searchUsername.value.split(' ');
+  isLoading.value = true;
+  try {
+    const response = await accountStore.searchIbansByUsername(firstName, lastName);
+    ibanResults.value = response.data;
+  } catch (error) {
+    console.error('Error fetching IBANs:', error);
+  }
+  isLoading.value = false;
+};
+
+const populateRecipientIban = (iban) => {
+  if (ibanField.value === 'sender') {
+    ibanFrom.value = iban;
+  } else if (ibanField.value === 'recipient') {
+    ibanTo.value = iban;
+  }
+};
+
+// watch for changes in searchUsername and clear ibanResults
+watch(searchUsername, () => {
+  ibanResults.value = [];
+});
 </script>
 
 <template>
-  <h1>Transfer Funds</h1>
-  <div class="container text-center">
-    <div class="row justify-content-center">
-      <div class="col-6">
+  <h1>Transfer Funds Menu</h1>
+  <div class="container">
+    <div class="row">
+      <!-- Left column: Transfer funds form -->
+      <div class="col-12 col-md-6">
         <div class="card small-card">
-          <div class="card-body">
+          <div class="card-body pt-0">
+            <h5 class="card-title">Form to transfer funds</h5>
             <div class="transfer-funds">
               <form method="POST">
                 <div class="form-group">
@@ -109,13 +147,37 @@ const transferFunds = async () => {
                 </div>
                 <div class="form-group">
                   <label for="description">Description</label>
-                  <input type="text" id="description" v-model="description" placeholder="e.g. : Business expences"/>
+                  <input type="text" id="description" v-model="description" placeholder="e.g. : Business expenses"/>
                 </div>
-                <button type="submit" @click.prevent="transferFunds">Transfer</button>
+                <button type="submit" class="wide-button" @click.prevent="transferFunds">Transfer</button>
                 <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
                 <p v-if="successMessage" class="success">{{ successMessage }}</p>
               </form>
               <img v-if="isLoading" :src="loadingGif" alt="Loading" class="loading-gif">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right column: Search IBANs by Username -->
+      <div class="col-12 col-md-6">
+        <div class="card small-card">
+          <h5 class="card-title">Search IBANs by customer name</h5>
+          <div class="search-container">
+            <input v-model="searchUsername" id="searchUsername" class="no-right-padding" placeholder="e.g. : John Doe" />
+            <button class="btn-blue" @click="searchIbans">Search</button>
+          </div>
+
+          <!-- Display IBANs -->
+          <div v-if="ibanResults.length > 0" class="iban-results">
+            <h4 class="iban-results-title">IBANs for {{ searchUsername }}</h4>
+            <div v-for="iban in ibanResults" :key="iban.iban" class="iban-card">
+              <p class="account-type">{{ iban.accountType }}</p>
+              <p class="iban">{{ iban.iban }}</p>
+              <div class="iban-buttons">
+                <button @click="ibanField = 'sender'; populateRecipientIban(iban.iban)">Sender's IBAN</button>
+                <button @click="ibanField = 'recipient'; populateRecipientIban(iban.iban)">Recipient's IBAN</button>
+              </div>
             </div>
           </div>
         </div>
@@ -149,8 +211,6 @@ button {
   margin: 8px 0;
   border: none;
   cursor: pointer;
-  width: 100%;
-  font-size: 16px; 
   transition: background-color 0.3s; 
 }
 
@@ -158,11 +218,20 @@ button:hover {
   background-color: #45A049; 
 }
 
+.wide-button {
+  width: 100%;
+  font-size: 16px;
+}
+
 input {
   padding: 10px;
   margin: 10px 0;
   width: calc(100% - 20px); 
   margin-right: 20px; 
+}
+
+.no-right-padding {
+  margin-right: 0;
 }
 
 .form-group {
@@ -175,6 +244,13 @@ input {
 label {
   margin-right: 10px;
   width: 30%; 
+}
+
+.card-title {
+  text-align: center;
+  font-weight: bold;
+  margin-bottom:15px;
+  margin-top: 5px;
 }
 
 .error {
@@ -192,5 +268,56 @@ label {
   width: 50px;
   height: 50px;
   z-index: 1000;
+}
+
+.search-container {
+  display: flex;
+  gap: 1em;
+}
+
+.iban-results {
+  display: flex;
+  flex-direction: column;
+}
+
+.iban-card {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: .5em 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 2px 2px 5px #ccc;
+}
+
+.iban-results-title {
+  padding-top: 10px;
+}
+
+.account-type {
+  font-weight: bold;
+}
+
+.iban-buttons {
+  display: flex;
+  gap: 0.5em;
+}
+
+button {
+  margin-top: 10px;
+  width: auto;
+  padding: 10px;
+}
+
+#searchUsername {
+  width: calc(100% - 20px); 
+  padding: 10px;
+}
+
+@media (max-width: 768px) {
+  .row {
+    flex-direction: column-reverse;
+  }
 }
 </style>

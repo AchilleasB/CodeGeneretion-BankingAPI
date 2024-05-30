@@ -86,25 +86,25 @@ public class TransactionService {
     }
 
     public TransactionDTO createTransaction(TransactionDTO requestDTO) {
-//        testBalance(requestDTO);
+
+        isTheAmountCorrect(requestDTO.getAmount());
+        areIbansTheSame(requestDTO.getIbanFrom(), requestDTO.getIbanTo());
 
         // Using authentication to get a user's ID
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = (User) authentication.getPrincipal();
 
+        //Iban checks
         if(user.getRole().equals(UserRole.Employee))
         {
             IbanValidation(requestDTO.getIbanFrom(), "Sender");
             doesIbanExists(requestDTO.getIbanFrom(), "Sender");
         }
-
-        //general Iban checks
         IbanValidation(requestDTO.getIbanTo(), "Recipient");
         doesIbanExists(requestDTO.getIbanTo(), "Recipient");
 
         // AccountFrom checks
         Account accountFrom = accountRepository.findByIban(requestDTO.getIbanFrom());
-        User userFrom = accountFrom.getUser();
         isEnoughBalance(accountFrom, requestDTO.getAmount());
         checkLimits(accountFrom, requestDTO.getAmount());
 
@@ -112,7 +112,6 @@ public class TransactionService {
         Account accountTo = accountRepository.findByIban(requestDTO.getIbanTo());
         BigDecimal amount = requestDTO.getAmount();
         transferAmounts(accountFrom, accountTo, amount);
-
 
         Transaction transaction = new Transaction(); // needs to be done that way to pass correct UUID in the response
         transaction.setAccountTo(accountTo);
@@ -141,7 +140,7 @@ public class TransactionService {
             throw new IllegalArgumentException(whichIban + "'s IBAN must start with \'NL\'");
         if (!iban.substring(2).matches("\\d{2}[A-Z]{4}\\d{10}"))
             throw new IllegalArgumentException(whichIban + "'s IBAN format is invalid");
-        checksum(iban);
+        checksum(iban, whichIban);
     }
     private void doesIbanExists(String iban, String whichIban)
     {
@@ -171,7 +170,7 @@ public class TransactionService {
             throw new IllegalArgumentException("Account's absolute limit is exceeded");
     }
 
-    private void checksum(String iban) {
+    private void checksum(String iban, String whichIban) {
         String accountNumber = iban.substring(8);
 
         for (int i = 7; i >= 4; i--) {
@@ -189,7 +188,7 @@ public class TransactionService {
 
         String checkDigits = iban.substring(2, 4);
         if (!twoDigits.equals(checkDigits))
-            throw new IllegalArgumentException("Invalid IBAN");
+            throw new IllegalArgumentException(whichIban + "'s IBAN is invalid");
     }
 
     private void transferAmounts(Account accountFrom, Account accountTo, BigDecimal amount) {
@@ -212,4 +211,13 @@ public class TransactionService {
         System.out.println();
     }
 
+    private void isTheAmountCorrect(BigDecimal amount) {
+        if(amount.compareTo((new BigDecimal("0"))) <= 0)
+            throw new IllegalArgumentException("Amount must be higher than €0.00");
+    }
+
+    private void areIbansTheSame(String IbanFrom, String IbanTo){
+        if(IbanFrom.equals(IbanTo))
+            throw new IllegalArgumentException("IBAN of recipient and sender must be different");
+    }
 }
