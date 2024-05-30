@@ -47,4 +47,29 @@ public class AccountController {
         return ResponseEntity.status(HttpStatus.OK).body(ibans);
     }
 
+    @PutMapping("/{accountId}")
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<AccountDTO> updateAccount(@PathVariable UUID accountId, @RequestBody AccountDTO accountDTO) {
+        try {
+            AccountDTO updatedAccount = accountService.updateAccount(accountId, accountDTO);
+            return new ResponseEntity<>(updatedAccount, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PutMapping("/deactivate/{accountId}")
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<AccountDTO> deactivateAccount(@PathVariable UUID accountId) {
+        try {
+            AccountDTO updatedAccount = accountService.deactivateAccount(accountId);
+            return new ResponseEntity<>(updatedAccount, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
+
+
 }
