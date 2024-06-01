@@ -73,6 +73,25 @@ public class AccountService {
         }
     }
 
+     // update account by account id
+     public AccountDTO updateAccount(UUID accountId, AccountDTO accountDTO) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+        account.setAbsoluteLimit(accountDTO.getAbsoluteLimit());
+        account.setTransactionLimit(accountDTO.getTransactionLimit());
+
+        Account savedAccount = accountRepository.save(account); // save updated account to repository
+        return accountMapper.convertAccountToAccountDTO(savedAccount);
+    }
+
+    public AccountDTO deactivateAccount(UUID accountId) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+        account.setActive(false);
+        Account updatedAccount = accountRepository.save(account);
+        return accountMapper.convertAccountToAccountDTO(updatedAccount);
+    }
+
 
     //Private functions
     private User getUserFromRepository(UUID userId) {
@@ -116,26 +135,7 @@ public class AccountService {
         return accountMapper.convertAccountToAccountDTO(savedAccount);
     }
 
-    // update account by account id
-    public AccountDTO updateAccount(UUID accountId, AccountDTO accountDTO) {
-        Account account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new RuntimeException("Account not found"));
-        account.setAbsoluteLimit(accountDTO.getAbsoluteLimit());
-        account.setTransactionLimit(accountDTO.getTransactionLimit());
-
-        Account savedAccount = accountRepository.save(account); // save updated account to repository
-        return accountMapper.convertAccountToAccountDTO(savedAccount);
-    }
-
-    public AccountDTO deactivateAccount(UUID accountId) {
-        Account account = accountRepository.findById(accountId)
-                .orElseThrow(() -> new RuntimeException("Account not found"));
-        account.setActive(false);
-        Account updatedAccount = accountRepository.save(account);
-        return accountMapper.convertAccountToAccountDTO(updatedAccount);
-    }
-
-
+   
     //TODO: Check with Dan
     /*public List<AccountDTO> createAccounts(AccountDTO accountDTO) {
         List<Account> accounts = new ArrayList<>();

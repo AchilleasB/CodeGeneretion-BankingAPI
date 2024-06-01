@@ -32,9 +32,4 @@ public class SecurityExpressions {
         return authUserId.equals(userId) || isEmployee;
     }
 
-    public boolean isLoggedIn(Authentication authentication) {
-        return authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_EMPLOYEE"))
-                || authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
-    }
-
 }
