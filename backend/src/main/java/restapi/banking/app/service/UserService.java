@@ -48,12 +48,6 @@ public class UserService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + userId));
     }
 
-    private void isUserAdult(LocalDate dateOfBirth) {
-        if (dateOfBirth == null || dateOfBirth.plusYears(18).isAfter(LocalDate.now())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User should be at least 18 years old");
-        }
-    }
-
     public List<UserDTO> findUnapprovedUsers() {
         List<UserDTO> unapprovedUserDTOs = userRepository.findByApprovedAndRole(false, UserRole.Customer).stream()
                 .map(userMapper::convertUserToUserDTO)
