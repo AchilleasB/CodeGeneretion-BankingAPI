@@ -142,6 +142,8 @@ public class TransactionService {
             throw new IllegalArgumentException(whichIban + "'s IBAN format is invalid");
         checksum(iban, whichIban);
     }
+
+    // TODO: why query two times for the same IBAN? 
     private void doesIbanExists(String iban, String whichIban)
     {
         Account account = accountRepository.findByIban(iban);

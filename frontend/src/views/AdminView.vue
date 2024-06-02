@@ -8,7 +8,7 @@ const ApprovedUsers = defineAsyncComponent(() => import('../components/admin/App
 const TransferFunds = defineAsyncComponent(() => import('../components/admin/TransferFunds.vue'));
 const AllAccounts = defineAsyncComponent(() => import('../components/admin/AllAccounts.vue'));
 import { useAuthStore } from '../stores/auth';
-import { useAdminStore } from '../stores/Admin';
+import { useAdminStore } from '../stores/admin';
 
 
 const router = useRouter();

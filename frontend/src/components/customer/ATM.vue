@@ -8,13 +8,13 @@ const accountStore = useAccountStore();
 
 const accountType = ref('CHECKING');
 const transactionType = ref('WITHDRAW');
-const amount = ref(0);
+const amount = ref(10);
 const successMessage = ref('');
 const errorMessage = ref('');
 
 const isValidAmount = ref(true);
 const validateAmount = () => {
-    if (amount.value < 0 || amount.value === 0) {
+    if (amount.value < 10) {
         isValidAmount.value = false;
     } else {
         isValidAmount.value = true;
@@ -30,11 +30,7 @@ const submitATMTransaction = async () => {
     validateAmount();
 
     if (!isValidAmount.value) {
-        errorMessage.value = 'Amount must be higher than €10.00';
-        setTimeout(() => {
-            errorMessage.value = '';
-            amount.value = 0;
-        }, 3000);
+        errorMessage.value = 'Amount must be at least €10.00';
         return;
     }
 
@@ -63,7 +59,7 @@ const submitATMTransaction = async () => {
     setTimeout(() => {
         successMessage.value = '';
         errorMessage.value = '';
-        amount.value = 0;
+        amount.value = 10;
     }, 3000);
 
 };
@@ -104,7 +100,7 @@ const submitATMTransaction = async () => {
                 <div class="card-row">
                     <div class="card">
                         <label for="amount">Type Amount in €:</label>
-                        <input type="number" v-model.number="amount" id="amount" min="0" required />
+                        <input type="number" v-model.number="amount" id="amount" min="10" required />
                     </div>
                     <div class="card">
                         <button class="submit-btn" @click="submitATMTransaction">Submit</button>
