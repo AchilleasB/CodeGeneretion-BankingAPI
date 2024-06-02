@@ -30,8 +30,6 @@ const logout = async() => {
 
 onMounted(async () => {
     const userId = authStore.id;
-    // console.log(userId);
-    await accountStore.getCustomerAccounts(userId);
     await userStore.loadUserDetails(userId);
     // console.log(accountStore.accounts);
 })

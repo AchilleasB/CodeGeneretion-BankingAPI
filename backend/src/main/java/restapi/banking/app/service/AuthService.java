@@ -4,6 +4,7 @@ import restapi.banking.app.dto.LoginRequestDTO;
 import restapi.banking.app.dto.LoginResponseDTO;
 import restapi.banking.app.dto.RegistrationDTO;
 import restapi.banking.app.dto.UserDTO;
+import restapi.banking.app.exception.UserNotApprovedException;
 import restapi.banking.app.model.User;
 import restapi.banking.app.model.UserRole;
 import restapi.banking.app.repository.UserRepository;
@@ -12,15 +13,12 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.modelmapper.ModelMapper;
 
@@ -49,39 +47,37 @@ public class AuthService {
     }
 
     public LoginResponseDTO login(LoginRequestDTO loginRequest) {
-    try {
-        // Use AuthenticationManager to authenticate the user
-        Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
-        );
+        try {
+            // Use AuthenticationManager to authenticate the user
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
-        // Get the authenticated user details and cast it to User
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User user = (User) userDetails;
-        
-        // Check if the user is approved
-        if (!user.isApproved()) {
-            throw new AccessDeniedException("User not approved yet");
+            // Get the authenticated user details and cast it to User
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            User user = (User) userDetails;
+
+            // Check if the user is approved
+            if (!user.isApproved()) {
+                throw new UserNotApprovedException(user.getFirstName()+ " "+ user.getLastName() +" is waiting for approval.");
+            }
+
+            String jwtToken = JwtService.generateToken(userDetails);
+
+            LoginResponseDTO responseDTO = new LoginResponseDTO();
+            responseDTO.setJwtToken(jwtToken);
+
+            UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+            responseDTO.setUser(userDTO);
+
+            return responseDTO;
+
+        } catch (AuthenticationException ex) {
+            throw new BadCredentialsException("Invalid email or password", ex);
         }
-        
-        String jwtToken = JwtService.generateToken(userDetails);
-
-        LoginResponseDTO responseDTO = new LoginResponseDTO();
-        responseDTO.setJwtToken(jwtToken);
-
-        UserDTO userDTO = modelMapper.map(user, UserDTO.class);
-        responseDTO.setUser(userDTO);
-
-        return responseDTO;
-
-    } catch (AuthenticationException ex) {
-        throw new BadCredentialsException("Invalid email or password", ex);
     }
-}
-
 
     // private functions
-    
+
     private void validateRegistrationData(RegistrationDTO registrationDTO) {
         doesEmailExist(registrationDTO.getEmail());
         isBsnValid(registrationDTO.getBsn());

@@ -2,14 +2,19 @@
 import { onMounted, ref } from 'vue';
 import { useUserStore } from '../../stores/user';
 import { useAccountStore } from '../../stores/account';
+import { useAuthStore } from '../../stores/auth';
 
 const userStore = useUserStore();
 const accountStore = useAccountStore();
+const authStore = useAuthStore();
 
 const iban = ref('');
 const balance = ref(0);
 
 onMounted(async () => {
+  const userId = authStore.id;
+  await accountStore.getCustomerAccounts(userId);
+
   const savingsAccount = accountStore.getSavingsAccount[0];
 
   if (savingsAccount) {
