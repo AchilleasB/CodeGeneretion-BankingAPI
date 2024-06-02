@@ -1,9 +1,10 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { useUserStore } from '../../stores/user';
 import { useAccountStore } from '../../stores/account';
 import { useAuthStore } from '../../stores/auth';
 import TransferFunds from './TransferFunds.vue';
+import { formatCurrency } from '@/utils/currencyFormatter'; 
 
 const userStore = useUserStore();
 const accountStore = useAccountStore();
@@ -14,6 +15,10 @@ const balance = ref(0);
 const dailyLimit = ref(0);
 const transactionLimit = ref(0);
 const absoluteLimit = ref(0);
+
+const totalBalance = computed(() => {
+  return formatCurrency(accountStore.getTotalBalance);
+});
 
 const showPaymentForm = ref(false);
 
@@ -30,15 +35,16 @@ onMounted(async () => {
 
   if (checkingAccount) {
     iban.value = checkingAccount.iban;
-    balance.value = checkingAccount.balance;
-    dailyLimit.value = userStore.dailyLimit;
-    transactionLimit.value = checkingAccount.transactionLimit;
-    absoluteLimit.value = checkingAccount.absoluteLimit;
+    balance.value = formatCurrency(checkingAccount.balance);
+    dailyLimit.value = formatCurrency(userStore.dailyLimit);
+    transactionLimit.value = formatCurrency(checkingAccount.transactionLimit);
+    absoluteLimit.value = formatCurrency(checkingAccount.absoluteLimit);
   }
 });
 </script>
 
 <template>
+  <p class="total-balance">Total Balance: {{ totalBalance }}</p>
   <h1>Checking Account</h1>
   <div class="container text-center">
     <div class="row">
@@ -56,7 +62,7 @@ onMounted(async () => {
         <div class="card">
           <div class="card-body">
             <p>Daily Limit</p>
-            <h3>€ {{ dailyLimit }}</h3>
+            <h3>{{ dailyLimit }}</h3>
           </div>
         </div>
       </div>
@@ -64,7 +70,7 @@ onMounted(async () => {
         <div class="card">
           <div class="card-body">
             <p>Transaction Limit</p>
-            <h3>€ {{ transactionLimit }}</h3>
+            <h3>{{ transactionLimit }}</h3>
           </div>
         </div>
       </div>
@@ -72,7 +78,7 @@ onMounted(async () => {
         <div class="card">
           <div class="card-body">
             <p>Absolute Limit</p>
-            <h3>€ {{ absoluteLimit }}</h3>
+            <h3>{{ absoluteLimit }}</h3>
           </div>
         </div>
       </div>
@@ -81,8 +87,8 @@ onMounted(async () => {
       <div class="col-8">
         <div class="card">
           <div class="card-body">
-            <p>Total balance</p>
-            <h2>€ {{ balance }}</h2>
+            <p>Balance</p>
+            <h2>{{ balance }}</h2>
           </div>
         </div>
       </div>
@@ -100,7 +106,7 @@ onMounted(async () => {
     </div>
 
     <!-- Payment Form -->
-    <TransferFunds v-if="showPaymentForm" :iban-from="iban" @cancel="togglePaymentForm" />
+    <TransferFunds v-if="showPaymentForm" :iban-from="iban" :totalBalance="totalBalance" @cancel="togglePaymentForm" />
   </div>
 </template>
 

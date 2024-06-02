@@ -127,7 +127,7 @@ onMounted(async () => {
           <div>{{ splitTimestamp(transaction.timestamp).time }}</div>
         </div>
         <div>{{ transaction.type }}</div>
-        <div>€{{ transaction.amount }}</div>
+        <div>{{ transaction.amount }}</div>
         <div>{{ transaction.message }}</div>
         <div class="iban-from">{{ transaction.ibanFrom }}</div>
         <div class="iban-to">{{ transaction.ibanTo }}</div>
