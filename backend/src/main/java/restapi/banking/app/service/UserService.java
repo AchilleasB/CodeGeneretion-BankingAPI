@@ -59,9 +59,9 @@ public class UserService {
 
     public List<UserDTO> findApprovedUsers() {
         return userRepository.findByApprovedAndRole(true, UserRole.Customer).stream()
+                //.filter(user -> user.getAccounts() == null || user.getAccounts().isEmpty())
                 .map(userMapper::convertUserToUserDTO)
                 .collect(Collectors.toList());
-
     }
 
     public UserDTO approveUser(UUID userId) {

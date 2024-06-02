@@ -49,7 +49,8 @@ export const useAdminStore = defineStore('adminStore', {
       this.isLoading = true;
       try {
         const response = await axios.get('users/approved');
-        this.approvedUsers = response.data.map(user => ({ ...user, accountCreated: false }));
+        this.approvedUsers = response.data;
+        //this.approvedUsers = response.data.map(user => ({ ...user, accountCreated: false }));
       } catch (error) {
         this.error = error.message;
       } finally {

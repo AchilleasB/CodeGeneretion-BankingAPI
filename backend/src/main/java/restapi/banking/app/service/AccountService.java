@@ -15,7 +15,6 @@ import restapi.banking.app.repository.UserRepository;
 import restapi.banking.app.utilities.IBANGenerator;
 
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -31,12 +30,12 @@ public class AccountService {
 
     public List<AccountDTO> getAllAccounts() {
         return accountRepository.findAll().stream()
-                .map(accountMapper::convertAccountToAccountDTO)
+                .map(accountMapper::convertAccountToDTO)
                 .collect(Collectors.toList());
     }
     public List<AccountDTO> findAccountByUserId(UUID userId) {
         return accountRepository.findAccountsByUserId(userId).stream()
-                .map(accountMapper::convertAccountToAccountDTO)
+                .map(accountMapper::convertAccountToDTO)
                 .collect(Collectors.toList());
     }
 
@@ -87,7 +86,7 @@ public class AccountService {
     }
 
     private Account createAccount(AccountDTO accountDTO, AccountType accountType, String iban, LocalDate openingDate, User user) {
-        Account account = accountMapper.convertAccountToAccount(accountDTO);
+        Account account = accountMapper.convertToAccountEntity(accountDTO);
         account.setAccountType(accountType);
         account.setIban(iban);
         account.setOpeningDate(openingDate);
@@ -98,7 +97,7 @@ public class AccountService {
     private AccountDTO createAndSaveAccount(AccountDTO accountDTO, AccountType accountType, String iban, LocalDate openingDate, User user) {
         Account account = createAccount(accountDTO, accountType, iban, openingDate, user);
         Account savedAccount = accountRepository.save(account);
-        return accountMapper.convertAccountToAccountDTO(savedAccount);
+        return accountMapper.convertAccountToDTO(savedAccount);
     }
 
     // update account by account id
@@ -109,17 +108,25 @@ public class AccountService {
         account.setTransactionLimit(accountDTO.getTransactionLimit());
 
         Account savedAccount = accountRepository.save(account); // save updated account to repository
-        return accountMapper.convertAccountToAccountDTO(savedAccount);
+        return accountMapper.convertAccountToDTO(savedAccount);
     }
 
-    public AccountDTO deactivateAccount(UUID accountId) {
+    // Method to toggle the status of an account
+    public AccountDTO toggleAccountStatus(UUID accountId) {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
-        account.setActive(false);
+        account.setActive(!account.isActive()); // Toggle the active status
         Account updatedAccount = accountRepository.save(account);
-        return accountMapper.convertAccountToAccountDTO(updatedAccount);
+        return accountMapper.convertAccountToDTO(updatedAccount);
     }
 
+    public AccountDTO findAccountByIBAN(String iban) {
+        Account account = accountRepository.findByIban(iban);
+        if (account == null) {
+            throw new EntityNotFoundException("Account not found with IBAN: " + iban);
+        }
+        return accountMapper.convertAccountToDTO(account);
+    }
     //TODO: Check with Dan
     /*public List<AccountDTO> createAccounts(AccountDTO accountDTO) {
         List<Account> accounts = new ArrayList<>();

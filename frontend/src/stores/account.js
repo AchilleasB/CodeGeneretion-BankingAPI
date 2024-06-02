@@ -61,7 +61,7 @@ export const useAccountStore = defineStore('accountStore', {
         console.log('Failed to fetch accounts with user details', error);
       }
     },
-  
+
     async createAccounts(accountData) {
       this.error = null;
       try {
@@ -98,36 +98,45 @@ export const useAccountStore = defineStore('accountStore', {
         throw error;
       }
     },
-    async deactivateAccount(account) {
+    async toggleAccountStatus(account) {
       try {
-        await axios.put(`/accounts/deactivate/${account.id}`);
+        await axios.put(`/accounts/status/${account.id}`);
       } catch (error) {
         console.error('Error deactivating account:', error);
         throw error;
       }
-    
-  }
-    
-  }
+
+    }
+
+  },
 
 
-    async searchIbansByUsername(firstName, lastName) {
-      try {
-        const response = await axios.get('accounts/ibans', {
-          params: {
-            firstName,
-            lastName
-          }
-        });
+  async searchIbansByUsername(firstName, lastName) {
+    try {
+      const response = await axios.get('accounts/ibans', {
+        params: {
+          firstName,
+          lastName
+        }
+      });
 
-        console.log(response);
-        return response;
-      } catch (error) {
-        console.error('Error fetching IBANs:', error);
-        return error;
-      }
-    },
+      console.log(response);
+      return response;
+    } catch (error) {
+      console.error('Error fetching IBANs:', error);
+      return error;
+    }
+  },
+  async getAccountByIBAN(iban) {
+    try {
+      const response = await axios.get(`/accounts/iban/${iban}`);
+      return response;
+    } catch (error) {
+      console.error('Error fetching account by IBAN:', error);
+      throw error;
+    }
+  },
 
-  }
+}
 
-});
+);
