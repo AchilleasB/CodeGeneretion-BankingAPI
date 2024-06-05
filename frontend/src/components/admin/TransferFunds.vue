@@ -74,7 +74,7 @@ const transferFunds = async () => {
         console.log(response);
         successMessage.value = 'Transfer successful!';
     } catch (error) {
-      console.log(error   )
+      console.log(error);
       errorMessage.value = error.message;
     }
 
@@ -100,10 +100,11 @@ const searchIbans = async () => {
   const [firstName, lastName] = searchUsername.value.split(' ');
   isLoading.value = true;
   try {
+    console.log(accountStore)
     const response = await accountStore.searchIbansByUsername(firstName, lastName);
     ibanResults.value = response.data;
   } catch (error) {
-    console.error('Error fetching IBANs:', error);
+    console.error('Error fetching IBANs 2:', error);
   }
   isLoading.value = false;
 };

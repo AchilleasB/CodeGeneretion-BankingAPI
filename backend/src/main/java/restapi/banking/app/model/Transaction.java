@@ -31,6 +31,9 @@ public class Transaction {
     @Column(name="amount")
     private BigDecimal amount;
 
+    @Column(name="personal")
+    private Boolean personal;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_from", referencedColumnName = "id")
     @JsonIgnoreProperties("transactions")
@@ -49,5 +52,4 @@ public class Transaction {
 
     @Column(name="user_id")
     private UUID userId;
-
 }
