@@ -52,7 +52,7 @@ const login = async () => {
         <h3 class="d-flex justify-content-center mb-5">Log in</h3>
         <div v-if="successMessage" class="alert alert-success">{{ successMessage }}</div>
         <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
-        <form action="" method="POST" class="login-form row">
+        <form @submit.prevent="login" class="login-form row">
             <div class="col-12 mb-3">
                 <label for="inputLoginEmail" class="form-label">Email</label>
                 <input name="email" type="email" v-model="email" class="form-control" id="inputLoginEmail" required>
@@ -62,7 +62,7 @@ const login = async () => {
                 <input name="password" type="password" v-model="password" class="form-control" id="inputLoginPassword" required>
             </div>
             <div class="col-12 d-flex justify-content-center">
-                <button @click.prevent="login" type="submit" class="btn btn-primary mt-4">Submit</button>
+                <button type="submit" class="btn btn-primary mt-4">Submit</button>
             </div>
         </form>
     </div>
