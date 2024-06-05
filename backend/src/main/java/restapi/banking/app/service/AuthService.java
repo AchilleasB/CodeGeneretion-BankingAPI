@@ -79,6 +79,7 @@ public class AuthService {
     // private functions
 
     private void validateRegistrationData(RegistrationDTO registrationDTO) {
+        isEmailValid(registrationDTO.getEmail());
         doesEmailExist(registrationDTO.getEmail());
         isBsnValid(registrationDTO.getBsn());
         isUserAdult(registrationDTO.getDateOfBirth());
@@ -88,6 +89,13 @@ public class AuthService {
     private void doesEmailExist(String email) {
         if (userRepository.findByEmail(email).isPresent()) {
             throw new IllegalArgumentException("Email already exists");
+        }
+    }
+
+    private void isEmailValid(String email) {
+        String emailRegex = "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$";
+        if (!email.matches(emailRegex)) {
+            throw new IllegalArgumentException("Invalid email format");
         }
     }
 

@@ -71,14 +71,6 @@ public class DatabaseInitializer {
         account1.setActive(true);
         accountRepository.saveAndFlush(account1);
 
-
-
-
-
-        
-
-
-
         Account account2 = new Account();
         account2.setIban("NL31INHO7634150005");
         account2.setBalance(BigDecimal.valueOf(16450));
@@ -91,8 +83,6 @@ public class DatabaseInitializer {
         accountRepository.saveAndFlush(account2);
 
         initilizeTransactions(customer1, account1);
-
-
 
 
         // Customer 2

@@ -22,18 +22,18 @@ const register = async () => {
 
     if (res.data) {
       successMessage.value = `${res.data.firstName}, your registration request was sent successfully!\n
-                              Please wait for the bank administrators to approve your account`;
+                              Please wait for approval.`;
     } else {
       errorMessage.value = res.response.data.message;
     }
     setTimeout(() => {
         successMessage.value = '';
         errorMessage.value = '';
-        firstName.value = '';
-        lastName.value = '';
-        dateOfBirth.value = '';
-        phone.value = '';
-        bsn.value = '';
+        // firstName.value = '';
+        // lastName.value = '';
+        // dateOfBirth.value = '';
+        // phone.value = '';
+        // bsn.value = '';
         email.value = '';
         password.value = '';
         router.push({ name: 'home' });
@@ -51,7 +51,7 @@ const register = async () => {
     <h3>Registration</h3>
     <div v-if="successMessage" class="alert alert-success">{{ successMessage }}</div>
     <div v-if="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
-    <form action="" method="POST" class="registration-form">
+    <form @submit.prevent="register" class="registration-form">
       <!-- Form Fields in two-column layout -->
       <div class="form-row mt-5">
         <div class="form-group col-md-6">
@@ -92,7 +92,7 @@ const register = async () => {
         </div>
       </div>
       <div class="form-group">
-        <button @click.prevent="register" type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary">Submit</button>
       </div>
     </form>
   </div>
