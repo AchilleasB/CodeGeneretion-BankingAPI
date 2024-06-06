@@ -26,7 +26,7 @@ public class AccountDTO {
     private String iban;
 
     @Min(value = 0, message = "Balance must be greater than or equal to 0")
-    private BigDecimal balance = BigDecimal.ZERO;
+    private BigDecimal balance;
 
     @NotNull(message = "Type of account can't be null")
     private AccountType accountType;

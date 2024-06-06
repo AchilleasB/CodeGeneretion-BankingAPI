@@ -112,6 +112,7 @@ public class AccountService {
         account.setIban(iban);
         account.setOpeningDate(openingDate);
         account.setUser(user);
+        account.setBalance(BigDecimal.ZERO);
         return account;
     }
 
