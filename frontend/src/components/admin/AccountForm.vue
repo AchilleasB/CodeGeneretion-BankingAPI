@@ -3,10 +3,6 @@
     <h2>Create Account</h2>
     <form @submit.prevent="submitForm">
       <div>
-        <label for="balance">Initial Balance:</label>
-        <input type="number" id="balance" v-model="account.balance" required min="0" />
-      </div>
-      <div>
         <label for="absoluteLimit">Absolute Limit:</label>
         <input type="number" id="absoluteLimit" v-model="account.absoluteLimit" required min="0" />
       </div>
@@ -33,7 +29,6 @@ export default {
   data() {
     return {
       account: {
-        balance: 0,
         absoluteLimit: 0,
         transactionLimit: 0,
         active: true,

@@ -59,7 +59,7 @@ public class UserService {
                 .map(userMapper::convertUserToUserDTO)
                 .collect(Collectors.toList());
         if (unapprovedUserDTOs.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No unapproved users found");
+            throw new RuntimeException("User not found with id: " + UUID.randomUUID());
         }
         return unapprovedUserDTOs;
     }
@@ -80,13 +80,13 @@ public class UserService {
             userRepository.save(user);
             return userMapper.convertUserToUserDTO(user);
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + userId);
+            throw new RuntimeException("User not found with id: " + userId);
         }
     }
 
     public void declineUser(UUID id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
         userRepository.delete(user);
     }
 
