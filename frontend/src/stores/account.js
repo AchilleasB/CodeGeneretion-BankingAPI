@@ -109,8 +109,9 @@ export const useAccountStore = defineStore('accountStore', {
         throw error;
       }
 
-    },
-
+    
+  },
+ 
     async searchIbansByUsername(firstName, lastName) {
       try {
         const response = await axios.get('accounts/ibans', {

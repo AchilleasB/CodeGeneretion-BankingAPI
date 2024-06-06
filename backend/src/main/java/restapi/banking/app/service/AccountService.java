@@ -117,9 +117,7 @@ public class AccountService {
 
 
     private void validateAccountDTO(AccountDTO accountDTO) {
-        if (accountDTO.getBalance().compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Balance cannot be negative");
-        }
+
         if (accountDTO.getAbsoluteLimit().compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Absolute limit cannot be negative");
         }

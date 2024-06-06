@@ -1,5 +1,6 @@
 package restapi.banking.app.exception;
 
+import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,5 +69,8 @@ public class GlobalExceptionHandler {
                 "An unexpected error has occurred.");
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+
+
 
 }
