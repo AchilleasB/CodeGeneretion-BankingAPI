@@ -54,7 +54,7 @@ export const useAuthStore = defineStore('authStore', {
 
                 localStorage.setItem('jwt', this.jwt);
                 localStorage.setItem('id', this.id);
-                localStorage.setItem('fullName', this.firstName);
+                localStorage.setItem('firstName', this.firstName);
                 localStorage.setItem('role', this.role);
 
                 axios.defaults.headers.common['Authorization'] = 'Bearer ' + this.jwt;
@@ -71,7 +71,7 @@ export const useAuthStore = defineStore('authStore', {
         autoLogin() {
             const jwt = localStorage.getItem('jwt');
             const id = localStorage.getItem('id');
-            const firstName = localStorage.getItem('fullName');
+            const firstName = localStorage.getItem('firstName');
             const role = localStorage.getItem('role');
 
             console.log(jwt, id);

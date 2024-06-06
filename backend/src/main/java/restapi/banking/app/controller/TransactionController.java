@@ -34,6 +34,7 @@ public class TransactionController {
 
 
     @PostMapping("/transfer")
+    @PreAuthorize("isAuthenticated() and hasAnyRole('EMPLOYEE', 'CUSTOMER')")
     public ResponseEntity<TransactionDTO> create(@Valid @RequestBody TransactionDTO transferDTO) {
         TransactionDTO createdTransactionDTO = transactionService.createTransaction(transferDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTransactionDTO);
