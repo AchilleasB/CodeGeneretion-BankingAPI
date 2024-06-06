@@ -84,6 +84,7 @@ public class DatabaseInitializer {
 
         initilizeTransactions(customer1, account1);
 
+
         // Customer 2
 
         User customer2 = new User();
@@ -126,6 +127,21 @@ public class DatabaseInitializer {
         accountRepository.saveAndFlush(account4);
 
         initilizeTransactions(customer2, account3);
+
+
+        User customer3 = new User();
+        customer3.setFirstName("John");
+        customer3.setLastName("Doe");
+        customer3.setDateOfBirth(LocalDate.of(1985, 5, 15));
+        customer3.setBsn("789456123");
+        customer3.setPhone("0612345678");
+        customer3.setEmail("john.doe@email.com");
+        customer3.setPassword(passwordEncoder.encode("john1234"));
+        customer3.setRole(UserRole.Customer);
+        customer3.setApproved(false);
+        customer3.setDailyLimit(5000);
+
+        userRepository.saveAndFlush(customer3);
 
     }
 

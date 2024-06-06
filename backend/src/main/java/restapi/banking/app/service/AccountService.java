@@ -42,6 +42,7 @@ public class AccountService {
 
 
     public List<AccountDTO> createAccounts(AccountDTO accountDTO) {
+        validateAccountDTO(accountDTO);
         LocalDate today = LocalDate.now();
         User user = getUserFromRepository(accountDTO.getUserId());
         Map<String, String> ibans = getIBANsForAccounts();
@@ -71,6 +72,14 @@ public class AccountService {
         }
     }
 
+    public AccountDTO deactivateAccount(UUID accountId) {
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("Account not found"));
+        account.setActive(false);
+        Account updatedAccount = accountRepository.save(account);
+        return accountMapper.convertAccountToAccountDTO(updatedAccount);
+    }
+
 
     //Private functions
     private User getUserFromRepository(UUID userId) {
@@ -91,8 +100,21 @@ public class AccountService {
         account.setIban(iban);
         account.setOpeningDate(openingDate);
         account.setUser(user);
+        account.setBalance(BigDecimal.ZERO);
         return account;
     }
+
+
+    private void validateAccountDTO(AccountDTO accountDTO) {
+
+        if (accountDTO.getAbsoluteLimit().compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Absolute limit cannot be negative");
+        }
+        if (accountDTO.getTransactionLimit().compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Transaction limit cannot be negative");
+        }
+    }
+
 
     private AccountDTO createAndSaveAccount(AccountDTO accountDTO, AccountType accountType, String iban, LocalDate openingDate, User user) {
         Account account = createAccount(accountDTO, accountType, iban, openingDate, user);
@@ -127,6 +149,7 @@ public class AccountService {
         }
         return accountMapper.convertAccountToDTO(account);
     }
+
     //TODO: Check with Dan
     /*public List<AccountDTO> createAccounts(AccountDTO accountDTO) {
         List<Account> accounts = new ArrayList<>();

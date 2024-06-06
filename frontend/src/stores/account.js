@@ -12,6 +12,7 @@ export const useAccountStore = defineStore('accountStore', {
   getters: {
     getCheckingAccount: (state) => state.accounts.filter(account => account.accountType === 'CHECKING'),
     getSavingsAccount: (state) => state.accounts.filter(account => account.accountType === 'SAVINGS'),
+    getTotalBalance: (state) => state.accounts.reduce((acc, account) => acc + account.balance, 0),
     getAccountByType: (state) => (type) => state.accounts.find(account => account.accountType === type),
   },
 
@@ -39,6 +40,7 @@ export const useAccountStore = defineStore('accountStore', {
       }
 
     },
+
     async fetchAllAccountsWithUserDetails() {
       try {
         const response = await axios.get('/accounts');
@@ -98,6 +100,7 @@ export const useAccountStore = defineStore('accountStore', {
         throw error;
       }
     },
+    
     async toggleAccountStatus(account) {
       try {
         await axios.put(`/accounts/status/${account.id}`);
@@ -109,7 +112,6 @@ export const useAccountStore = defineStore('accountStore', {
     }
 
   },
-
 
   async searchIbansByUsername(firstName, lastName) {
     try {

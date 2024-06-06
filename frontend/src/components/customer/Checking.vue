@@ -1,17 +1,24 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { useUserStore } from '../../stores/user';
 import { useAccountStore } from '../../stores/account';
+import { useAuthStore } from '../../stores/auth';
 import TransferFunds from './TransferFunds.vue';
+import { formatCurrency } from '@/utils/currencyFormatter'; 
 
 const userStore = useUserStore();
 const accountStore = useAccountStore();
+const authStore = useAuthStore();
 
 const iban = ref('');
 const balance = ref(0);
 const dailyLimit = ref(0);
 const transactionLimit = ref(0);
 const absoluteLimit = ref(0);
+
+const totalBalance = computed(() => {
+  return formatCurrency(accountStore.getTotalBalance);
+});
 
 const showPaymentForm = ref(false);
 
@@ -20,65 +27,24 @@ const togglePaymentForm = () => {
 };
 
 onMounted(async () => {
+
+  const userId = authStore.id;
+  await accountStore.getCustomerAccounts(userId);
+
   const checkingAccount = accountStore.getCheckingAccount[0];
 
   if (checkingAccount) {
     iban.value = checkingAccount.iban;
-    balance.value = checkingAccount.balance;
-    dailyLimit.value = userStore.dailyLimit;
-    transactionLimit.value = checkingAccount.transactionLimit;
-    absoluteLimit.value = checkingAccount.absoluteLimit;
+    balance.value = formatCurrency(checkingAccount.balance);
+    dailyLimit.value = formatCurrency(userStore.dailyLimit);
+    transactionLimit.value = formatCurrency(checkingAccount.transactionLimit);
+    absoluteLimit.value = formatCurrency(checkingAccount.absoluteLimit);
   }
 });
-
-const areIbansTheSame = ref(false);
-const checkIbans = () => {
-    if (iban.value === ibanTo.value){
-      areIbansTheSame.value = true;
-    } else {
-      areIbansTheSame.value = false;
-    }
-};
-
-const submitTransfer = async () => {
-  errorMessage.value = '';
-  successMessage.value = '';
-  
-  checkIbans();
-
-  if(areIbansTheSame.value) {
-    errorMessage.value = 'Failed to transfer: IBAN of recipient and sender must be different ';
-      setTimeout(() => {
-          errorMessage.value = '';
-      }, 3000);
-      return;
-  }
-
-  const transactionType = 'TRANSFER';
-  try {
-    const transactionDTO = {
-      amount: transferAmount.value,
-      ibanTo: ibanTo.value,
-      ibanFrom: iban.value,
-      type: transactionType, 
-      message: message.value,
-    };
-
-    const response = await transactionStore.transfer(transactionDTO);
-    console.log(response);
-    successMessage.value = 'Transfer successful!';
-  } catch (error) {
-    errorMessage.value = 'Transaction failed: ' + error.message;
-  }
-  setTimeout(() => {
-    errorMessage.value = '';
-    successMessage.value = '';
-  }, 4000);
-};
-
 </script>
 
 <template>
+  <p class="total-balance">Total Balance: {{ totalBalance }}</p>
   <h1>Checking Account</h1>
   <div class="container text-center">
     <div class="row">
@@ -96,7 +62,7 @@ const submitTransfer = async () => {
         <div class="card">
           <div class="card-body">
             <p>Daily Limit</p>
-            <h3>€ {{ dailyLimit }}</h3>
+            <h3>{{ dailyLimit }}</h3>
           </div>
         </div>
       </div>
@@ -104,7 +70,7 @@ const submitTransfer = async () => {
         <div class="card">
           <div class="card-body">
             <p>Transaction Limit</p>
-            <h3>€ {{ transactionLimit }}</h3>
+            <h3>{{ transactionLimit }}</h3>
           </div>
         </div>
       </div>
@@ -112,7 +78,7 @@ const submitTransfer = async () => {
         <div class="card">
           <div class="card-body">
             <p>Absolute Limit</p>
-            <h3>€ {{ absoluteLimit }}</h3>
+            <h3>{{ absoluteLimit }}</h3>
           </div>
         </div>
       </div>
@@ -121,8 +87,8 @@ const submitTransfer = async () => {
       <div class="col-8">
         <div class="card">
           <div class="card-body">
-            <p>Total balance</p>
-            <h2>€ {{ balance }}</h2>
+            <p>Balance</p>
+            <h2>{{ balance }}</h2>
           </div>
         </div>
       </div>
@@ -138,32 +104,9 @@ const submitTransfer = async () => {
         </div>
       </div>
     </div>
-    <!-- <div v-if="showPaymentForm" class="payment-form card">
-      <h2>Transfer Funds</h2>
-      <form method="POST">
-        <div class="form-group">
-          <label for="ibanTo">Recipient IBAN</label>
-          <input type="text" id="ibanTo" v-model="ibanTo" required />
-        </div>
-        <div class="form-group">
-          <label for="transferAmount">Amount (€)</label>
-          <input type="number" id="transferAmount" v-model="transferAmount" required />
-        </div>
-        <div class="form-group">
-          <label for="transferAmount">Description</label>
-          <input type="text" id="description" v-model="message" required />
-        </div>
-        <div class="form-group button-group">
-          <button type="submit" @click.prevent="submitTransfer">Submit</button>
-          <button type="button" @click="togglePaymentForm">Cancel</button>
-        </div>
-      </form>
-      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-      <p v-if="successMessage" class="success">{{ successMessage }}</p>
-    </div> -->
 
     <!-- Payment Form -->
-    <TransferFunds v-if="showPaymentForm" :iban-from="iban" @cancel="togglePaymentForm" />
+    <TransferFunds v-if="showPaymentForm" :iban-from="iban" :totalBalance="totalBalance" @cancel="togglePaymentForm" />
   </div>
 </template>
 

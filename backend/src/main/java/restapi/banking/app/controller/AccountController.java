@@ -41,7 +41,7 @@ public class AccountController {
     }
 
     @GetMapping("/ibans")
-    @PreAuthorize("hasRole('EMPLOYEE') or hasRole('CUSTOMER')")
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')")
     public ResponseEntity<List<IbanDTO>> getIbansByUserName(@RequestParam String firstName, @RequestParam String lastName) {
         List<IbanDTO> ibans = accountService.findIbansByUserName(firstName, lastName);
         return ResponseEntity.status(HttpStatus.OK).body(ibans);

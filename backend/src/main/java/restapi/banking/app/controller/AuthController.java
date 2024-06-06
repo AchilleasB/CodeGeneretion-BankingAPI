@@ -20,8 +20,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin
@@ -31,6 +29,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
+    @PreAuthorize("isAnonymous()") // users can't register if they're already logged in
     public ResponseEntity<UserDTO> register(@Valid @RequestBody RegistrationDTO registrationDTO) {
         UserDTO registeringUserDTO = authService.register(registrationDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(registeringUserDTO);
@@ -38,6 +37,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @PreAuthorize("isAnonymous()") // users can't login if they're already logged in
     public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO loginDTO){
         LoginResponseDTO loggingInDTO = authService.login(loginDTO);
         return ResponseEntity.status(HttpStatus.OK).body(loggingInDTO);
