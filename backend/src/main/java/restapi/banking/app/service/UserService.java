@@ -59,6 +59,7 @@ public class UserService {
     }
     public List<UserDTO> findApprovedUsersWithoutAccount() {
         return userRepository.findByApprovedAndRole(true, UserRole.Customer).stream()
+                //.filter(user -> user.getAccounts() == null || user.getAccounts().isEmpty())
                 .filter(user -> accountRepository.findAccountByUserId(user.getId()).isEmpty())
                 .map(userMapper::convertUserToUserDTO)
                 .collect(Collectors.toList());
