@@ -38,7 +38,6 @@ watch(selectedComponent, () => {
 onMounted(async () => {
   await adminStore.fetchApprovedUsers();
   await adminStore.fetchUnapprovedUsers();
-  //todo: do i need it here?
 
 });
 </script>

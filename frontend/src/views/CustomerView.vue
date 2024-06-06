@@ -10,13 +10,11 @@ import { useAuthStore } from '../stores/auth';
 import { useAccountStore } from '../stores/account'
 import { useUserStore } from '../stores/user'
 import { useRouter } from 'vue-router';
-import { formatCurrency } from '../utils/currencyFormatter';
 
 const router = useRouter();
 const authStore = useAuthStore();
 const accountStore = useAccountStore();
 const userStore = useUserStore();
-// const transactionStore = useTransactionStore();
 
 const selectedComponent = ref('checking');
 
@@ -33,7 +31,6 @@ onMounted(async () => {
     const userId = authStore.id;
     await userStore.loadUserDetails(userId);
     await accountStore.getCustomerAccounts(userId);
-
     // console.log(accountStore.accounts);
 })
 
@@ -50,7 +47,6 @@ onMounted(async () => {
                 <ul class="nav-items">
                     <li id="accounts">Accounts 
                     <ul>
-                        <!-- <li class="nav-item" id="totalBalance">Total Balance: {{ formatCurrency(accountStore.getTotalBalance) }}</li> -->
                         <li class="nav-item" id="checkingAccount" @click="selectComponent('checking')">Checking</li>
                         <li class="nav-item" id="savingsAccount" @click="selectComponent('savings')">Savings</li>
                     </ul>

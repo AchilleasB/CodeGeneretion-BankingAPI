@@ -78,11 +78,13 @@ export const useAccountStore = defineStore('accountStore', {
     async updateAccount(account) {
       try {
         // Update the account limits
-        await axios.put(`/accounts/${account.id}`, {
+        const response = await axios.put(`/accounts/${account.id}`, {
           id: account.id,
           transactionLimit: account.transactionLimit,
           absoluteLimit: account.absoluteLimit,
         });
+
+        console.log('Updated account:', response.data);
 
         // Update the user's daily limit
         const userStore = useUserStore();

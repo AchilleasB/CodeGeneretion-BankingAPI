@@ -14,7 +14,7 @@ import restapi.banking.app.repository.AccountRepository;
 import restapi.banking.app.repository.UserRepository;
 import restapi.banking.app.utilities.IBANGenerator;
 
-
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -77,7 +77,7 @@ public class AccountService {
                 .orElseThrow(() -> new RuntimeException("Account not found"));
         account.setActive(false);
         Account updatedAccount = accountRepository.save(account);
-        return accountMapper.convertAccountToAccountDTO(updatedAccount);
+        return accountMapper.convertAccountToDTO(updatedAccount);
     }
 
 
