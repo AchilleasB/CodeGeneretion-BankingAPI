@@ -55,4 +55,12 @@ public class TransactionController {
         TransactionDTO transactionDTO = transactionService.processATMTransaction(depositDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(transactionDTO);
     }
+
+    @GetMapping("")
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<List<TransactionDTO>> getTransactionHistory() {
+        List<TransactionDTO> transactionHistory = transactionService.getTransactionHistory();
+        return ResponseEntity.ok(transactionHistory);
+    }
+
 }
