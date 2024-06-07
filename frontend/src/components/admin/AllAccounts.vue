@@ -2,7 +2,7 @@
   <div>
     <h5 class="card-title mb-1">Search Account by IBAN:</h5>
     <div class="search-container mb-4">
-      <input v-model="searchIban" id="searchIban" class="p-2" placeholder="e.g.: NL05INHO3456000021" />
+      <input v-model="searchIban" id="searchIban" class="p-2" placeholder="e.g.: NL05INHO3456000021" required/>
       <button class="btn-style p-2" @click="searchIbans">Search</button>
       <button class="btn-style p-2 ms-2" @click="showAllAccounts">Show all</button>
     </div>
@@ -49,17 +49,17 @@
               <div class="form-group">
                 <label for="transactionLimit">Transaction Limit:</label>
                 <input type="number" class="form-control" id="transactionLimit"
-                  v-model="selectedAccount.transactionLimit" min="1" />
+                  v-model="selectedAccount.transactionLimit" min="1" required/>
               </div>
               <div class="form-group">
                 <label for="absoluteLimit">Absolute Limit:</label>
                 <input type="number" class="form-control" id="absoluteLimit" v-model="selectedAccount.absoluteLimit"
-                  min="1" />
+                  min="1" required/>
               </div>
               <div class="form-group">
                 <label for="userDailyLimit">Daily Limit:</label>
                 <input type="number" class="form-control" id="userDailyLimit" v-model="selectedAccount.userDailyLimit"
-                  min="1" />
+                  min="1" required/>
               </div>
               <button type="submit" class="btn-style p-2 mt-3">Confirm</button>
               <button type="button" class="btn-style p-2 mt-3 ms-2" @click="closeModal">Cancel</button>
