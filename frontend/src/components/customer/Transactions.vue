@@ -5,24 +5,16 @@ import { useAuthStore } from '../../stores/auth';
 
 const transactionStore = useTransactionStore();
 const authStore = useAuthStore();
-const isLoading = ref(false);
 
-const startDate = ref('');
-const endDate = ref('');
-const minAmount = ref(null);
-const maxAmount = ref(null);
-const ibanFrom = ref('');
-const ibanTo = ref('');
 const searchApplied = ref(false);
 
-const fetchMoreTransactions = async () => {
-  const userId = authStore.id;
-  console.log(userId);
-  if (transactionStore.hasMore && !isLoading.value) {
-    isLoading.value = true;
-    await transactionStore.fetchCustomerTransactions(userId);
-    isLoading.value = false;
-  }
+let searchCriteria = {
+  startDate: '',
+  endDate: '',
+  minAmount: null,
+  maxAmount: null,
+  ibanFrom: '',
+  ibanTo: ''
 };
 
 function splitTimestamp(timestamp) {
@@ -30,44 +22,70 @@ function splitTimestamp(timestamp) {
   return { date, time };
 }
 
+const handleInputChange = (event) => {
+  const { name, value } = event.target;
+  searchCriteria[name] = value;
+};
+
+const formatDate = (dateStr) => {
+  const [year, month, day] = dateStr.split('-');
+  return `${day}-${month}-${year}`;
+};
+
 const searchTransactions = () => {
   searchApplied.value = true;
-  const today = new Date().toISOString().split('T')[0];
+  const formattedStartDate = searchCriteria.startDate ? formatDate(searchCriteria.startDate) : '';
+  const formattedEndDate = searchCriteria.endDate ? formatDate(searchCriteria.endDate) : formatDate(today);
+  
   transactionStore.searchTransactions({
-    startDate: startDate.value,
-    endDate: endDate.value || today, //Set end date to today if not specified
-    minAmount: minAmount.value,
-    maxAmount: maxAmount.value,
-    ibanFrom: ibanFrom.value,
-    ibanTo: ibanTo.value
+    startDate: formattedStartDate,
+    endDate: formattedEndDate,
+    minAmount: searchCriteria.minAmount,
+    maxAmount: searchCriteria.maxAmount,
+    ibanFrom: searchCriteria.ibanFrom,
+    ibanTo: searchCriteria.ibanTo
   });
 };
 
 const resetSearch = () => {
-  startDate.value = '';
-  endDate.value = '';
-  minAmount.value = null;
-  maxAmount.value = null;
-  ibanFrom.value = '';
-  ibanTo.value = '';
+  searchCriteria = {
+    startDate: '',
+    endDate: '',
+    minAmount: null,
+    maxAmount: null,
+    ibanFrom: '',
+    ibanTo: ''
+  };
   searchApplied.value = false;
   transactionStore.resetSearch();
+
+  document.getElementById('start-date').value = '';
+  document.getElementById('end-date').value = '';
+  document.getElementById('min-amount').value = '';
+  document.getElementById('max-amount').value = '';
+  document.getElementById('iban-from').value = '';
+  document.getElementById('iban-to').value = '';
+};
+
+const fetchMoreTransactions = async () => {
+  const userId = authStore.id;
+  if (transactionStore.hasMore) {
+    await transactionStore.fetchCustomerTransactions(userId);
+    console.log(transactionStore.transactions);
+
+  }
 };
 
 const displayedTransactions = computed(() => {
-  if (searchApplied.value) {
-    return transactionStore.filteredTransactions;
-  } else {
-    return transactionStore.transactions;
-  }
+  return searchApplied.value ? transactionStore.filteredTransactions : transactionStore.transactions;
 });
 
 onMounted(async () => {
   transactionStore.resetTransactions();
   await fetchMoreTransactions();
+  console.log(transactionStore.transactions);
 });
 </script>
-
 
 <template>
   <div class="transactions-container">
@@ -77,31 +95,31 @@ onMounted(async () => {
       <div class="search-dates">
         <div>
           <label for="start-date">Start Date:</label>
-          <input type="date" id="start-date" v-model="startDate" />
+          <input type="date" id="start-date" name="startDate" @input="handleInputChange" />
         </div>
         <div>
           <label for="end-date">End Date:</label>
-          <input type="date" id="end-date" v-model="endDate" />
+          <input type="date" id="end-date" name="endDate" @input="handleInputChange" />
         </div>
       </div>
       <div class="search-amounts">
         <div>
           <label for="min-amount">Min Amount:</label>
-          <input type="number" id="min-amount" v-model="minAmount" />
+          <input type="number" id="min-amount" name="minAmount" @input="handleInputChange" />
         </div>
         <div>
           <label for="max-amount">Max Amount:</label>
-          <input type="number" id="max-amount" v-model="maxAmount" />
+          <input type="number" id="max-amount" name="maxAmount" @input="handleInputChange" />
         </div>
       </div>
       <div class="search-ibans">
         <div>
           <label for="iban-from">IBAN From:</label>
-          <input type="text" id="iban-from" v-model="ibanFrom" />
+          <input type="text" id="iban-from" name="ibanFrom" @input="handleInputChange" />
         </div>
         <div>
           <label for="iban-to">IBAN To:</label>
-          <input type="text" id="iban-to" v-model="ibanTo" />
+          <input type="text" id="iban-to" name="ibanTo" @input="handleInputChange" />
         </div>
       </div>
       <div class="button-container">
@@ -138,6 +156,7 @@ onMounted(async () => {
     <p v-if="!transactionStore.hasMore && transactionStore.transactions.length > 0">No more transactions to load.</p>
   </div>
 </template>
+
 
 
 <style scoped>
@@ -255,6 +274,7 @@ button {
   justify-content: space-between;
   gap: 10px;
   margin-top: 10px;
+  padding: 2em;
 }
 
 @media (max-width: 1390px) {

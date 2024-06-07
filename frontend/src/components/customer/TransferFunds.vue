@@ -2,6 +2,7 @@
 import { ref, watch } from 'vue';
 import { useAccountStore } from '../../stores/account';
 import { useTransactionStore } from '../../stores/transaction';
+import router from '@/router';
 
 const accountStore = useAccountStore();
 const transactionStore = useTransactionStore();
@@ -58,20 +59,20 @@ const submitTransfer = async () => {
     const response = await transactionStore.transfer(transactionDTO);
     console.log(response);
     successMessage.value = 'Transfer successful!';
-    totalBalance.value = accountStore.getTotalBalance();
   } catch (error) {
     errorMessage.value = 'Transaction failed: ' + error.message;
   }
 
   setTimeout(() => {
-        successMessage.value = '';
-        errorMessage.value = '';
-        transferAmount.value = 0;
-        ibanTo.value = '';
-        message.value = '';
-        searchUsername.value = '';
-        ibanResults.value = [];
-    }, 3000);
+    successMessage.value = '';
+    errorMessage.value = '';
+    transferAmount.value = 0;
+    ibanTo.value = '';
+    message.value = '';
+    searchUsername.value = '';
+    ibanResults.value = [];
+    router.push({ name: 'customer' })
+  }, 3000);
 };
 </script>
 
@@ -91,7 +92,8 @@ const submitTransfer = async () => {
     <!-- Display IBANs -->
     <div v-if="ibanResults.length > 0" class="iban-results">
       <h4>IBANs for {{ searchUsername }}</h4>
-      <div v-for="iban in ibanResults" :key="iban.iban" @click="populateRecipientIban(iban.iban)" class="iban-card clickable">
+      <div v-for="iban in ibanResults" :key="iban.iban" @click="populateRecipientIban(iban.iban)"
+        class="iban-card clickable">
         <p class="account-type">{{ iban.accountType }}</p>
         <p class="iban">{{ iban.iban }}</p>
       </div>
@@ -110,7 +112,8 @@ const submitTransfer = async () => {
       </div>
       <div class="card">
         <label for="description">Description</label>
-        <textarea id="description" v-model="message" maxlength="150" placeholder="Enter description (max 150 characters)"></textarea>
+        <textarea id="description" v-model="message" maxlength="150"
+          placeholder="Enter description (max 150 characters)"></textarea>
       </div>
       <div class="card button-card">
         <button type="submit" class="btn-green" @click.prevent="submitTransfer">Submit</button>
@@ -198,10 +201,10 @@ button {
 
 .btn-green {
   border-radius: 4px;
-  background: linear-gradient(90deg, #4e54c8 20%, #8f94fb 40%, #ff7b83 90%);
+  background-color: green;
   color: white;
-  font-size: 1.5em;
-  font-weight: bold;
+  /* font-size: 1.5em; */
+  /* font-weight: bold; */
   cursor: pointer;
 }
 
@@ -243,7 +246,7 @@ button {
 
 .iban-card:hover {
   background-color: green;
-  color:#f0f0f0;
+  color: #f0f0f0;
 }
 
 .iban-results {
