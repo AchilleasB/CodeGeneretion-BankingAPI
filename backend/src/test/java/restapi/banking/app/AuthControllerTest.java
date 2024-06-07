@@ -20,7 +20,6 @@ import restapi.banking.app.dto.RegistrationDTO;
 import restapi.banking.app.dto.UserDTO;
 import restapi.banking.app.model.UserRole;
 import restapi.banking.app.service.AuthService;
-import restapi.banking.app.exception.UserNotApprovedException;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.*;
@@ -212,20 +211,5 @@ public class AuthControllerTest {
                 .andExpect(jsonPath("$.message").value("Invalid email or password"));
     }
 
-    @Test
-    public void testLoginUserNotApproved() throws Exception {
-        LoginRequestDTO loginRequestDTO = LoginRequestDTO.builder()
-                .email("john.doe@example.com")
-                .password("password")
-                .build();
-
-        given(authService.login(any(LoginRequestDTO.class))).willThrow(new UserNotApprovedException("John Doe is waiting for approval."));
-
-        mockMvc.perform(post("/auth/login")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(loginRequestDTO)))
-                .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.message").value("John Doe is waiting for approval."));
-    }
     
 }

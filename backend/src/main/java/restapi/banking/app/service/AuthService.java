@@ -4,7 +4,6 @@ import restapi.banking.app.dto.LoginRequestDTO;
 import restapi.banking.app.dto.LoginResponseDTO;
 import restapi.banking.app.dto.RegistrationDTO;
 import restapi.banking.app.dto.UserDTO;
-import restapi.banking.app.exception.UserNotApprovedException;
 import restapi.banking.app.model.User;
 import restapi.banking.app.model.UserRole;
 import restapi.banking.app.repository.UserRepository;
@@ -47,33 +46,30 @@ public class AuthService {
     }
 
     public LoginResponseDTO login(LoginRequestDTO loginRequest) {
+        
+        // Authenticate user for SpringBoot security context
+        Authentication authentication;
         try {
-            // Use AuthenticationManager to authenticate the user
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
-
-            // Get the authenticated user details and cast it to User
-            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-            User user = (User) userDetails;
-
-            // Check if the user is approved
-            if (!user.isApproved()) {
-                throw new UserNotApprovedException(user.getFirstName()+ " "+ user.getLastName() +" is waiting for approval.");
-            }
-
-            String jwtToken = JwtService.generateToken(userDetails);
-
-            LoginResponseDTO responseDTO = new LoginResponseDTO();
-            responseDTO.setJwtToken(jwtToken);
-
-            UserDTO userDTO = modelMapper.map(user, UserDTO.class);
-            responseDTO.setUser(userDTO);
-
-            return responseDTO;
-
+            authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
         } catch (AuthenticationException ex) {
             throw new BadCredentialsException("Invalid email or password", ex);
         }
+
+        // Get the authenticated user details and cast it to User
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        User user = (User) userDetails;
+
+        String jwtToken = JwtService.generateToken(userDetails);
+
+        LoginResponseDTO responseDTO = new LoginResponseDTO();
+        responseDTO.setJwtToken(jwtToken);
+
+        UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+        responseDTO.setUser(userDTO);
+
+        return responseDTO;
+
     }
 
     // private functions
