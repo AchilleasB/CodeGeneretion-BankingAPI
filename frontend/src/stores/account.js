@@ -61,7 +61,7 @@ export const useAccountStore = defineStore('accountStore', {
         console.log('Failed to fetch accounts with user details', error);
       }
     },
-
+  
     async createAccounts(accountData) {
       this.error = null;
       try {
@@ -105,12 +105,15 @@ export const useAccountStore = defineStore('accountStore', {
         console.error('Error deactivating account:', error);
         throw error;
       }
+    
+  }
+    
+  }
 
-    },
+
     async searchIbansByUsername(firstName, lastName) {
       try {
         const response = await axios.get('accounts/ibans', {
-          timeout: 3000, // 3s
           params: {
             firstName,
             lastName
@@ -121,13 +124,10 @@ export const useAccountStore = defineStore('accountStore', {
         return response;
       } catch (error) {
         console.error('Error fetching IBANs:', error);
-        // Not return, throw instead since we catch it in searchIbans again
-        throw error;
+        return error;
       }
     },
 
-  },
+  }
 
-}
-
-);
+});

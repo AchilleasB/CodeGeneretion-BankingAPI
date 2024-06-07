@@ -73,7 +73,6 @@ public class TransactionService {
         transaction.setType(transactionDTO.getTransactionType());
         transaction.setUserId(account.getUser().getId());
         transaction.setTimestamp(LocalDateTime.now());
-        transaction.setPersonal(true);
         transaction.setMessage("ATM");
         transactionRepository.save(transaction);
 
@@ -107,16 +106,12 @@ public class TransactionService {
         // AccountFrom checks
         Account accountFrom = accountRepository.findByIban(requestDTO.getIbanFrom());
         isEnoughBalance(accountFrom, requestDTO.getAmount());
-
-        Boolean personal = this.checkIfPersonal(requestDTO.getIbanTo(), requestDTO.getIbanFrom());
-        if (!personal) {
-            checkLimits(accountFrom, requestDTO.getAmount());
-        }
+        checkLimits(accountFrom, requestDTO.getAmount());
 
         // transferring
         Account accountTo = accountRepository.findByIban(requestDTO.getIbanTo());
         BigDecimal amount = requestDTO.getAmount();
-        transferFunds(accountFrom, accountTo, amount);
+        transferAmounts(accountFrom, accountTo, amount);
 
         Transaction transaction = new Transaction(); // needs to be done that way to pass correct UUID in the response
         transaction.setAccountTo(accountTo);
@@ -126,7 +121,6 @@ public class TransactionService {
         transaction.setType(requestDTO.getType());
         transaction.setMessage(requestDTO.getMessage());
         transaction.setUserId(user.getId());
-        transaction.setPersonal(personal);
         transactionRepository.saveAndFlush(transaction);
 
         TransactionDTO responceDTO = transactionMapper.convertToDTO(transaction);
@@ -137,16 +131,6 @@ public class TransactionService {
         return responceDTO;
     }
 
-    private Boolean checkIfPersonal(String ibanTo, String ibanFrom) {
-        Account accountTo = accountRepository.findByIban(ibanTo);
-        Account accountFrom = accountRepository.findByIban(ibanFrom);
-
-        if (accountTo.getUser().getId().equals(accountFrom.getUser().getId())) {
-            return true;
-        } else return false;
-    }
-
-    //validating the IBAN
     private void IbanValidation(String iban, String whichIban)
     {
         iban = iban.replaceAll("\\s+", "");
@@ -158,7 +142,6 @@ public class TransactionService {
             throw new IllegalArgumentException(whichIban + "'s IBAN format is invalid");
         checksum(iban, whichIban);
     }
-    //Checking whether the account number exists in the database
     private void doesIbanExists(String iban, String whichIban)
     {
         Account account = accountRepository.findByIban(iban);
@@ -171,7 +154,6 @@ public class TransactionService {
             throw new IllegalArgumentException("Not enough balance to transfer");
     }
 
-    //checking user's daily limit & account's absolute limit
     private void checkLimits(Account accountFrom, BigDecimal amountToTransfer) {
         // check daily limit
         User user = accountFrom.getUser();
@@ -186,15 +168,8 @@ public class TransactionService {
         accountBalance.subtract(amountToTransfer);
         if (accountBalance.compareTo(accountFrom.getAbsoluteLimit()) <= 0)
             throw new IllegalArgumentException("Account's absolute limit is exceeded");
-        // check transaction limit?
-        if (amountToTransfer.compareTo(accountFrom.getTransactionLimit()) > 0) // Make sure we can still transfer UP TO & INCLUDING the limit
-        {
-            throw new IllegalArgumentException("Amount to transfer is greater than transaction limit");
-        }
     }
 
-    //The IBAN check digit consists of two digits in positions 3 and 4 of the IBAN.
-    //It is calculated using the MOD97 algorithm and provides the primary integrity check for the IBAN standard.
     private void checksum(String iban, String whichIban) {
         String accountNumber = iban.substring(8);
 
@@ -216,8 +191,7 @@ public class TransactionService {
             throw new IllegalArgumentException(whichIban + "'s IBAN is invalid");
     }
 
-    //transferring funds between accounts
-    private void transferFunds(Account accountFrom, Account accountTo, BigDecimal amount) {
+    private void transferAmounts(Account accountFrom, Account accountTo, BigDecimal amount) {
         BigDecimal newBalanceFrom = accountFrom.getBalance().subtract(amount);
         accountFrom.setBalance(newBalanceFrom);
 
@@ -228,7 +202,6 @@ public class TransactionService {
         accountRepository.save(accountTo);
     }
 
-    //method for debugging
     private void testBalance(TransactionDTO transactionDTO) {
         Account accountFrom = accountRepository.findByIban(transactionDTO.getIbanFrom());
         Account accountTo = accountRepository.findByIban(transactionDTO.getIbanTo());

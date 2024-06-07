@@ -51,20 +51,12 @@ export const useTransactionStore = defineStore('transactionStore', {
             }
         },
         async transfer(transactionDTO) {
-            return await axios.post('/transactions/transfer', transactionDTO)
-            .then(response => response.data)
-            .catch((error) => {
-                console.log(error);
-                // Handle
-                switch (error.code) {
-                    case "ERR_NETWORK": {
-                        throw new Error("Failed to connect to the service");
-                    }
-                    default: {
-                        throw new Error(error.response.data.message);
-                    }
-                }
-            });
+            try {
+                const response = await axios.post('/transactions/transfer', transactionDTO);
+                return response.data;
+            } catch (error) {
+                throw new Error('Failed to transfer: ' + error.response.data.message);
+            }
         },
 
         resetTransactions() {

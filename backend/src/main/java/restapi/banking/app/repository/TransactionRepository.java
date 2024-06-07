@@ -17,14 +17,12 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
 
     /**
      * This method returns the sum of all the transactions created by the provided user within the provided period of time.
-     * Additionally, this method ignores the transaction created by employees,
-     * therefore this method will return the sum of all transactions initialized by the provided user
      * @param userId is the user identifier
      * @param timeFrom is the time from which we want to see transactions
      * @param timeTo is the time to which we want to see transactions
-     * @return the sum of the transactions created in the given period of time; initialized by the provided user
+     * @return the sum of the transactions created in the given period of time
      */
-    @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t WHERE t.accountFrom.user.id = :userId AND t.timestamp BETWEEN :timeFrom AND :timeTo AND t.personal = false")
+    @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t WHERE t.accountFrom.user.id = :userId AND t.timestamp BETWEEN :timeFrom AND :timeTo")
     BigDecimal totalTransferred(@Param("userId") UUID userId, @Param("timeFrom") LocalDateTime timeFrom, @Param("timeTo") LocalDateTime timeTo);
 
 
