@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +22,7 @@ import restapi.banking.app.repository.UserRepository;
 
 @Component
 @AllArgsConstructor
+@Profile("!test") // This bean will only be created when the profile is not "test"
 public class DatabaseInitializer {
 
     private final UserRepository userRepository;
