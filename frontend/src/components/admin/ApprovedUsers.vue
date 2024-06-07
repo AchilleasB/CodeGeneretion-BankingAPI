@@ -1,27 +1,36 @@
 <template>
   <div class="approved-users">
     <h2>Approved Users</h2>
-    <div v-if="isLoading" class="loading">Loading...</div>
-    <ul v-else class="user-list">
-      <li v-for="user in approvedUsers" :key="user.id" class="user-item">
-        <div class="user-details">
-          <span class="user-name">Name: {{ user.firstName }} {{ user.lastName }}</span>
-          <span class="user-email">Email: {{ user.email }}</span>
-          <button
-            v-if="!user.accountCreated && selectedUserId !== user.id"
-            @click="showForm(user.id)"
-            class="approve-button"
-          >
-            Create Account
-          </button>
-        </div>
-        <AccountForm
-          v-if="selectedUserId === user.id"
-          :userId="user.id"
-          @accountCreated="handleAccountCreated"
-        />
-      </li>
-    </ul>
+    <div v-if="successMessage" class="success-message">{{ successMessage }}</div>
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="user in approvedUsers" :key="user.id" class="user-item">
+          <td>{{ user.firstName }} {{ user.lastName }}</td>
+          <td>{{ user.email }}</td>
+          <td>
+            <button
+              v-if="!user.accountCreated && selectedUserId !== user.id"
+              @click="showForm(user.id)"
+              class="approve-button"
+            >
+              Create Account
+            </button>
+            <AccountForm
+              v-if="selectedUserId === user.id"
+              :userId="user.id"
+              @accountCreated="handleAccountCreated"
+            />
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 </template>
 
@@ -38,8 +47,8 @@ export default {
   setup() {
     const adminStore = useAdminStore();
     const approvedUsers = computed(() => adminStore.approvedUsers);
-    const isLoading = computed(() => adminStore.isLoading);
     const selectedUserId = ref(null);
+    const successMessage = ref('');
 
     onMounted(async () => {
       await adminStore.fetchApprovedUsers();
@@ -47,17 +56,22 @@ export default {
 
     const showForm = (userId) => {
       selectedUserId.value = userId;
+      successMessage.value = ''; // Clear success message when showing form
     };
 
     const handleAccountCreated = async () => {
       await adminStore.fetchApprovedUsers(); // Refresh the list after account creation
       selectedUserId.value = null; // Reset the selected user
+      successMessage.value = 'Account successfully created!'; // Set success message
+      setTimeout(() => {
+        successMessage.value = ''; // Clear the message after a few seconds
+      }, 3000); // Adjust the timeout duration as needed
     };
 
     return {
       approvedUsers,
-      isLoading,
       selectedUserId,
+      successMessage,
       showForm,
       handleAccountCreated,
     };
@@ -68,9 +82,6 @@ export default {
 <style scoped>
 .approved-users {
   padding: 20px;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
 }
 
 .approved-users h2 {
@@ -78,39 +89,26 @@ export default {
   color: #555;
 }
 
-.loading,
-.error {
+.success-message {
   font-size: 1.2em;
-  color: #999;
+  color: green;
+  margin-bottom: 20px;
 }
 
-.user-list {
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
 }
 
-.user-item {
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-  border-bottom: 1px solid #eee;
+.user-table th,
+.user-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
 }
 
-.user-item:last-child {
-  border-bottom: none;
-}
-
-.user-details {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.user-name,
-.user-email {
-  margin: 0;
-  padding: 0;
+.user-table th {
+  background-color: #f2f2f2;
+  text-align: left;
 }
 
 .approve-button {
