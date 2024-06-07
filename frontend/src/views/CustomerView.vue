@@ -1,5 +1,5 @@
 <script setup>
-import { ref, defineAsyncComponent, onMounted } from 'vue';
+import { ref, defineAsyncComponent, onMounted, computed } from 'vue';
 import BankBanner from '../components/BankBanner.vue';
 const Checking = defineAsyncComponent(() => import('../components/customer/Checking.vue'));
 const Savings = defineAsyncComponent(() => import('../components/customer/Savings.vue'));
@@ -15,7 +15,6 @@ const router = useRouter();
 const authStore = useAuthStore();
 const accountStore = useAccountStore();
 const userStore = useUserStore();
-// const transactionStore = useTransactionStore();
 
 const selectedComponent = ref('checking');
 
@@ -23,16 +22,15 @@ const selectComponent = (component) => {
     selectedComponent.value = component;
 }
 
-const logout = async() => {
+const logout = async () => {
     await authStore.logout();
     router.push({ name: 'home' });
 }
 
 onMounted(async () => {
     const userId = authStore.id;
-    // console.log(userId);
-    await accountStore.getCustomerAccounts(userId);
     await userStore.loadUserDetails(userId);
+    await accountStore.getCustomerAccounts(userId);
     // console.log(accountStore.accounts);
 })
 
@@ -47,11 +45,11 @@ onMounted(async () => {
                     <h3>Welcome, {{ authStore.firstName }}</h3>
                 </div>
                 <ul class="nav-items">
-                    <li id="accounts">Accounts
-                        <ul>
-                            <li class="nav-item" id="checkingAccount" @click="selectComponent('checking')">Checking</li>
-                            <li class="nav-item" id="savingsAccount" @click="selectComponent('savings')">Savings</li>
-                        </ul>
+                    <li id="accounts">Accounts 
+                    <ul>
+                        <li class="nav-item" id="checkingAccount" @click="selectComponent('checking')">Checking</li>
+                        <li class="nav-item" id="savingsAccount" @click="selectComponent('savings')">Savings</li>
+                    </ul>
                     </li>
                     <li class="nav-item" id="transactions" @click="selectComponent('transactions')">Transactions</li>
                     <li class="nav-item" id="profile" @click="selectComponent('profile')">Profile</li>
@@ -98,7 +96,7 @@ onMounted(async () => {
     text-align: center;
     background-color: #f4f5f7;
     border-bottom: 1px solid #ccc;
-    display:flex;
+    display: flex;
     flex-wrap: wrap;
 }
 

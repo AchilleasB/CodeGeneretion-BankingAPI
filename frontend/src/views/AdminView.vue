@@ -7,8 +7,10 @@ const UnapprovedUsers = defineAsyncComponent(() => import('../components/admin/U
 const ApprovedUsers = defineAsyncComponent(() => import('../components/admin/ApprovedUsers.vue'));
 const TransferFunds = defineAsyncComponent(() => import('../components/admin/TransferFunds.vue'));
 const AllAccounts = defineAsyncComponent(() => import('../components/admin/AllAccounts.vue'));
+const TransactionHistory = defineAsyncComponent(() => import('../components/admin/TransactionHistory.vue'));
 import { useAuthStore } from '../stores/auth';
 import { useAdminStore } from '../stores/admin';
+import { useTransactionStore } from '../stores/transaction';
 
 
 const router = useRouter();
@@ -38,7 +40,6 @@ watch(selectedComponent, () => {
 onMounted(async () => {
   await adminStore.fetchApprovedUsers();
   await adminStore.fetchUnapprovedUsers();
-  //todo: do i need it here?
 
 });
 </script>
@@ -58,6 +59,7 @@ onMounted(async () => {
           <li id="approvedUsers" class="nav-item" @click="selectComponent('approvedUsers')">Create Account</li>
           <li id="transferFunds" class="nav-item" @click="selectComponent('transferFunds')">Transfer Funds</li>
           <li id="allAccounts" class="nav-item" @click="selectComponent('allAccounts')">Account list</li>
+          <li id="transactionHistory" class="nav-item" @click="selectComponent('transactionHistory')">Transaction History</li>
           <li id="logout" class="nav-item" @click="logout">Logout</li>
         </ul>
       </div>
@@ -66,6 +68,7 @@ onMounted(async () => {
         <ApprovedUsers v-if="selectedComponent === 'approvedUsers'" />
         <TransferFunds v-if="selectedComponent === 'transferFunds'" />
         <AllAccounts v-if="selectedComponent === 'allAccounts'"/>
+        <TransactionHistory v-if="selectedComponent === 'transactionHistory'" />
       </div>
     </div>
   </main>

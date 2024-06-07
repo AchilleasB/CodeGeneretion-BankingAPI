@@ -41,7 +41,7 @@ public class AccountController {
     }
 
     @GetMapping("/ibans")
-    @PreAuthorize("hasRole('EMPLOYEE') or hasRole('CUSTOMER')")
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')")
     public ResponseEntity<List<IbanDTO>> getIbansByUserName(@RequestParam String firstName, @RequestParam String lastName) {
         List<IbanDTO> ibans = accountService.findIbansByUserName(firstName, lastName);
         return ResponseEntity.status(HttpStatus.OK).body(ibans);
@@ -58,14 +58,24 @@ public class AccountController {
         }
     }
 
-    @PutMapping("/deactivate/{accountId}")
+    @PutMapping("/status/{accountId}")
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<AccountDTO> deactivateAccount(@PathVariable UUID accountId) {
+    public ResponseEntity<AccountDTO> toggleAccountStatus(@PathVariable UUID accountId) {
         try {
-            AccountDTO updatedAccount = accountService.deactivateAccount(accountId);
+            AccountDTO updatedAccount = accountService.toggleAccountStatus(accountId);
             return new ResponseEntity<>(updatedAccount, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    @GetMapping("/iban/{iban}")
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public ResponseEntity<AccountDTO> getAccountByIBAN(@PathVariable String iban) {
+        try {
+            AccountDTO account = accountService.findAccountByIBAN(iban);
+            return new ResponseEntity<>(account, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

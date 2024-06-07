@@ -5,7 +5,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import restapi.banking.app.dto.AccountDTO;
 import restapi.banking.app.dto.UserDTO;
 import restapi.banking.app.service.UserService;
 
@@ -19,17 +18,17 @@ import java.util.UUID;
 public class UserController {
     private final UserService userService;
 
-    @PreAuthorize("hasRole('EMPLOYEE') or @securityExpressions.isSameUserOrEmployee(authentication, #userId)")
+    @PreAuthorize("hasRole('EMPLOYEE')")
     @GetMapping("/unapproved")
     public ResponseEntity<List<UserDTO>> listUnapprovedUsers() {
         List<UserDTO> userDTOs = userService.findUnapprovedUsers();
         return ResponseEntity.ok(userDTOs);
     }
 
-    @PreAuthorize("hasRole('EMPLOYEE') or @securityExpressions.isSameUserOrEmployee(authentication, #userId)")
+    @PreAuthorize("hasRole('EMPLOYEE')")
     @GetMapping("/approved")
     public ResponseEntity<List<UserDTO>> listApprovedUsers() {
-        List<UserDTO> userDTOs = userService.findApprovedUsers();
+        List<UserDTO> userDTOs = userService.findApprovedUsersWithoutAccount();
         return ResponseEntity.ok(userDTOs);
     }
 
@@ -62,6 +61,7 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    // TODO: move the logic to the service layer 
     @PreAuthorize("hasRole('EMPLOYEE')")
     @PutMapping("/{userId}")
     public ResponseEntity<UserDTO> updateDailyLimit(

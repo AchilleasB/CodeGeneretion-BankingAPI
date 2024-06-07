@@ -4,7 +4,6 @@ import java.util.UUID;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
@@ -30,11 +29,6 @@ public class SecurityExpressions {
                 .map(GrantedAuthority::getAuthority)
                 .anyMatch(role -> role.equals("ROLE_EMPLOYEE"));
         return authUserId.equals(userId) || isEmployee;
-    }
-
-    public boolean isLoggedIn(Authentication authentication) {
-        return authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_EMPLOYEE"))
-                || authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_CUSTOMER"));
     }
 
 }

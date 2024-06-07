@@ -23,6 +23,7 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -142,6 +143,8 @@ public class TransactionService {
             throw new IllegalArgumentException(whichIban + "'s IBAN format is invalid");
         checksum(iban, whichIban);
     }
+
+    // TODO: why query two times for the same IBAN? 
     private void doesIbanExists(String iban, String whichIban)
     {
         Account account = accountRepository.findByIban(iban);
@@ -220,4 +223,13 @@ public class TransactionService {
         if(IbanFrom.equals(IbanTo))
             throw new IllegalArgumentException("IBAN of recipient and sender must be different");
     }
+
+    public List<TransactionDTO> getTransactionHistory() {
+
+        List<Transaction> transactions = transactionRepository.findAll();
+        return transactions.stream()
+                .map(transactionMapper::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
 }

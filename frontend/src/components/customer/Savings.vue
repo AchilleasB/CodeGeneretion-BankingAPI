@@ -1,28 +1,38 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed } from 'vue';
 import { useUserStore } from '../../stores/user';
 import { useAccountStore } from '../../stores/account';
+import { useAuthStore } from '../../stores/auth';
+import { formatCurrency } from '@/utils/currencyFormatter';
 
 const userStore = useUserStore();
 const accountStore = useAccountStore();
+const authStore = useAuthStore();
 
 const iban = ref('');
 const balance = ref(0);
 
+const totalBalance = computed(() => {
+  return formatCurrency(accountStore.getTotalBalance);
+});
+
 onMounted(async () => {
+
+  const userId = authStore.id;
+  await accountStore.getCustomerAccounts(userId);
+  
   const savingsAccount = accountStore.getSavingsAccount[0];
 
   if (savingsAccount) {
     iban.value = savingsAccount.iban;
-    balance.value = savingsAccount.balance;
+    balance.value = formatCurrency(savingsAccount.balance);
   }
 });
-
-
 
 </script>
 
 <template>
+  <p class="total-balance">Total Balance: {{ totalBalance }}</p>
   <h1>Savings account</h1>
   <div class="container text-center">
     <div class="row">
@@ -31,15 +41,15 @@ onMounted(async () => {
           <div class="card">
             <div class="card-body">
               <p>IBAN</p>
-              <h3>€ {{ iban }}</h3>
+              <h3>{{ iban }}</h3>
             </div>
           </div>
         </div>
         <div class="col-12">
           <div class="card">
             <div class="card-body">
-              <p>Total balance</p>
-              <h2>€ {{ balance }}</h2>
+              <p>Balance</p>
+              <h2>{{ balance }}</h2>
             </div>
           </div>
         </div>
