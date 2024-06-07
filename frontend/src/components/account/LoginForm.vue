@@ -31,13 +31,13 @@ const login = async () => {
 
             }, 2000);
         } else {
-            errorMessage.value = res.response.data.message;
+            errorMessage.value = res.response.data;
             successMessage.value = '';
 
             setTimeout(() => {
                 successMessage.value = '';
                 errorMessage.value = '';
-                email.value = '';
+                // email.value = '';
                 password.value = '';
             }, 3000);
         }

@@ -56,7 +56,7 @@ public class DatabaseInitializer {
         customer1.setEmail("achil@email.com");
         customer1.setPassword(passwordEncoder.encode("achil1234"));
         customer1.setRole(UserRole.Customer);
-        customer1.setApproved(false);
+        customer1.setApproved(true);
         customer1.setDailyLimit(5000);
         userRepository.saveAndFlush(customer1);
 

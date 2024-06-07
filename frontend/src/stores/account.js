@@ -33,12 +33,9 @@ export const useAccountStore = defineStore('accountStore', {
         const response = await axios.get('/accounts');
         this.allAccounts = await response.data;
         return this.allAccounts;
-
       } catch (error) {
         console.log('Failed to fetch accounts', error);
-
       }
-
     },
 
     async fetchAllAccountsWithUserDetails() {
@@ -77,7 +74,6 @@ export const useAccountStore = defineStore('accountStore', {
 
     async updateAccount(account) {
       try {
-        // Update the account limits
         const response = await axios.put(`/accounts/${account.id}`, {
           id: account.id,
           transactionLimit: account.transactionLimit,
@@ -86,11 +82,9 @@ export const useAccountStore = defineStore('accountStore', {
 
         console.log('Updated account:', response.data);
 
-        // Update the user's daily limit
         const userStore = useUserStore();
         await userStore.updateUserDailyLimit(account.userId, account.userDailyLimit);
 
-        // Return only the properties you updated
         return {
           id: account.id,
           transactionLimit: account.transactionLimit,
@@ -102,7 +96,7 @@ export const useAccountStore = defineStore('accountStore', {
         throw error;
       }
     },
-    
+
     async toggleAccountStatus(account) {
       try {
         await axios.put(`/accounts/status/${account.id}`);
@@ -110,37 +104,33 @@ export const useAccountStore = defineStore('accountStore', {
         console.error('Error deactivating account:', error);
         throw error;
       }
+    },
 
-    }
+    async searchIbansByUsername(firstName, lastName) {
+      try {
+        const response = await axios.get('accounts/ibans', {
+          params: {
+            firstName,
+            lastName
+          }
+        });
 
+        console.log(response);
+        return response;
+      } catch (error) {
+        console.error('Error fetching IBANs:', error);
+        return error;
+      }
+    },
+
+    async getAccountByIBAN(iban) {
+      try {
+        const response = await axios.get(`/accounts/iban/${iban}`);
+        return response;
+      } catch (error) {
+        console.error('Error fetching account by IBAN:', error);
+        throw error;
+      }
+    },
   },
-
-  async searchIbansByUsername(firstName, lastName) {
-    try {
-      const response = await axios.get('accounts/ibans', {
-        params: {
-          firstName,
-          lastName
-        }
-      });
-
-      console.log(response);
-      return response;
-    } catch (error) {
-      console.error('Error fetching IBANs:', error);
-      return error;
-    }
-  },
-  async getAccountByIBAN(iban) {
-    try {
-      const response = await axios.get(`/accounts/iban/${iban}`);
-      return response;
-    } catch (error) {
-      console.error('Error fetching account by IBAN:', error);
-      throw error;
-    }
-  },
-
-}
-
-);
+});
