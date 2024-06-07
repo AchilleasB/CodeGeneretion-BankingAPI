@@ -1,27 +1,29 @@
 <script setup>
-import { ref, defineAsyncComponent, onMounted, computed } from 'vue';
+import { ref, defineAsyncComponent, onMounted } from 'vue';
 import BankBanner from '../components/BankBanner.vue';
 const Checking = defineAsyncComponent(() => import('../components/customer/Checking.vue'));
 const Savings = defineAsyncComponent(() => import('../components/customer/Savings.vue'));
 const Transactions = defineAsyncComponent(() => import('../components/customer/Transactions.vue'));
 const Profile = defineAsyncComponent(() => import('../components/customer/Profile.vue'));
 const ATM = defineAsyncComponent(() => import('../components/customer/ATM.vue'));
+const UnapprovedCustomer = defineAsyncComponent(() => import('../components/customer/UnapprovedCustomer.vue'));
 import { useAuthStore } from '../stores/auth';
 import { useAccountStore } from '../stores/account'
 import { useUserStore } from '../stores/user'
 import { useRouter } from 'vue-router';
-import { formatCurrency } from '../utils/currencyFormatter';
 
 const router = useRouter();
 const authStore = useAuthStore();
 const accountStore = useAccountStore();
 const userStore = useUserStore();
-// const transactionStore = useTransactionStore();
 
 const selectedComponent = ref('checking');
+const isApproved = ref(true);
 
 const selectComponent = (component) => {
-    selectedComponent.value = component;
+    if (isApproved.value) {
+        selectedComponent.value = component;
+    }
 }
 
 const logout = async () => {
@@ -33,8 +35,13 @@ onMounted(async () => {
     const userId = authStore.id;
     await userStore.loadUserDetails(userId);
     await accountStore.getCustomerAccounts(userId);
-
     // console.log(accountStore.accounts);
+    
+    // Customer without account will see the info component 
+    isApproved.value = userStore.approved;
+    if (!isApproved.value) {
+        selectedComponent.value = 'unapproved';
+    }
 })
 
 </script>
@@ -48,16 +55,15 @@ onMounted(async () => {
                     <h3>Welcome, {{ authStore.firstName }}</h3>
                 </div>
                 <ul class="nav-items">
-                    <li id="accounts">Accounts 
+                    <li v-if="isApproved" id="accounts">Accounts 
                     <ul>
-                        <!-- <li class="nav-item" id="totalBalance">Total Balance: {{ formatCurrency(accountStore.getTotalBalance) }}</li> -->
                         <li class="nav-item" id="checkingAccount" @click="selectComponent('checking')">Checking</li>
                         <li class="nav-item" id="savingsAccount" @click="selectComponent('savings')">Savings</li>
                     </ul>
                     </li>
-                    <li class="nav-item" id="transactions" @click="selectComponent('transactions')">Transactions</li>
-                    <li class="nav-item" id="profile" @click="selectComponent('profile')">Profile</li>
-                    <li class="nav-item" id="atm" @click="selectComponent('atm')">ATM</li>
+                    <li class="nav-item" v-if="isApproved" id="transactions" @click="selectComponent('transactions')">Transactions</li>
+                    <li class="nav-item" v-if="isApproved" id="profile" @click="selectComponent('profile')">Profile</li>
+                    <li class="nav-item" v-if="isApproved" id="atm" @click="selectComponent('atm')">ATM</li>
                     <li class="nav-item" id="logout" @click="logout">Logout</li>
                 </ul>
             </div>
@@ -67,6 +73,7 @@ onMounted(async () => {
                 <Transactions v-if="selectedComponent === 'transactions'" />
                 <Profile v-if="selectedComponent === 'profile'" />
                 <ATM v-if="selectedComponent === 'atm'" />
+                <UnapprovedCustomer v-if="selectedComponent === 'unapproved'" />
             </div>
         </div>
     </main>

@@ -14,7 +14,6 @@ import restapi.banking.app.repository.AccountRepository;
 import restapi.banking.app.repository.UserRepository;
 import restapi.banking.app.utilities.IBANGenerator;
 
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;

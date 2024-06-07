@@ -24,7 +24,7 @@ const register = async () => {
       successMessage.value = `${res.data.firstName}, your registration request was sent successfully!\n
                               Please wait for approval.`;
     } else {
-      errorMessage.value = res.response.data.message;
+      errorMessage.value = res.response.data;
     }
     setTimeout(() => {
         successMessage.value = '';

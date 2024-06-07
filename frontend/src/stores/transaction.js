@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import axios from '../axios-auth';
+import { useUserStore } from './user';
 
 export const useTransactionStore = defineStore('transactionStore', {
     state: () => ({
@@ -59,7 +60,28 @@ export const useTransactionStore = defineStore('transactionStore', {
                 throw new Error('Failed to transfer: ' + error.response.data.message);
             }
         },
-
+        async fetchTransactions() {
+            try {
+              const response = await axios.get('/transactions');
+              const transactions = response.data;
+          
+              const userStore = useUserStore();
+          
+              const transactionsWithUserDetails = await Promise.all(transactions.map(async (transaction) => {
+                await userStore.loadUserDetails(transaction.userId);
+                return {
+                  ...transaction,
+                  userName: `${userStore.firstName} ${userStore.lastName}`,
+                 
+                };
+              }));
+          
+              this.transactions = transactionsWithUserDetails;
+            } catch (error) {
+              console.log('Failed to fetch transactions with user details', error);
+            }
+          },
+          
         searchTransactions({ startDate, endDate, minAmount, maxAmount, ibanFrom, ibanTo }) {
             const parseDate = dateStr => dateStr ? new Date(dateStr).toISOString().split('T')[0] : null;
             const start = parseDate(startDate);
