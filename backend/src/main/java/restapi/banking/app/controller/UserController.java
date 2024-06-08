@@ -21,60 +21,80 @@ public class UserController {
     @PreAuthorize("hasRole('EMPLOYEE')")
     @GetMapping("/unapproved")
     public ResponseEntity<List<UserDTO>> listUnapprovedUsers() {
-        List<UserDTO> userDTOs = userService.findUnapprovedUsers();
-        return ResponseEntity.ok(userDTOs);
+        try {
+            List<UserDTO> userDTOs = userService.findUnapprovedUsers();
+            return ResponseEntity.ok(userDTOs);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PreAuthorize("hasRole('EMPLOYEE')")
     @GetMapping("/approved")
     public ResponseEntity<List<UserDTO>> listApprovedUsers() {
-        List<UserDTO> userDTOs = userService.findApprovedUsersWithoutAccount();
-        return ResponseEntity.ok(userDTOs);
+        try {
+            List<UserDTO> userDTOs = userService.findApprovedUsersWithoutAccount();
+            return ResponseEntity.ok(userDTOs);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    @PreAuthorize("hasRole('EMPLOYEE') or @securityExpressions.isSameUserOrEmployee(authentication, #userId)")
+    @PreAuthorize("hasRole('EMPLOYEE')")
     @PostMapping("/approve/{userId}")
     public ResponseEntity<UserDTO> approveUser(@PathVariable UUID userId) {
-        UserDTO approvedUser=userService.approveUser(userId);
-        return ResponseEntity.status(HttpStatus.OK).body(approvedUser);
+        try {
+            UserDTO approvedUser = userService.approveUser(userId);
+            return ResponseEntity.status(HttpStatus.OK).body(approvedUser);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    @PreAuthorize("hasRole('EMPLOYEE') or @securityExpressions.isSameUserOrEmployee(authentication, #userId)")
+    @PreAuthorize("hasRole('EMPLOYEE')")
     @DeleteMapping("/decline/{id}")
-
     public ResponseEntity<String> declineUser(@PathVariable UUID id) {
-        userService.declineUser(id);
-        return ResponseEntity.status(HttpStatus.OK).body("User declined successfully.");
+        try {
+            userService.declineUser(id);
+            return ResponseEntity.status(HttpStatus.OK).body("User declined successfully.");
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<List<UserDTO>> getAllUsers() {
-        List<UserDTO> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
+        try {
+            List<UserDTO> users = userService.getAllUsers();
+            return ResponseEntity.ok(users);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PreAuthorize("hasRole('EMPLOYEE') or @securityExpressions.isSameUserOrEmployee(authentication, #userId)")
     @GetMapping("/{userId}")
     public ResponseEntity<UserDTO> getUserById(@PathVariable UUID userId) {
-        UserDTO user = userService.findUserById(userId);
-        return ResponseEntity.ok(user);
+        try {
+            UserDTO user = userService.findUserById(userId);
+            return ResponseEntity.ok(user);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
-    // TODO: move the logic to the service layer 
     @PreAuthorize("hasRole('EMPLOYEE')")
     @PutMapping("/{userId}")
-    public ResponseEntity<UserDTO> updateDailyLimit(
-            @PathVariable UUID userId,
-            @RequestBody UserDTO userDTO) {
-        if (userDTO.getDailyLimit() <= 0) {
-            return ResponseEntity.badRequest().body(null);
+    public ResponseEntity<UserDTO> updateDailyLimit(@PathVariable UUID userId, @RequestBody UserDTO userDTO) {
+        try {
+            if (userDTO.getDailyLimit() <= 0) {
+                return ResponseEntity.badRequest().body(null);
+            }
+            UserDTO updatedUser = userService.updateDailyLimit(userId, userDTO.getDailyLimit());
+            return ResponseEntity.ok(updatedUser);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        UserDTO updatedUser = userService.updateDailyLimit(userId, userDTO.getDailyLimit());
-        return ResponseEntity.ok(updatedUser);
     }
-
-
-
-
 }
