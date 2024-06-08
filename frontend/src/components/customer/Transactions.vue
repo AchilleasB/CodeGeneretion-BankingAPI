@@ -34,6 +34,7 @@ const formatDate = (dateStr) => {
 
 const searchTransactions = () => {
   searchApplied.value = true;
+  const today = new Date().toISOString().split('T')[0];
   const formattedStartDate = searchCriteria.startDate ? formatDate(searchCriteria.startDate) : '';
   const formattedEndDate = searchCriteria.endDate ? formatDate(searchCriteria.endDate) : formatDate(today);
   
