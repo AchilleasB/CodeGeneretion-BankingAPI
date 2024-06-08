@@ -61,15 +61,9 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    // TODO: move the logic to the service layer 
     @PreAuthorize("hasRole('EMPLOYEE')")
     @PutMapping("/{userId}")
-    public ResponseEntity<UserDTO> updateDailyLimit(
-            @PathVariable UUID userId,
-            @RequestBody UserDTO userDTO) {
-        if (userDTO.getDailyLimit() <= 0) {
-            return ResponseEntity.badRequest().body(null);
-        }
+    public ResponseEntity<UserDTO> updateDailyLimit(@PathVariable UUID userId, @RequestBody UserDTO userDTO) {
         UserDTO updatedUser = userService.updateDailyLimit(userId, userDTO.getDailyLimit());
         return ResponseEntity.ok(updatedUser);
     }
