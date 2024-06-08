@@ -86,6 +86,9 @@ public class UserService {
     }
 
     public UserDTO updateDailyLimit(UUID userId, double newDailyLimit) {
+        if (newDailyLimit <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Daily limit must be greater than 0");
+        }
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with id: " + userId));
 

@@ -15,12 +15,11 @@ const balance = ref(0);
 const dailyLimit = ref(0);
 const transactionLimit = ref(0);
 const absoluteLimit = ref(0);
+const showPaymentForm = ref(false);
 
 const totalBalance = computed(() => {
   return formatCurrency(accountStore.getTotalBalance);
 });
-
-const showPaymentForm = ref(false);
 
 const togglePaymentForm = () => {
   showPaymentForm.value = !showPaymentForm.value;

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +22,7 @@ import restapi.banking.app.repository.UserRepository;
 
 @Component
 @AllArgsConstructor
+@Profile("!test") // This bean will only be created when the profile is not "test"
 public class DatabaseInitializer {
 
     private final UserRepository userRepository;
@@ -150,7 +152,7 @@ public class DatabaseInitializer {
         transaction1.setAccountFrom(account);
         transaction1.setAccountTo(null);
         transaction1.setAmount(BigDecimal.valueOf(1000));
-        transaction1.setTimestamp(LocalDateTime.now());
+        transaction1.setTimestamp(LocalDateTime.of(2024, 4, 1, 12, 0));
         transaction1.setType(TransactionType.WITHDRAW);
         transaction1.setMessage("ATM");
         transaction1.setUserId(customer.getId());
@@ -160,7 +162,7 @@ public class DatabaseInitializer {
         transaction2.setAccountFrom(null);
         transaction2.setAccountTo(account);
         transaction2.setAmount(BigDecimal.valueOf(2000));
-        transaction2.setTimestamp(LocalDateTime.now());
+        transaction2.setTimestamp(LocalDateTime.of(2024, 5, 1, 12, 0));
         transaction2.setType(TransactionType.DEPOSIT);
         transaction2.setMessage("ATM");
         transaction2.setUserId(customer.getId());
