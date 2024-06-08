@@ -8,9 +8,10 @@ const accountStore = useAccountStore();
 const transactionStore = useTransactionStore();
 
 const props = defineProps({
-  ibanFrom: String,
-  totalBalance: Number,
+  ibanFrom: String
 });
+
+const emit = defineEmits(['transactionSuccess']);
 
 const searchUsername = ref('');
 const ibanResults = ref([]);
@@ -59,6 +60,7 @@ const submitTransfer = async () => {
     const response = await transactionStore.transfer(transactionDTO);
     console.log(response);
     successMessage.value = 'Transfer successful!';
+    emit('transactionSuccess');
   } catch (error) {
     errorMessage.value = 'Transaction failed: ' + error.message;
   }

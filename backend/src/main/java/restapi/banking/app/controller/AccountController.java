@@ -23,28 +23,46 @@ public class AccountController {
 
     @GetMapping
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public List<AccountDTO> getAllAccounts() {
-        return accountService.getAllAccounts();
+    public ResponseEntity<List<AccountDTO>> getAllAccounts() {
+        try {
+            List<AccountDTO> accounts = accountService.getAllAccounts();
+            return new ResponseEntity<>(accounts, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/{userId}")
     @PreAuthorize("@securityExpressions.isSameUserOrEmployee(authentication, #userId)")
-    public List<AccountDTO> getAccountsByUserId(@PathVariable UUID userId) {
-        return accountService.findAccountByUserId(userId);
+    public ResponseEntity<List<AccountDTO>> getAccountsByUserId(@PathVariable UUID userId) {
+        try {
+            List<AccountDTO> accounts = accountService.findAccountByUserId(userId);
+            return new ResponseEntity<>(accounts, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping("/{userId}")
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<List<AccountDTO>> createAccounts(@RequestBody AccountDTO accountDTO) {
-        List<AccountDTO> createdAccounts = accountService.createAccounts(accountDTO);
-        return new ResponseEntity<>(createdAccounts, HttpStatus.CREATED);
+        try {
+            List<AccountDTO> createdAccounts = accountService.createAccounts(accountDTO);
+            return new ResponseEntity<>(createdAccounts, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @GetMapping("/ibans")
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')")
     public ResponseEntity<List<IbanDTO>> getIbansByUserName(@RequestParam String firstName, @RequestParam String lastName) {
-        List<IbanDTO> ibans = accountService.findIbansByUserName(firstName, lastName);
-        return ResponseEntity.status(HttpStatus.OK).body(ibans);
+        try {
+            List<IbanDTO> ibans = accountService.findIbansByUserName(firstName, lastName);
+            return ResponseEntity.status(HttpStatus.OK).body(ibans);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PutMapping("/{accountId}")
@@ -68,6 +86,7 @@ public class AccountController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     @GetMapping("/iban/{iban}")
     @PreAuthorize("hasRole('EMPLOYEE')")
     public ResponseEntity<AccountDTO> getAccountByIBAN(@PathVariable String iban) {
@@ -78,8 +97,4 @@ public class AccountController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-
-
-
 }
