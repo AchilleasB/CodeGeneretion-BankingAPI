@@ -68,7 +68,7 @@ const transferFunds = async () => {
             ibanTo: ibanTo.value,
             ibanFrom: ibanFrom.value,
             type: "TRANSFER",
-            message: description.value
+            message: description.value,
         };
         const response = await transactionStore.transfer(transactionDTO);
         console.log(response);
