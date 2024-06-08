@@ -124,6 +124,12 @@ public class AccountService {
 
     // update account limits by account id
     public AccountDTO updateAccountLimits(UUID accountId, AccountDTO accountDTO) {
+        // Validate account DTO
+        if (accountDTO.getAbsoluteLimit() == null || accountDTO.getTransactionLimit() == null ||
+                accountDTO.getAbsoluteLimit().compareTo(BigDecimal.ZERO) <= 0 ||
+                accountDTO.getTransactionLimit().compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("Account limits must be at least 1");
+        }
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
         account.setAbsoluteLimit(accountDTO.getAbsoluteLimit());
