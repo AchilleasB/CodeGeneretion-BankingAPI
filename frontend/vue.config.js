@@ -1,3 +1,3 @@
 module.exports = {
-    publicPath: process.env.NODE_ENV === 'production' ? '/CodeGeneretion-BankingAPI/frontend/' : '/'
+    publicPath: '/CodeGeneretion-BankingAPI/frontend/'
   }
