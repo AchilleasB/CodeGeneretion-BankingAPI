@@ -25,11 +25,8 @@ const togglePaymentForm = () => {
   showPaymentForm.value = !showPaymentForm.value;
 };
 
-onMounted(async () => {
-
-  const userId = authStore.id;
-  await accountStore.getCustomerAccounts(userId);
-
+const loadAccountDetails = async () => {
+  await accountStore.getCustomerAccounts(authStore.id);
   const checkingAccount = accountStore.getCheckingAccount[0];
 
   if (checkingAccount) {
@@ -39,6 +36,10 @@ onMounted(async () => {
     transactionLimit.value = formatCurrency(checkingAccount.transactionLimit);
     absoluteLimit.value = formatCurrency(checkingAccount.absoluteLimit);
   }
+};
+
+onMounted(async () => {
+  await loadAccountDetails();
 });
 </script>
 
@@ -105,7 +106,7 @@ onMounted(async () => {
     </div>
 
     <!-- Payment Form -->
-    <TransferFunds v-if="showPaymentForm" :iban-from="iban" :totalBalance="totalBalance" @cancel="togglePaymentForm" />
+    <TransferFunds v-if="showPaymentForm" :iban-from="iban" :totalBalance="totalBalance" @cancel="togglePaymentForm" @transactionSuccess="loadAccountDetails" />
   </div>
 </template>
 
