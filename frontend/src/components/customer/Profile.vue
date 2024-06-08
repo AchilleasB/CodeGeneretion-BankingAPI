@@ -2,15 +2,12 @@
 import { useUserStore } from '../../stores/user';
 
 const userStore = useUserStore();
-
-
 </script>
-
 
 <template>
   <div class="profile">
-    <h1>Profile Page</h1>
-    <div class="profile-card">
+    <h2>My Profile</h2>
+    <div class="profile-details">
       <div class="profile-item">
         <span class="profile-label">Full Name:</span>
         <span class="profile-value">{{ userStore.firstName }} {{ userStore.lastName }}</span>
@@ -32,54 +29,49 @@ const userStore = useUserStore();
         <span class="profile-value">{{ userStore.phone }}</span>
       </div>
     </div>
-
   </div>
 </template>
 
-
 <style scoped>
 .profile {
-  padding: 20px;
-  max-width: 600px;
+  padding: 40px;
   margin: auto;
-  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.profile h2 {
+  color: #333;
+  margin-bottom: 30px;
+}
+
+.profile-details {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 1em;
-  padding: 2rem;
-  background-color: #f0f0f0;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.profile h1 {
-  text-align: center;
-  color: #333;
-}
-
-.profile-card {
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  margin-top: 20px;
+  gap: 20px;
 }
 
 .profile-item {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
+  background: #fff;
+  padding: 15px 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .profile-label {
   font-weight: bold;
   color: #555;
+  margin-right: 20px;
 }
 
 .profile-value {
   color: #777;
+  flex: 1;
+  text-align: right;
 }
 
 .loading {

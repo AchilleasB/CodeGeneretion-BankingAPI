@@ -36,15 +36,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler(UserNotApprovedException.class)
-    public ResponseEntity<ExceptionDTO> handleUserNotApprovedException (UserNotApprovedException ex) {
-        ExceptionDTO response = new ExceptionDTO(
-                HttpStatus.UNAUTHORIZED.value(),
-                ex.getClass().getSimpleName(),
-                ex.getMessage());
-        return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
-    }
-
     @ExceptionHandler(value = { IllegalArgumentException.class, IllegalStateException.class })
     public ResponseEntity<ExceptionDTO> handleBadRequest(Exception ex) {
         ExceptionDTO response = new ExceptionDTO(
@@ -52,13 +43,6 @@ public class GlobalExceptionHandler {
                 ex.getClass().getSimpleName(),
                 ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getFieldErrors().forEach(error -> errors.put(error.getField(), error.getDefaultMessage()));
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
     
     @ExceptionHandler(Exception.class)

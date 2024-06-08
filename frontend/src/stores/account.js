@@ -115,7 +115,7 @@ export const useAccountStore = defineStore('accountStore', {
     async searchIbansByUsername(firstName, lastName) {
       try {
         const response = await axios.get('accounts/ibans', {
-          timeout: 3000, // 3s
+          timeout: 5000, // 5s
           params: {
             firstName,
             lastName
