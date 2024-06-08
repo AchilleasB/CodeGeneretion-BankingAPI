@@ -115,6 +115,7 @@ export const useAccountStore = defineStore('accountStore', {
     async searchIbansByUsername(firstName, lastName) {
       try {
         const response = await axios.get('accounts/ibans', {
+          timeout: 3000, // 3s
           params: {
             firstName,
             lastName
@@ -124,8 +125,8 @@ export const useAccountStore = defineStore('accountStore', {
         console.log(response);
         return response;
       } catch (error) {
-        console.error('Error fetching IBANs:', error);
-        return error;
+        // Not return, throw instead since we catch it in searchIbans again
+        throw error;
       }
     },
     async getAccountByIBAN(iban) {

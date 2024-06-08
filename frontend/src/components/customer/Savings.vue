@@ -1,14 +1,11 @@
-<!-- Savings.vue -->
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-import { useUserStore } from '../../stores/user';
 import { useAccountStore } from '../../stores/account';
 import { useAuthStore } from '../../stores/auth';
 import { useTransactionStore } from '@/stores/transaction';
 import { formatCurrency } from '@/utils/currencyFormatter';
-import loadingGif from '../../assets/loading-gif.gif'; // Make sure this path is correct
+import loadingGif from '../../assets/loading-gif.gif';
 
-const userStore = useUserStore();
 const accountStore = useAccountStore();
 const transactionStore = useTransactionStore();
 const authStore = useAuthStore();
@@ -25,8 +22,8 @@ const totalBalance = computed(() => {
 
 const checkingIban = ref('');
 const savingsIban = ref('');
-const transferAmount = ref(0);
-const isFromCheckingToSavings = ref(true); // Determines transfer direction
+//const depositAmount = ref(0); // Independent deposit amount state
+//const withdrawAmount = ref(0); // Independent withdraw amount state
 
 onMounted(async () => {
   try {
@@ -53,8 +50,8 @@ onMounted(async () => {
   }
 });
 
-const validateAmount = () => {
-  return transferAmount.value > 0;
+const validateAmount = (amount) => {
+  return !isNaN(amount) && amount > 0;
 };
 
 const resetMessages = () => {
@@ -64,24 +61,28 @@ const resetMessages = () => {
   }, 3000);
 };
 
-const transferFunds = async () => {
+const transferFunds = async (amount, fromCheckingToSavings) => {
   errorMessage.value = '';
   successMessage.value = '';
   isLoading.value = true;
 
-  if (!validateAmount()) {
+  amount = parseFloat(amount); // Ensure amount is a number
+
+  if (!validateAmount(amount)) {
     errorMessage.value = 'Failed to transfer: Amount must be higher than €0.00';
     isLoading.value = false;
+    depositAmount.value = 0;
+    withdrawAmount.value = 0;
     resetMessages();
     return;
   }
 
   const transactionDTO = {
-    amount: transferAmount.value,
-    ibanFrom: isFromCheckingToSavings.value ? checkingIban.value : savingsIban.value,
-    ibanTo: isFromCheckingToSavings.value ? savingsIban.value : checkingIban.value,
+    amount: amount,
+    ibanFrom: fromCheckingToSavings ? checkingIban.value : savingsIban.value,
+    ibanTo: fromCheckingToSavings ? savingsIban.value : checkingIban.value,
     type: 'TRANSFER',
-    message: isFromCheckingToSavings.value
+    message: fromCheckingToSavings
       ? 'Deposit money from Checking to Saving account'
       : 'Withdraw money from Saving to Checking account',
   };
@@ -90,7 +91,16 @@ const transferFunds = async () => {
     const response = await transactionStore.transfer(transactionDTO);
     console.log(response);
     successMessage.value = 'Transfer successful!';
-    totalBalance.value = formatCurrency(accountStore.getTotalBalance);
+
+    // Update the local balance
+    const savingsAccount = accountStore.getSavingsAccount[0];
+    if (fromCheckingToSavings) {
+      savingsAccount.balance += amount;
+    } else {
+      savingsAccount.balance -= amount;
+    }
+
+    balance.value = formatCurrency(savingsAccount.balance);
   } catch (error) {
     errorMessage.value = 'Transaction failed: ' + error.message;
   } finally {
@@ -101,8 +111,7 @@ const transferFunds = async () => {
 </script>
 
 <template>
-  <!--<div class="savings-container"> -->
-    <p class="total-balance">Total Balance: {{ totalBalance }}</p>
+    <p>Total Balance: {{ totalBalance }}</p>
     <h1>Savings account</h1>
 
     <div class="container text-center">
@@ -127,15 +136,15 @@ const transferFunds = async () => {
           <div class="card">
             <div class="card-body from-checking">
               <p>Deposit money (CHECKING -> SAVINGS)</p>
-              <input type="number" v-model="transferAmount" placeholder="Enter amount" />
-              <button @click.prevent="isFromCheckingToSavings = true; transferFunds()">DEPOSIT</button>
+              <input type="number" v-model.number="depositAmount" placeholder="Enter amount" />
+              <button @click.prevent="transferFunds(depositAmount, true)">DEPOSIT</button>
             </div>
           </div>
           <div class="card">
             <div class="card-body to-checking">
               <p>Withdraw money (SAVINGS -> CHECKING)</p>
-              <input type="number" v-model="transferAmount" placeholder="Enter amount" />
-              <button @click.prevent="isFromCheckingToSavings = false; transferFunds()">WITHDRAW</button>
+              <input type="number" v-model.number="withdrawAmount" placeholder="Enter amount" />
+              <button @click.prevent="transferFunds(withdrawAmount, false)">WITHDRAW</button>
             </div>
           </div>
         </div>
@@ -147,7 +156,6 @@ const transferFunds = async () => {
 
     <!-- Loading GIF Display -->
     <img v-if="isLoading" :src="loadingGif" alt="Loading" class="loading-gif">
-  <!--</div> -->
 </template>
 
 <style scoped>
