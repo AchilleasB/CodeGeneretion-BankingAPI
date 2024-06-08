@@ -122,8 +122,8 @@ public class AccountService {
         return accountMapper.convertAccountToDTO(savedAccount);
     }
 
-    // update account by account id
-    public AccountDTO updateAccount(UUID accountId, AccountDTO accountDTO) {
+    // update account limits by account id
+    public AccountDTO updateAccountLimits(UUID accountId, AccountDTO accountDTO) {
         Account account = accountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("Account not found"));
         account.setAbsoluteLimit(accountDTO.getAbsoluteLimit());

@@ -49,9 +49,9 @@ public class AccountController {
 
     @PutMapping("/{accountId}")
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<AccountDTO> updateAccount(@PathVariable UUID accountId, @RequestBody AccountDTO accountDTO) {
+    public ResponseEntity<AccountDTO> updateAccountLimits(@PathVariable UUID accountId, @RequestBody AccountDTO accountDTO) {
         try {
-            AccountDTO updatedAccount = accountService.updateAccount(accountId, accountDTO);
+            AccountDTO updatedAccount = accountService.updateAccountLimits(accountId, accountDTO);
             return new ResponseEntity<>(updatedAccount, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
