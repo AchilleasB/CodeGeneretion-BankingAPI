@@ -16,26 +16,33 @@ const login = async () => {
     try {
         const res = await authStore.login(email.value, password.value);
 
-        successMessage.value = `You have successfully logged in!`;
-        errorMessage.value = '';
-
-        setTimeout(() => {
-            successMessage.value = '';
-            if (authStore.isCustomer) {
-                router.push({ name: 'customer' });
-            }
-            if (authStore.isAdmin) {
-                router.push({ name: 'admin' });
-            }
-        }, 2000);
-    } catch (error) {
-        errorMessage.value = error.message;
-
-        setTimeout(() => {
+        if (res.data) {
+            successMessage.value = `You have successfully logged in!`;
             errorMessage.value = '';
-            // email.value = '';
-            password.value = '';
-        }, 3000);
+
+            setTimeout(() => {
+
+                if (authStore.isCustomer){
+                    router.push({ name: 'customer' });
+                }
+                if (authStore.isAdmin){
+                    router.push({ name: 'admin' });
+                }
+
+            }, 2000);
+        } else {
+            errorMessage.value = res.response.data;
+            successMessage.value = '';
+
+            setTimeout(() => {
+                successMessage.value = '';
+                errorMessage.value = '';
+                // email.value = '';
+                password.value = '';
+            }, 3000);
+        }
+    } catch (error) {
+        console.log(error);
     }
 }
 </script>
@@ -52,8 +59,7 @@ const login = async () => {
             </div>
             <div class="col-12 mb-3">
                 <label for="inputLoginPassword" class="form-label">Password</label>
-                <input name="password" type="password" v-model="password" class="form-control" id="inputLoginPassword"
-                    required>
+                <input name="password" type="password" v-model="password" class="form-control" id="inputLoginPassword" required>
             </div>
             <div class="col-12 d-flex justify-content-center">
                 <button type="submit" class="btn btn-primary mt-4">Submit</button>
@@ -66,7 +72,7 @@ const login = async () => {
 .container {
     width: 100%;
     max-width: 500px;
-    border-radius: 8px;
+     border-radius: 8px;
     padding: 20px;
     background: rgb(247, 247, 247);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -84,8 +90,7 @@ h3 {
     text-align: center;
 }
 
-input,
-button {
+input, button {
     width: calc(100% - 40px);
     padding: 10px 20px;
     margin-top: 10px;
@@ -124,6 +129,7 @@ button:hover {
 }
 
 .alert-danger {
-    background-color: #f44336;
+    background-color: #f44336; 
 }
+
 </style>
