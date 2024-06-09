@@ -26,7 +26,7 @@ public class AccountController {
     public ResponseEntity<List<AccountDTO>> getAllAccounts() {
         try {
             List<AccountDTO> accounts = accountService.getAllAccounts();
-            return new ResponseEntity<>(accounts, HttpStatus.OK);
+            return ResponseEntity.status(HttpStatus.OK).body(accounts);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -37,7 +37,7 @@ public class AccountController {
     public ResponseEntity<List<AccountDTO>> getAccountsByUserId(@PathVariable UUID userId) {
         try {
             List<AccountDTO> accounts = accountService.findAccountByUserId(userId);
-            return new ResponseEntity<>(accounts, HttpStatus.OK);
+            return  ResponseEntity.status(HttpStatus.OK).body(accounts);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -48,7 +48,7 @@ public class AccountController {
     public ResponseEntity<List<AccountDTO>> createAccounts(@RequestBody AccountDTO accountDTO) {
         try {
             List<AccountDTO> createdAccounts = accountService.createAccounts(accountDTO);
-            return new ResponseEntity<>(createdAccounts, HttpStatus.CREATED);
+            return ResponseEntity.status(HttpStatus.CREATED).body(createdAccounts);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -67,10 +67,10 @@ public class AccountController {
 
     @PutMapping("/{accountId}")
     @PreAuthorize("hasRole('EMPLOYEE')")
-    public ResponseEntity<AccountDTO> updateAccount(@PathVariable UUID accountId, @RequestBody AccountDTO accountDTO) {
+    public ResponseEntity<AccountDTO> updateAccountLimits(@PathVariable UUID accountId, @RequestBody AccountDTO accountDTO) {
         try {
-            AccountDTO updatedAccount = accountService.updateAccount(accountId, accountDTO);
-            return new ResponseEntity<>(updatedAccount, HttpStatus.OK);
+            AccountDTO updatedAccount = accountService.updateAccountLimits(accountId, accountDTO);
+            return ResponseEntity.status(HttpStatus.OK).body(updatedAccount);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -81,7 +81,7 @@ public class AccountController {
     public ResponseEntity<AccountDTO> toggleAccountStatus(@PathVariable UUID accountId) {
         try {
             AccountDTO updatedAccount = accountService.toggleAccountStatus(accountId);
-            return new ResponseEntity<>(updatedAccount, HttpStatus.OK);
+            return ResponseEntity.status(HttpStatus.OK).body(updatedAccount);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -92,7 +92,7 @@ public class AccountController {
     public ResponseEntity<AccountDTO> getAccountByIBAN(@PathVariable String iban) {
         try {
             AccountDTO account = accountService.findAccountByIBAN(iban);
-            return new ResponseEntity<>(account, HttpStatus.OK);
+            return ResponseEntity.status(HttpStatus.OK).body(account);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }

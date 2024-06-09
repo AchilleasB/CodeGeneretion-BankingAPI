@@ -139,7 +139,7 @@ public class AccountControllerTest {
         UUID accountId = UUID.randomUUID();
         AccountDTO accountDTO = createTestAccountDTO();
 
-        given(accountService.updateAccount(eq(accountId), any(AccountDTO.class))).willReturn(accountDTO);
+        given(accountService.updateAccountLimits(eq(accountId), any(AccountDTO.class))).willReturn(accountDTO);
 
         mockMvc.perform(put("/accounts/{accountId}", accountId)
                         .contentType(MediaType.APPLICATION_JSON)

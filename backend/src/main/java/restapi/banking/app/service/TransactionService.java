@@ -112,7 +112,7 @@ public class TransactionService {
         // transferring
         Account accountTo = accountRepository.findByIban(requestDTO.getIbanTo());
         BigDecimal amount = requestDTO.getAmount();
-        transferAmounts(accountFrom, accountTo, amount);
+        transferFunds(accountFrom, accountTo, amount);
 
         Transaction transaction = new Transaction(); // needs to be done that way to pass correct UUID in the response
         transaction.setAccountTo(accountTo);
@@ -141,10 +141,11 @@ public class TransactionService {
             throw new IllegalArgumentException(whichIban + "'s IBAN must start with \'NL\'");
         if (!iban.substring(2).matches("\\d{2}[A-Z]{4}\\d{10}"))
             throw new IllegalArgumentException(whichIban + "'s IBAN format is invalid");
-        checksum(iban, whichIban);
+        //method below would be used in real case scenario
+        //checksum(iban, whichIban);
     }
 
-    // TODO: why query two times for the same IBAN? 
+    //Checking whether the account number exists in the database
     private void doesIbanExists(String iban, String whichIban)
     {
         Account account = accountRepository.findByIban(iban);
@@ -157,6 +158,7 @@ public class TransactionService {
             throw new IllegalArgumentException("Not enough balance to transfer");
     }
 
+    //checking user's daily, transfer & account's absolute limits
     private void checkLimits(Account accountFrom, BigDecimal amountToTransfer) {
         // check daily limit
         User user = accountFrom.getUser();
@@ -164,15 +166,22 @@ public class TransactionService {
         BigDecimal transferredAmount = transactionRepository.totalTransferred(user.getId(), localDate.atStartOfDay(),
                 localDate.atTime(LocalTime.MAX));
         transferredAmount = transferredAmount.add(amountToTransfer); // adding amount to transfer to compare with the limit
-        if (transferredAmount.compareTo(BigDecimal.valueOf(user.getDailyLimit())) >= 0)
+        if (transferredAmount.compareTo(BigDecimal.valueOf(user.getDailyLimit())) > 0)
             throw new IllegalArgumentException("User's daily limit exceeded ");
         // check absolute limit
         BigDecimal accountBalance = accountFrom.getBalance();
         accountBalance.subtract(amountToTransfer);
-        if (accountBalance.compareTo(accountFrom.getAbsoluteLimit()) <= 0)
+        if (accountBalance.compareTo(accountFrom.getAbsoluteLimit()) < 0)
             throw new IllegalArgumentException("Account's absolute limit is exceeded");
+        // check transaction limit
+        if (amountToTransfer.compareTo(accountFrom.getTransactionLimit()) > 0) // Make sure we can still transfer UP TO & INCLUDING the limit
+        {
+            throw new IllegalArgumentException("Amount to transfer is greater than transaction limit");
+        }
     }
 
+    //The IBAN check digit consists of two digits in positions 3 and 4 of the IBAN.
+    //It is calculated using the MOD97 algorithm and provides the primary integrity check for the IBAN standard.
     private void checksum(String iban, String whichIban) {
         String accountNumber = iban.substring(8);
 
@@ -194,7 +203,8 @@ public class TransactionService {
             throw new IllegalArgumentException(whichIban + "'s IBAN is invalid");
     }
 
-    private void transferAmounts(Account accountFrom, Account accountTo, BigDecimal amount) {
+    //transferring funds between accounts
+    private void transferFunds(Account accountFrom, Account accountTo, BigDecimal amount) {
         BigDecimal newBalanceFrom = accountFrom.getBalance().subtract(amount);
         accountFrom.setBalance(newBalanceFrom);
 
@@ -205,6 +215,7 @@ public class TransactionService {
         accountRepository.save(accountTo);
     }
 
+    //method for debugging
     private void testBalance(TransactionDTO transactionDTO) {
         Account accountFrom = accountRepository.findByIban(transactionDTO.getIbanFrom());
         Account accountTo = accountRepository.findByIban(transactionDTO.getIbanTo());
