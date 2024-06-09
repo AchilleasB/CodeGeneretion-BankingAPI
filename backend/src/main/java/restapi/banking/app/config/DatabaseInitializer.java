@@ -47,4 +47,5 @@ public class DatabaseInitializer {
             superBank.setDailyLimit(1000000);
             userRepository.saveAndFlush(superBank);
      
-}
+ }
+}   
