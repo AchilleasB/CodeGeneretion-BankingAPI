@@ -119,7 +119,7 @@ export const useAccountStore = defineStore('accountStore', {
         return response;
       } catch (error) {
         console.error('Error fetching IBANs:', error);
-        return error;
+        throw new Error(error.response.data.message);
       }
     },
 

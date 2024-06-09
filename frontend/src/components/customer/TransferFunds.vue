@@ -33,7 +33,7 @@ const searchIbans = async () => {
     const response = await accountStore.searchIbansByUsername(firstName, lastName);
     ibanResults.value = response.data;
   } catch (error) {
-    console.error('Error fetching IBANs:', error);
+    errorMessage.value = error.message;
   }
 };
 
