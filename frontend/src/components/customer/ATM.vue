@@ -31,7 +31,6 @@ const submitATMTransaction = async () => {
 
     if (!isValidAmount.value) {
         errorMessage.value = 'Amount must be at least €10.00';
-        setTimeout(() => {errorMessage.value = ''; amount.value = 10; }, 3000);
         return;
     }
 
@@ -53,7 +52,7 @@ const submitATMTransaction = async () => {
         console.log(response);
         successMessage.value = 'Transaction successful';
     } catch (error) {
-        errorMessage.value = error.message;
+        errorMessage.value = 'Transaction failed: ' + error.message;
     }
 
 

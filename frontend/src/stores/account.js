@@ -125,9 +125,8 @@ export const useAccountStore = defineStore('accountStore', {
         console.log(response);
         return response;
       } catch (error) {
-        console.error('Error fetching IBANs:', error);
-        throw new Error(error.response.data.message);
-
+        // Not return, throw instead since we catch it in searchIbans again
+        throw error;
       }
     },
     async getAccountByIBAN(iban) {
