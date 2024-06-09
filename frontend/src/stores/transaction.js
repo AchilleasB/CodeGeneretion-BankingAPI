@@ -100,7 +100,6 @@ export const useTransactionStore = defineStore('transactionStore', {
                 const response = await axios.post('/transactions/atm/deposit', transactionDTO);
                 return response.data;
             } catch (error) {
-                console.log(error);
                 throw new Error('Failed to deposit: ' + error.response.data.message);
             }
         },
@@ -109,8 +108,7 @@ export const useTransactionStore = defineStore('transactionStore', {
                 const response = await axios.post('/transactions/atm/withdraw', transactionDTO);
                 return response.data;
             } catch (error) {
-                console.log(error);
-                throw new Error('Failed to withdraw: ' + error.response.data.message);
+                throw new Error('Failed to withdraw: ' + error.response.message);
             }
         },
         async transfer(transactionDTO) {
