@@ -23,7 +23,7 @@ public class UserController {
     public ResponseEntity<List<UserDTO>> listUnapprovedUsers() {
         try {
             List<UserDTO> userDTOs = userService.findUnapprovedUsers();
-            return ResponseEntity.ok(userDTOs);
+            return ResponseEntity.status(HttpStatus.OK).body(userDTOs);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -34,7 +34,7 @@ public class UserController {
     public ResponseEntity<List<UserDTO>> listApprovedUsers() {
         try {
             List<UserDTO> userDTOs = userService.findApprovedUsersWithoutAccount();
-            return ResponseEntity.ok(userDTOs);
+            return ResponseEntity.status(HttpStatus.OK).body(userDTOs);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -67,7 +67,7 @@ public class UserController {
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         try {
             List<UserDTO> users = userService.getAllUsers();
-            return ResponseEntity.ok(users);
+            return ResponseEntity.status(HttpStatus.OK).body(users);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -78,7 +78,7 @@ public class UserController {
     public ResponseEntity<UserDTO> getUserById(@PathVariable UUID userId) {
         try {
             UserDTO user = userService.findUserById(userId);
-            return ResponseEntity.ok(user);
+            return ResponseEntity.status(HttpStatus.OK).body(user);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -93,7 +93,7 @@ public class UserController {
                 return ResponseEntity.badRequest().body(null);
             }
             UserDTO updatedUser = userService.updateDailyLimit(userId, userDTO.getDailyLimit());
-            return ResponseEntity.ok(updatedUser);
+            return ResponseEntity.status(HttpStatus.OK).body(updatedUser);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
