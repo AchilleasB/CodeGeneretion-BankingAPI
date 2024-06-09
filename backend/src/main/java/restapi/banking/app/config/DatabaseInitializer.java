@@ -146,4 +146,5 @@ public class DatabaseInitializer {
             transactionRepository.saveAndFlush(transaction2);
         }
 
+ }
 }
