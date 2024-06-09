@@ -20,27 +20,23 @@ const register = async () => {
   try {
     const res = await authStore.register(firstName.value, lastName.value, dateOfBirth.value, phone.value, bsn.value, email.value, password.value);
 
-    if (res.data) {
-      successMessage.value = `${res.data.firstName}, your registration request was sent successfully!\n
+    successMessage.value = `${res.data.firstName}, your registration request was sent successfully!\n
                               Please wait for approval.`;
-    } else {
-      errorMessage.value = res.response.data;
-    }
+
     setTimeout(() => {
-        successMessage.value = '';
-        errorMessage.value = '';
-        // firstName.value = '';
-        // lastName.value = '';
-        // dateOfBirth.value = '';
-        // phone.value = '';
-        // bsn.value = '';
-        email.value = '';
-        password.value = '';
-        router.push({ name: 'home' });
-      }, 5000);
+      successMessage.value = '';
+      email.value = '';
+      password.value = '';
+      router.push({ name: 'home' });
+    }, 5000);
   }
   catch (error) {
-    console.log(error);
+    errorMessage.value = error.message;
+    setTimeout(() => {
+      errorMessage.value = '';
+      email.value = '';
+      password.value = '';
+    }, 5000);
   }
 }
 
