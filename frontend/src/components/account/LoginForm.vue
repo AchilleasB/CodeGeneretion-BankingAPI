@@ -14,37 +14,31 @@ const errorMessage = ref('');
 
 const login = async () => {
     try {
-        const res = await authStore.login(email.value, password.value);
+        await authStore.login(email.value, password.value);
 
-        if (res.data) {
-            successMessage.value = `You have successfully logged in!`;
-            errorMessage.value = '';
+        successMessage.value = `You have successfully logged in!`;
+        errorMessage.value = '';
 
-            setTimeout(() => {
-
-                if (authStore.isCustomer){
-                    router.push({ name: 'customer' });
-                }
-                if (authStore.isAdmin){
-                    router.push({ name: 'admin' });
-                }
-
-            }, 2000);
-        } else {
-            errorMessage.value = res.response.data;
-            successMessage.value = '';
-
-            setTimeout(() => {
-                successMessage.value = '';
-                errorMessage.value = '';
-                // email.value = '';
-                password.value = '';
-            }, 3000);
-        }
+        setTimeout(() => {
+            if (authStore.isCustomer) {
+                router.push({ name: 'customer' });
+            }
+            if (authStore.isAdmin) {
+                router.push({ name: 'admin' });
+            }
+        }, 2000);
     } catch (error) {
-        console.log(error);
+        errorMessage.value = error.message;
+        successMessage.value = '';
+
+        setTimeout(() => {
+            successMessage.value = '';
+            errorMessage.value = '';
+            // email.value = '';
+            password.value = '';
+        }, 3000);
     }
-}
+};
 </script>
 
 <template>
