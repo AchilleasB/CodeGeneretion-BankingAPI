@@ -17,15 +17,14 @@ import restapi.banking.app.dto.mapper.TransactionMapper;
 import restapi.banking.app.model.*;
 import restapi.banking.app.repository.AccountRepository;
 import restapi.banking.app.repository.TransactionRepository;
+import restapi.banking.app.repository.UserRepository;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 // import java.time.LocalDate;
@@ -36,6 +35,7 @@ import java.util.stream.Collectors;
 public class TransactionService {
 
     private final AccountRepository accountRepository;
+    private final UserRepository userRepository;
     private final TransactionRepository transactionRepository;
     @Autowired
     private final TransactionMapper transactionMapper;
@@ -72,7 +72,7 @@ public class TransactionService {
         transaction.setAccountTo(transactionDTO.getTransactionType() == TransactionType.DEPOSIT ? account : null);
         transaction.setAmount(transactionDTO.getAmount());
         transaction.setType(transactionDTO.getTransactionType());
-        transaction.setUserId(account.getUser().getId());
+        transaction.setUserId(account.getUserId());
         transaction.setTimestamp(LocalDateTime.now());
         transaction.setMessage("ATM");
         transactionRepository.save(transaction);
@@ -148,7 +148,6 @@ public class TransactionService {
     //Checking whether the account number exists in the database
     private void doesIbanExists(String iban, String whichIban)
     {
-        Account account = accountRepository.findByIban(iban);
         if(accountRepository.findByIban(iban) == null)
             throw new IllegalArgumentException(whichIban + "'s IBAN does not exist");
     }
@@ -161,12 +160,14 @@ public class TransactionService {
     //checking user's daily, transfer & account's absolute limits
     private void checkLimits(Account accountFrom, BigDecimal amountToTransfer) {
         // check daily limit
-        User user = accountFrom.getUser();
+        Optional<User> user = userRepository.findById(accountFrom.getUserId());
+        if(user.isEmpty())
+            throw new NoSuchElementException("User does not exist");
         LocalDate localDate = LocalDate.now();
-        BigDecimal transferredAmount = transactionRepository.totalTransferred(user.getId(), localDate.atStartOfDay(),
+        BigDecimal transferredAmount = transactionRepository.totalTransferred(user.get().getId(), localDate.atStartOfDay(),
                 localDate.atTime(LocalTime.MAX));
         transferredAmount = transferredAmount.add(amountToTransfer); // adding amount to transfer to compare with the limit
-        if (transferredAmount.compareTo(BigDecimal.valueOf(user.getDailyLimit())) > 0)
+        if (transferredAmount.compareTo(BigDecimal.valueOf(user.get().getDailyLimit())) > 0)
             throw new IllegalArgumentException("User's daily limit exceeded ");
         // check absolute limit
         BigDecimal accountBalance = accountFrom.getBalance();

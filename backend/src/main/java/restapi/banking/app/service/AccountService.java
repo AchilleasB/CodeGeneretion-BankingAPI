@@ -99,7 +99,7 @@ public class AccountService {
         account.setAccountType(accountType);
         account.setIban(iban);
         account.setOpeningDate(openingDate);
-        account.setUser(user);
+        account.setUserId(user.getId());
         account.setBalance(BigDecimal.ZERO);
         return account;
     }

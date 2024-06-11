@@ -33,10 +33,10 @@ public class Account {
     @Column(name = "opening_date")
     private LocalDate openingDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    @JsonBackReference // Prevents cyclic serialization
-    private User user;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "user_id", referencedColumnName = "id")
+//    @JsonBackReference // Prevents cyclic serialization
+//    private User user;
 
     @Column(name = "absolute_limit")
     private BigDecimal absoluteLimit;
@@ -46,4 +46,7 @@ public class Account {
 
     @Column(name = "active")
     private boolean active;
+
+    @Column(name = "user_id")
+    private UUID userId;
 }

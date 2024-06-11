@@ -67,7 +67,7 @@ public class DatabaseInitializer {
         account1.setBalance(BigDecimal.valueOf(20560));
         account1.setAccountType(AccountType.CHECKING);
         account1.setOpeningDate(LocalDate.now());
-        account1.setUser(customer1);
+        account1.setUserId(customer1.getId());
         account1.setAbsoluteLimit(BigDecimal.valueOf(100));
         account1.setTransactionLimit(BigDecimal.valueOf(1000));
         account1.setActive(true);
@@ -78,7 +78,7 @@ public class DatabaseInitializer {
         account2.setBalance(BigDecimal.valueOf(16450));
         account2.setAccountType(AccountType.SAVINGS);
         account2.setOpeningDate(LocalDate.now());
-        account2.setUser(customer1);
+        account2.setUserId(customer1.getId());
         account2.setAbsoluteLimit(BigDecimal.valueOf(100));
         account2.setTransactionLimit(BigDecimal.valueOf(1000));
         account2.setActive(true);
@@ -108,7 +108,7 @@ public class DatabaseInitializer {
         account3.setBalance(BigDecimal.valueOf(32480));
         account3.setAccountType(AccountType.CHECKING);
         account3.setOpeningDate(LocalDate.now());
-        account3.setUser(customer2);
+        account3.setUserId(customer2.getId());
         account3.setAbsoluteLimit(BigDecimal.valueOf(100));
         account3.setTransactionLimit(BigDecimal.valueOf(1000));
         account3.setActive(true);
@@ -122,7 +122,7 @@ public class DatabaseInitializer {
         account4.setBalance(BigDecimal.valueOf(128450));
         account4.setAccountType(AccountType.SAVINGS);
         account4.setOpeningDate(LocalDate.now());
-        account4.setUser(customer2);
+        account4.setUserId(customer2.getId());
         account4.setAbsoluteLimit(BigDecimal.valueOf(100));
         account4.setTransactionLimit(BigDecimal.valueOf(1000));
         account4.setActive(true);

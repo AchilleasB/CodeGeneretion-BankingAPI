@@ -22,7 +22,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
      * @param timeTo is the time to which we want to see transactions
      * @return the sum of the transactions created in the given period of time
      */
-    @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t WHERE t.accountFrom.user.id = :userId AND t.timestamp BETWEEN :timeFrom AND :timeTo")
+    @Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t WHERE t.accountFrom.userId = :userId AND t.timestamp BETWEEN :timeFrom AND :timeTo")
     BigDecimal totalTransferred(@Param("userId") UUID userId, @Param("timeFrom") LocalDateTime timeFrom, @Param("timeTo") LocalDateTime timeTo);
 
 
