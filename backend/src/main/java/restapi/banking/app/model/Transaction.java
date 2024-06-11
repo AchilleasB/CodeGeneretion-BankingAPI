@@ -1,5 +1,6 @@
 package restapi.banking.app.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,9 +10,6 @@ import lombok.ToString;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Data
 @ToString
@@ -25,10 +23,10 @@ public class Transaction {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name="transaction_type")
+    @Column(name = "transaction_type")
     private TransactionType type;
-    
-    @Column(name="amount")
+
+    @Column(name = "amount")
     private BigDecimal amount;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -41,13 +39,13 @@ public class Transaction {
     @JsonIgnoreProperties("transactions")
     private Account accountTo;
 
-    @Column(name="message")
+    @Column(name = "message")
     private String message;
 
-    @Column(name="timestamp")
+    @Column(name = "timestamp")
     private LocalDateTime timestamp;
 
-    @Column(name="user_id")
+    @Column(name = "user_id")
     private UUID userId;
 
 }

@@ -1,5 +1,9 @@
 package restapi.banking.app.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Column;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,21 +11,13 @@ import restapi.banking.app.model.TransactionType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.UUID;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import jakarta.persistence.Column;
-import jakarta.validation.constraints.Min;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class TransactionDTO {
-    
+
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UUID id;
 
@@ -36,7 +32,7 @@ public class TransactionDTO {
     // the account IBAN to which the transaction is made
     private String ibanTo;
 
-    @Column(name="message")
+    @Column(name = "message")
     private String message;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

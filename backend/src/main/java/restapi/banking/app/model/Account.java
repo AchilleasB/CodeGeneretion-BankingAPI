@@ -1,8 +1,10 @@
 package restapi.banking.app.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -32,11 +34,6 @@ public class Account {
 
     @Column(name = "opening_date")
     private LocalDate openingDate;
-
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id", referencedColumnName = "id")
-//    @JsonBackReference // Prevents cyclic serialization
-//    private User user;
 
     @Column(name = "absolute_limit")
     private BigDecimal absoluteLimit;

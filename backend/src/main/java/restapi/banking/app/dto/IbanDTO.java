@@ -11,7 +11,7 @@ import restapi.banking.app.model.AccountType;
 @AllArgsConstructor
 @NoArgsConstructor
 public class IbanDTO {
-    
+
     private String iban;
     private AccountType accountType;
 

@@ -1,16 +1,7 @@
 package restapi.banking.app.service;
 
-import restapi.banking.app.dto.LoginRequestDTO;
-import restapi.banking.app.dto.LoginResponseDTO;
-import restapi.banking.app.dto.RegistrationDTO;
-import restapi.banking.app.dto.UserDTO;
-import restapi.banking.app.model.User;
-import restapi.banking.app.model.UserRole;
-import restapi.banking.app.repository.UserRepository;
-
 import lombok.AllArgsConstructor;
-
-import org.springframework.stereotype.Service;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -18,7 +9,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+import restapi.banking.app.dto.LoginRequestDTO;
+import restapi.banking.app.dto.LoginResponseDTO;
+import restapi.banking.app.dto.RegistrationDTO;
+import restapi.banking.app.dto.UserDTO;
+import restapi.banking.app.model.User;
+import restapi.banking.app.model.UserRole;
+import restapi.banking.app.repository.UserRepository;
 
 import java.time.LocalDate;
 import java.util.Optional;
@@ -58,7 +56,7 @@ public class AuthService {
 
         // Authenticate user for SpringBoot security context
         Authentication authentication = authenticationManager.authenticate(
-            new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));;
+                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
         // Get the authenticated user details and cast it to User
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -80,10 +78,10 @@ public class AuthService {
 
     private boolean validateRegistrationData(RegistrationDTO registrationDTO) {
         return isEmailValid(registrationDTO.getEmail()) &&
-            !doesEmailExist(registrationDTO.getEmail()) &&
-            isBsnValid(registrationDTO.getBsn()) &&
-            isUserAdult(registrationDTO.getDateOfBirth()) &&
-            isPhoneValid(registrationDTO.getPhone());
+                !doesEmailExist(registrationDTO.getEmail()) &&
+                isBsnValid(registrationDTO.getBsn()) &&
+                isUserAdult(registrationDTO.getDateOfBirth()) &&
+                isPhoneValid(registrationDTO.getPhone());
     }
 
     private boolean doesEmailExist(String email) {
@@ -107,7 +105,7 @@ public class AuthService {
             throw new IllegalArgumentException("BSN should contain only numbers and be 9 digits long");
         }
 
-        int[] factors = { 9, 8, 7, 6, 5, 4, 3, 2, -1 };
+        int[] factors = {9, 8, 7, 6, 5, 4, 3, 2, -1};
         int checksum = 0;
 
         for (int i = 0; i < 9; i++) {

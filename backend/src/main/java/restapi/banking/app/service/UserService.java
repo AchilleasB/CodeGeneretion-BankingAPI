@@ -1,20 +1,16 @@
 package restapi.banking.app.service;
 
 
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import restapi.banking.app.dto.UserDTO;
 import restapi.banking.app.dto.mapper.UserMapper;
-
 import restapi.banking.app.model.User;
 import restapi.banking.app.model.UserRole;
 import restapi.banking.app.repository.UserRepository;
 
-import java.lang.Double;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -57,6 +53,7 @@ public class UserService {
         }
         return unapprovedUserDTOs;
     }
+
     public List<UserDTO> findApprovedUsersWithoutAccount() {
         return userRepository.findByApprovedAndRole(true, UserRole.Customer).stream()
                 //.filter(user -> user.getAccounts() == null || user.getAccounts().isEmpty())

@@ -1,18 +1,11 @@
 package restapi.banking.app.exception;
 
-import java.io.IOException;
-import java.nio.file.AccessDeniedException;
-import java.util.HashMap;
-import java.util.Map;
-
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import jakarta.persistence.EntityNotFoundException;
 import restapi.banking.app.dto.ExceptionDTO;
 
 @ControllerAdvice
@@ -36,7 +29,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler(value = { IllegalArgumentException.class, IllegalStateException.class })
+    @ExceptionHandler(value = {IllegalArgumentException.class, IllegalStateException.class})
     public ResponseEntity<ExceptionDTO> handleBadRequest(Exception ex) {
         ExceptionDTO response = new ExceptionDTO(
                 HttpStatus.BAD_REQUEST.value(),
@@ -44,7 +37,7 @@ public class GlobalExceptionHandler {
                 ex.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
-    
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ExceptionDTO> handleGenericException(Exception ex) {
         ExceptionDTO response = new ExceptionDTO(
@@ -53,8 +46,6 @@ public class GlobalExceptionHandler {
                 "An unexpected error has occurred.");
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-
 
 
 }

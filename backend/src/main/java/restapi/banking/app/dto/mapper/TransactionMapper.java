@@ -2,7 +2,6 @@ package restapi.banking.app.dto.mapper;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
-
 import restapi.banking.app.dto.TransactionDTO;
 import restapi.banking.app.model.Transaction;
 

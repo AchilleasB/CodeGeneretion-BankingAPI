@@ -2,9 +2,9 @@ package restapi.banking.app.dto.mapper;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
+import org.springframework.stereotype.Component;
 import restapi.banking.app.dto.UserDTO;
 import restapi.banking.app.model.User;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
@@ -25,6 +25,7 @@ public class UserMapper {
     }
 
     public List<UserDTO> convertUserListToUserDTOList(List<User> userList) {
-        return modelMapper.map(userList, new TypeToken<List<UserDTO>>() {}.getType());
+        return modelMapper.map(userList, new TypeToken<List<UserDTO>>() {
+        }.getType());
     }
 }

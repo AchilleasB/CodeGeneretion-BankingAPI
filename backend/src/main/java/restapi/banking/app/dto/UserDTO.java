@@ -1,16 +1,15 @@
 package restapi.banking.app.dto;
 
-import java.time.LocalDate;
-import java.util.UUID;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import restapi.banking.app.model.UserRole;
+
+import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
 @Builder

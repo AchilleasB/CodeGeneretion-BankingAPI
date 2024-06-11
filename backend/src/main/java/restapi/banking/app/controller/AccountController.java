@@ -1,12 +1,10 @@
 package restapi.banking.app.controller;
 
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import restapi.banking.app.dto.AccountDTO;
 import restapi.banking.app.dto.IbanDTO;
 import restapi.banking.app.service.AccountService;
@@ -37,7 +35,7 @@ public class AccountController {
     public ResponseEntity<List<AccountDTO>> getAccountsByUserId(@PathVariable UUID userId) {
         try {
             List<AccountDTO> accounts = accountService.findAccountByUserId(userId);
-            return  ResponseEntity.status(HttpStatus.OK).body(accounts);
+            return ResponseEntity.status(HttpStatus.OK).body(accounts);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -1,24 +1,18 @@
 package restapi.banking.app.config;
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
+import jakarta.annotation.PostConstruct;
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
-import jakarta.annotation.PostConstruct;
-import lombok.AllArgsConstructor;
-import restapi.banking.app.model.Account;
-import restapi.banking.app.model.AccountType;
-import restapi.banking.app.model.Transaction;
-import restapi.banking.app.model.TransactionType;
-import restapi.banking.app.model.User;
-import restapi.banking.app.model.UserRole;
+import restapi.banking.app.model.*;
 import restapi.banking.app.repository.AccountRepository;
 import restapi.banking.app.repository.TransactionRepository;
 import restapi.banking.app.repository.UserRepository;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Component
 @AllArgsConstructor
@@ -31,7 +25,7 @@ public class DatabaseInitializer {
     private final PasswordEncoder passwordEncoder;
 
     @PostConstruct // This method will be called after the bean has been initialized at the start
-                   // of the application
+    // of the application
     public void initializeData() {
 
         // Admin user
@@ -114,8 +108,6 @@ public class DatabaseInitializer {
         account3.setActive(true);
         accountRepository.saveAndFlush(account3);
 
-//        Account test = accountRepository.findByIban("NL41INHO3456089001");
-//        User testUser = test.getUser();
 
         Account account4 = new Account();
         account4.setIban("NL42INHO7634150001");

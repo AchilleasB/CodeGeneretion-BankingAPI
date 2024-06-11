@@ -1,13 +1,12 @@
 package restapi.banking.app.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import jakarta.persistence.EntityNotFoundException;
-import restapi.banking.app.dto.mapper.AccountMapper;
-import restapi.banking.app.model.Account;
 import restapi.banking.app.dto.AccountDTO;
 import restapi.banking.app.dto.IbanDTO;
+import restapi.banking.app.dto.mapper.AccountMapper;
+import restapi.banking.app.model.Account;
 import restapi.banking.app.model.AccountType;
 import restapi.banking.app.model.User;
 import restapi.banking.app.repository.AccountRepository;
@@ -17,7 +16,6 @@ import restapi.banking.app.utilities.IBANGenerator;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.*;
-
 import java.util.stream.Collectors;
 
 @Service
@@ -33,12 +31,12 @@ public class AccountService {
                 .map(accountMapper::convertAccountToDTO)
                 .collect(Collectors.toList());
     }
+
     public List<AccountDTO> findAccountByUserId(UUID userId) {
         return accountRepository.findAccountsByUserId(userId).stream()
                 .map(accountMapper::convertAccountToDTO)
                 .collect(Collectors.toList());
     }
-
 
 
     public List<AccountDTO> createAccounts(AccountDTO accountDTO) {
@@ -55,7 +53,7 @@ public class AccountService {
 
     public List<IbanDTO> findIbansByUserName(String firstName, String lastName) {
         Optional<User> user = userRepository.findByFirstNameAndLastName(firstName, lastName);
-        
+
         if (user.isPresent()) {
             List<Account> accounts = accountRepository.findAccountsByUserId(user.get().getId());
 
@@ -68,7 +66,7 @@ public class AccountService {
                     .collect(Collectors.toList());
 
         } else {
-           throw new EntityNotFoundException("Customer not found");
+            throw new EntityNotFoundException("Customer not found");
         }
     }
 

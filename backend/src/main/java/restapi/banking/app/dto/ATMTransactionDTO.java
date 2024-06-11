@@ -15,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ATMTransactionDTO {
-    
+
     @NotNull(message = "Account ID cannot be null")
     private UUID accountId;
 

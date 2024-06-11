@@ -1,5 +1,6 @@
 package restapi.banking.app.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,11 +9,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
-import jakarta.persistence.EntityNotFoundException;
 import restapi.banking.app.dto.ATMTransactionDTO;
 import restapi.banking.app.dto.TransactionDTO;
-
 import restapi.banking.app.dto.mapper.TransactionMapper;
 import restapi.banking.app.model.*;
 import restapi.banking.app.repository.AccountRepository;
@@ -24,7 +22,10 @@ import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.*;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 // import java.time.LocalDate;
@@ -96,8 +97,7 @@ public class TransactionService {
         User user = (User) authentication.getPrincipal();
 
         //Iban checks
-        if(user.getRole().equals(UserRole.Employee))
-        {
+        if (user.getRole().equals(UserRole.Employee)) {
             IbanValidation(requestDTO.getIbanFrom(), "Sender");
             doesIbanExists(requestDTO.getIbanFrom(), "Sender");
         }
@@ -128,17 +128,16 @@ public class TransactionService {
         responceDTO.setIbanTo(accountTo.getIban());
         responceDTO.setIbanFrom(accountFrom.getIban());
 
-        testBalance(responceDTO);
+        //testBalance(responceDTO);
         return responceDTO;
     }
 
-    private void IbanValidation(String iban, String whichIban)
-    {
+    private void IbanValidation(String iban, String whichIban) {
         iban = iban.replaceAll("\\s+", "");
         if (iban.length() != 18)
             throw new IllegalArgumentException(whichIban + "'s IBAN must be 18 characters");
         if (!iban.startsWith("NL"))
-            throw new IllegalArgumentException(whichIban + "'s IBAN must start with \'NL\'");
+            throw new IllegalArgumentException(whichIban + "'s IBAN must start with 'NL'");
         if (!iban.substring(2).matches("\\d{2}[A-Z]{4}\\d{10}"))
             throw new IllegalArgumentException(whichIban + "'s IBAN format is invalid");
         //method below would be used in real case scenario
@@ -146,9 +145,8 @@ public class TransactionService {
     }
 
     //Checking whether the account number exists in the database
-    private void doesIbanExists(String iban, String whichIban)
-    {
-        if(accountRepository.findByIban(iban) == null)
+    private void doesIbanExists(String iban, String whichIban) {
+        if (accountRepository.findByIban(iban) == null)
             throw new IllegalArgumentException(whichIban + "'s IBAN does not exist");
     }
 
@@ -161,7 +159,7 @@ public class TransactionService {
     private void checkLimits(Account accountFrom, BigDecimal amountToTransfer) {
         // check daily limit
         Optional<User> user = userRepository.findById(accountFrom.getUserId());
-        if(user.isEmpty())
+        if (user.isEmpty())
             throw new NoSuchElementException("User does not exist");
         LocalDate localDate = LocalDate.now();
         BigDecimal transferredAmount = transactionRepository.totalTransferred(user.get().getId(), localDate.atStartOfDay(),
@@ -227,12 +225,12 @@ public class TransactionService {
     }
 
     private void isTheAmountCorrect(BigDecimal amount) {
-        if(amount.compareTo((new BigDecimal("0"))) <= 0)
+        if (amount.compareTo((new BigDecimal("0"))) <= 0)
             throw new IllegalArgumentException("Amount must be higher than €0.00");
     }
 
-    private void areIbansTheSame(String IbanFrom, String IbanTo){
-        if(IbanFrom.equals(IbanTo))
+    private void areIbansTheSame(String IbanFrom, String IbanTo) {
+        if (IbanFrom.equals(IbanTo))
             throw new IllegalArgumentException("IBAN of recipient and sender must be different");
     }
 

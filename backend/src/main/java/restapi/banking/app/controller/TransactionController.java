@@ -1,21 +1,20 @@
 package restapi.banking.app.controller;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 import restapi.banking.app.dto.ATMTransactionDTO;
 import restapi.banking.app.dto.TransactionDTO;
 import restapi.banking.app.service.TransactionService;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.UUID;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,8 +27,8 @@ public class TransactionController {
     @GetMapping("{userId}")
     @PreAuthorize("@securityExpressions.isSameUserOrEmployee(authentication, #userId)")
     public ResponseEntity<List<TransactionDTO>> getUserTransactions(@PathVariable UUID userId,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
+                                                                    @RequestParam(defaultValue = "0") int page,
+                                                                    @RequestParam(defaultValue = "10") int size) {
         try {
             List<TransactionDTO> transactions = transactionService.getUserTransactions(userId, page, size);
             return ResponseEntity.status(HttpStatus.OK).body(transactions);
@@ -46,7 +45,7 @@ public class TransactionController {
             TransactionDTO createdTransactionDTO = transactionService.createTransaction(transferDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(createdTransactionDTO);
 
-        } catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException | NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "An error occurred while processing the transaction."));

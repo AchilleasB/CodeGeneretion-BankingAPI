@@ -9,15 +9,10 @@ import java.util.Random;
 
 public class IBANGenerator implements IdentifierGenerator {
 
-    @Override
-    public Serializable generate(SharedSessionContractImplementor session, Object object) throws HibernateException {
-    return generateIBAN();
-    }
     // this method will return an iban . Ex . NL24 ABNA 1234 5678 10
     public static String generateIBAN() {
         return "NL" + generateRandomNumbers(2) + "ABNA" +
-                generateRandomNumbers(4) + "" + generateRandomNumbers(4) +
-                "" + generateRandomNumbers(2);
+                generateRandomNumbers(4) + generateRandomNumbers(4) + generateRandomNumbers(2);
     }
 
     // Generate random numbers of specified length
@@ -29,5 +24,10 @@ public class IBANGenerator implements IdentifierGenerator {
             randomNumbers.append(numbers.charAt(random.nextInt(numbers.length())));
         }
         return randomNumbers.toString();
+    }
+
+    @Override
+    public Serializable generate(SharedSessionContractImplementor session, Object object) throws HibernateException {
+        return generateIBAN();
     }
 }
