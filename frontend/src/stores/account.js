@@ -106,15 +106,10 @@ export const useAccountStore = defineStore('accountStore', {
       }
     },
 
+    // switched to path variable from request parms as it is more RESTful
     async searchIbansByUsername(firstName, lastName) {
       try {
-        const response = await axios.get('accounts/ibans', {
-          params: {
-            firstName,
-            lastName
-          }
-        });
-
+        const response = await axios.get(`accounts/ibans/${firstName}/${lastName}`);
         console.log(response);
         return response;
       } catch (error) {
