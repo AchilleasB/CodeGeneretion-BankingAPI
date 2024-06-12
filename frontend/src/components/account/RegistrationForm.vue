@@ -1,9 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useAuthStore } from '../../stores/auth';
-import { useRouter } from 'vue-router'
 
-const router = useRouter();
 const authStore = useAuthStore();
 
 const firstName = ref('');
@@ -20,12 +18,18 @@ const register = async () => {
     try {
         const res = await authStore.register(firstName.value, lastName.value, dateOfBirth.value, phone.value, bsn.value, email.value, password.value);
 
-        successMessage.value = `${res.firstName}, your registration request was sent successfully!\nPlease wait for approval.`;
+        successMessage.value = `${res.data.firstName}, your registration request was sent successfully!\nPlease wait for approval.`;
         errorMessage.value = '';
 
         setTimeout(() => {
             successMessage.value = '';
-            router.push({ name: 'home' });
+            firstName.value = '';
+            lastName.value = '';
+            dateOfBirth.value = '';
+            phone.value = '';
+            bsn.value = '';
+            email.value = '';
+            password.value = '';
         }, 5000);
     } catch (error) {
         errorMessage.value = error.message;

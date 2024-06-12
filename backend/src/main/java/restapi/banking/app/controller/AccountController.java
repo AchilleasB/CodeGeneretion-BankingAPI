@@ -54,9 +54,12 @@ public class AccountController {
         }
     }
 
-    @GetMapping("/ibans")
+    // Path Variables: make the path more Restful
+    // Request Params: used before due to being more appropriate for filtering 
+    // I prefer Path Variables now 
+    @GetMapping("/ibans/{firstName}/{lastName}")
     @PreAuthorize("hasAnyRole('EMPLOYEE', 'CUSTOMER')")
-    public ResponseEntity<List<IbanDTO>> getIbansByUserName(@RequestParam String firstName, @RequestParam String lastName) {
+    public ResponseEntity<List<IbanDTO>> getIbansByUserName(@PathVariable String firstName, @PathVariable String lastName) {
         try {
             List<IbanDTO> ibans = accountService.findIbansByUserName(firstName, lastName);
             return ResponseEntity.status(HttpStatus.OK).body(ibans);
